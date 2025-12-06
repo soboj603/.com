@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Image Font Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <style>
+        /* ✨ ============================================= */
+        /* ✨        NEW HIGH-QUALITY COLOR PALETTE         */
+        /* ✨ ============================================= */
+        
+        /* --- DARK THEME (Cosmic Night) --- */
+        :root {
+            --primary-color: #4a90e2;        /* Vibrant Blue */
+            --secondary-color: #9c27b0;      /* Deep Violet */
+            --text-color: #f0f0f0;           /* Soft White */
+            --text-color-dark: #1a1a2e;      /* Dark Text for light elements */
+            --bg-dark: #12121c;              /* Deep Navy/Purple Background */
+            --card-dark: #1d1d2b;            /* Slightly Lighter Card BG */
+            --header-icon-color: #ffd700;    /* Gold Icon */
+            --header-border-color: rgba(255, 255, 255, 0.1);
+            --footer-bg: #1d1d2b;            /* Match card color */
+            --copy-btn-bg: var(--primary-color);
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --result-box-bg: #2a2a3f;
+            --result-box-border: var(--primary-color);
+            /* NEW COLORS FOR AI BUTTONS */
+            --gemini-color: #4285F4; /* Google Blue */
+            --chatgpt-color: #10a37f; /* ChatGPT Green */
+        }
+        
+        /* --- LIGHT THEME (Clean & Fresh) */
+        .light-mode {
+            --primary-color: #ff6b6b;        /* Coral Pink */
+            --secondary-color: #8e44ad;      /* Soft Purple */
+            --text-color: #2c3e50;           /* Charcoal Text */
+            --text-color-dark: #FFFFFF;      /* White text for buttons */
+            --bg-dark: #f4f7f9;              /* Light Gray Background */
+            --card-dark: #ffffff;            /* White Cards */
+            --header-icon-color: var(--primary-color);
+            --header-border-color: #e0e0e0;   /* Light Gray Border */
+            --footer-bg: #ffffff;            /* White Footer */
+            --copy-btn-bg: var(--secondary-color);
+            --shadow-color: rgba(44, 62, 80, 0.15);
+            --result-box-bg: #fff0f0;
+            --result-box-border: var(--primary-color);
+            /* NEW COLORS FOR AI BUTTONS */
+            --gemini-color: #4285F4; 
+            --chatgpt-color: #10a37f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        
+        a, button, .image-card-wrapper, .developer-name, .more-btn, .generate-btn, input, .header-actions {
+            -webkit-tap-highlight-color: transparent;  
+            outline: none;  
+            touch-action: manipulation;
+        }
+        
+        #closeImageViewBtn, #likeImageViewBtn {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .footer-main, .developer-name, .policy-terms-line, .copyright-text, 
+        .image-title, .more-btn, .generate-btn, .view-count, 
+        .action-icon, .header-actions, .image-title-view, 
+        .result-box, .like-count, .image-view-action-bar, .action-btn-full
+        {
+            user-select: none;  
+            -webkit-user-select: none;  
+            -moz-user-select: none;  
+            -ms-user-select: none;  
+        }
+        
+        img {
+            -webkit-user-drag: none;  
+            user-select: none;  
+            -webkit-user-select: none;  
+            -moz-user-select: none;  
+            -ms-user-select: none;  
+            pointer-events: none;
+        }
+
+        body {
+            width: 100%;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            padding: 0;  
+            background: linear-gradient(135deg, #1f2833 0%, #171c26 100%);
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+        }
+        .light-mode body {
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+        }
+        
+        /* 🔥 সমাধান #2: প্রি-লোডার সরে যাওয়ার আগে সম্পূর্ণ কন্টেন্ট লুকানো */
+        .initial-hidden .all-bar {
+            visibility: hidden; 
+        }
+
+        .all-bar {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;  
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            background-color: var(--bg-dark); /* 🔥 মূল ব্যাকগ্রাউন্ড কালার */
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+            position: relative;
+        }
+
+
+
+
+
+
+
+        
+        /* 🌟 PRELOADER STYLES START */
+
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* 🔥 ব্যাকগ্রাউন্ড কালার var(--bg-dark) সেট করা হয়েছে seamless ম্যাচিং এর জন্য */
+            background-color: #000000; 
+            z-index: 2000; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* 🔥 কন্টেন্টকে উপরের দিকে শুরু করার জন্য */
+            justify-content: flex-start; 
+            /* 🔥 উপর থেকে চাপ দিয়ে নামানো (ভিডিওকে উপরে দেখানোর জন্য) */
+            transition: opacity 0.5s ease-out; 
+            gap: 15px;
+        }
+
+        .preloader-video {
+            width: 90%; /* ভিডিওর সাইজ নিয়ন্ত্রণ */
+            max-width: 300px; /* বেস ম্যাক্স উইডথ */
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            /* 🔥 সমাধান #1: ইনিশিয়াল ফেড-ইন অ্যানিমেশন সরানো হয়েছে। এটি এখন JS দ্বারা নিয়ন্ত্রিত। */
+            transition: opacity 0.5s ease-in; 
+            object-fit: contain; /* ভিডিও যেন সাইজের সাথে মানানসই হয় */
+        }
+        
+        /* 🔥 সিঙ্গেল ভিডিওকে মাঝখানে রাখা হয়েছে */
+        #video-1 {
+            max-width: 300px; 
+            margin-top: 50px; /* স্ক্রিনের উপরে থেকে একটু নামিয়ে আনা */
+        }
+
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        .preloader-hidden {
+            opacity: 0;
+            pointer-events: none; 
+        }
+        /* 🌟 PRELOADER STYLES END */
+    
+        .gallery-active .all-bar {
+            overflow-y: auto;
+        }
+    
+        .image-view-active .all-bar {
+            overflow-y: hidden;
+        }
+        
+        .heading-bar {  
+            width: 100%;  
+            height: 60px;
+            background-color: var(--card-dark);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            border-bottom: 1px solid var(--header-border-color);  
+            flex-shrink: 0;
+            position: sticky;  
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo-container-left {
+            width: 40px;  
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-container-left img {
+            width: 100%;  
+            height: 100%;
+            object-fit: contain;  
+            border-radius: 8px;
+        }
+        
+        .search-container {
+            flex-grow: 1;  
+            max-width: 200px;  
+            height: 40px;
+            margin: 0 15px;
+            position: relative;
+            transition: opacity 0.3s;
+        }
+        
+        .search-container input {
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            border: 1px solid var(--header-border-color);
+            padding: 0 15px;    
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            outline: none;
+            font-size: 14px;
+        }
+        .search-container input:focus {
+            border-color: var(--primary-color);
+        }
+        
+        .image-view-active .search-container {
+            opacity: 0;  
+            pointer-events: none;
+        }
+        
+        .header-actions {
+            width: 40px;  
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .action-icon {
+            font-size: 1.4em;
+            color: var(--header-icon-color);
+        }
+        
+        .content {
+            flex-grow: 1;
+            padding: 10px;  
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+        
+        .image-view-active .content,
+        .image-view-active .more-container {
+            display: none;
+        }
+
+        /* **পরিবর্তন:** নতুন অ্যানিমেশন সংজ্ঞায়িত করা হয়েছে */
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px); 
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        /* পুরানো slideUp অ্যানিমেশন সরানো হয়েছে */
+
+        .image-card-wrapper {
+            text-align: center;
+            background-color: var(--card-dark);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            opacity: 0;  
+            transform: translateY(50px); 
+            align-self: start; 
+            display: none; 
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; 
+            cursor: pointer;
+            position: relative; 
+        }
+        .image-card-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px var(--shadow-color);
+        }
+        
+        .image-card-wrapper.animated {
+            opacity: 1;
+            transform: translateY(0);
+            /* **পরিবর্তন:** নতুন অ্যানিমেশন ব্যবহার */
+            animation: fadeInScale 0.4s ease-out forwards; 
+        }
+        
+        .image-card {
+            position: relative;
+            width: 100%;
+            height: 170px;
+            overflow: hidden;
+        }
+        .image-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* 👁️ ভিউ কাউন্ট (বাম দিকে) */
+        .view-count {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;  
+            display: flex;  
+            align-items: center;  
+            gap: 5px;
+            z-index: 10;  
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);  
+        }
+
+        /* 💖 লাইক কাউন্ট (ডান দিকে) */
+        .like-count {
+            position: absolute;
+            bottom: 8px;
+            right: 8px; 
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;  
+            display: flex;  
+            align-items: center;  
+            gap: 5px;
+            z-index: 10;  
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            cursor: pointer; 
+            transition: color 0.2s, background-color 0.2s;
+        }
+        
+        /* লাইক আইকনে ক্লিক করলে লাল হবে */
+        .like-count .fas.fa-heart {
+            color: red !important;
+            transition: color 0.2s, transform 0.1s;
+        }
+
+        .image-card-wrapper .image-title {
+            color: var(--text-color);
+            padding: 12px 8px; 
+            font-weight: 500;
+            font-size: 0.95rem;
+            width: 100%;
+            text-align: center;
+            white-space: nowrap;  
+            overflow: hidden;  
+            text-overflow: ellipsis;  
+        }
+        
+        .more-container {
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 100%;  
+            background-color: var(--bg-dark);
+        }
+        
+        .more-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background-image: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            color: white; 
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .more-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .more-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: all;
+        }
+        
+        .footer-main {
+            width: 100%;
+            padding: 20px 15px 15px 15px;  
+            display: flex;
+            flex-direction: column;  
+            align-items: center;
+            justify-content: center;
+            background-color: var(--footer-bg);  
+            border-top: 1px solid var(--header-border-color);  
+            flex-shrink: 0;
+            border-radius: 15px 15px 0 0;  
+            margin-top: auto;  
+            text-align: center;
+        }
+        
+        .image-view-active .footer-main {
+            display: none;
+        }
+
+        .developed-by-line {
+            color: var(--text-color);  
+            font-size: 0.95rem;
+            margin-bottom: 10px;  
+            line-height: 1.4;
+        }
+
+        .developer-name {
+            color: var(--primary-color);
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;  
+            transition: color 0.2s;
+        }
+        .developer-name:hover {
+            filter: brightness(1.2); 
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 10px;
+            margin-left: -10px; 
+        }
+
+        .social-icon {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+            padding: 2px;  
+            -webkit-tap-highlight-color: transparent;
+        }
+        .social-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .social-image {
+            width: 100%;  
+            height: 100%;
+            object-fit: contain;  
+            border-radius: 20%;  
+        }
+        
+        .policy-terms-line {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            margin-top: 5px;  
+            margin-bottom: 8px;  
+            display: flex;  
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .policy-terms-line .separator {
+            margin: 0 8px;  
+            opacity: 0.5;
+        }
+        
+        .copyright-text {
+            font-size: 0.8rem;
+            color: var(--text-color);
+            opacity: 0.5;
+        }
+        
+        .full-image-view {
+            display: none;  
+            width: 100%;
+            flex-grow: 1;  
+            flex-direction: column;
+            background-color: var(--bg-dark);
+            height: calc(100vh - 60px);  
+            overflow-y: hidden;  
+        }
+        
+        .image-view-active .full-image-view {
+            display: flex;  
+        }
+        
+        .image-display-container {
+            flex-grow: 1;  
+            width: 100%;
+            display: flex;
+            flex-direction: column;  
+            align-items: center;  
+            justify-content: flex-start; 
+            padding-top: 20px; 
+            background-color: var(--bg-dark);
+            overflow: hidden;  
+            z-index: 999;  
+            position: relative;
+        }
+        
+        /* 🎨 ফুল ভিউয়ের জন্য অ্যাকশন বার (শুধুমাত্র ব্যাক বাটন) */
+        .image-view-action-bar {
+            position: absolute;  
+            top: 10px;  
+            width: calc(100% - 30px); 
+            max-width: 370px;
+            display: flex;
+            justify-content: flex-start; /* শুধু বাম দিকে থাকবে */
+            align-items: center;
+            padding: 0 10px;
+            z-index: 1005;  
+        }
+
+        .action-btn-full {
+            width: 35px;
+            height: 35px;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .action-btn-full:hover {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+        
+        /* ব্যাক বাটনকে আগের মতো স্কোয়ার শেপ এবং বর্ডার দেওয়া হলো */
+        #closeImageViewBtn {
+            border-bottom: 2px solid #B468C4;
+        }
+
+        .action-btn-full i {
+            font-size: 1.2em;  
+            color: #ffffff;
+        }
+        
+        /* ✨ ছবির জন্য নতুন র্যাপার ও লাভ আইকন */
+        #imageWrapper {
+            position: relative;
+            max-width: 100%;
+            max-height: 40vh; 
+            height: auto;
+            margin-bottom: 10px; 
+            margin-top:  -18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .image-display-container img {
+            max-width: 100%;  
+            max-height: 40vh;  
+            height: auto;  
+            object-fit: contain;
+            display: block;
+            margin-bottom: 0; 
+        }
+        
+        /* 💖 ছবির ভিতরে নিচে ডানদিকের লাভ বাটন (বৃত্তাকার) */
+        .like-in-image-corner {
+            position: absolute;
+            bottom: 10px; 
+            right: 10px;  
+            width: 35px; /* একটু বড় করা হলো */
+            height: 35px;
+            background-color: rgba(0, 0, 0, 0.6); 
+            border-radius: 30%; /* গোল করে দেওয়া হলো */
+            border-bottom: none !important; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            z-index: 1001; 
+        }
+
+        /* ফুল ভিউ লাইক আইকনের কালার */
+        .like-icon-full {
+            color: white !important; /* Default color (far) */
+        }
+
+        .like-icon-full.fas {
+            color: red !important; /* Liked color (fas) */
+        }
+        /* End of new full-view action bar styles */
+
+
+        .image-details-overlay {
+            width: 100%;
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; 
+            padding: 5px 15px 5px 15px; 
+            background: var(--card-dark);
+            border-radius: 20px 20px 0 0;  
+            text-align: center;
+            z-index: 1000;
+            margin-top: -10px;
+           border-top: 2px solid #B468C4;
+           flex-shrink: 0;
+           overflow-y: auto; 
+        }
+
+        .image-title-view {
+            font-size: 1.0rem;    
+            font-weight: 600;     
+            color: var(--text-color);
+            line-height: 1.0;
+            text-align: center;
+            margin-bottom: 5px;  
+            width: 100%;
+            white-space: normal;
+            word-wrap: break-word;
+            border-bottom: 2px solid transparent;
+            border-image: linear-gradient(to right, transparent, #B468C4, transparent) 1;
+            padding-bottom: 10px;
+        }
+
+        .generate-btn {
+            width: 220px;  
+            padding: 14px;
+            border: none;
+            border-radius: 15px;
+            background-image: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;  
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .generate-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        #generatePromptButton {
+            display: flex; 
+            margin-bottom: 10px; /* স্পেসের জন্য */
+        }
+
+        .loading-container {
+            display: none; 
+            width: 100px;
+            height: 100px;
+            position: relative;
+            margin: 20px auto 10px auto;
+        }
+
+        .loading-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid rgba(255, 255, 255, 0.2); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-color);
+            position: relative;
+        }
+        .light-mode .loading-circle {
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .loading-arc {
+            position: absolute;
+            top: -8px; 
+            left: -8px;
+            width: calc(100% + 16px);
+            height: calc(100% + 16px);
+            border-radius: 50%;
+            border: 8px solid transparent; 
+            border-top-color: var(--primary-color);
+            border-right-color: var(--primary-color);
+            animation: spin 1.5s linear infinite; 
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 5px; 
+            min-height: 130px; 
+            width: 100%;
+        }
+
+        .result-box {
+            padding: 10px 10px;
+            margin: 0 auto 10px auto; /* মার্জিন পরিবর্তন */
+            background-color: var(--result-box-bg); 
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            border: 1px solid var(--result-box-border);
+            text-align: left; 
+            width: 100%; 
+            height: 120px; 
+            overflow-y: auto; 
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+        }
+        
+        /* 🔥 নতুন বাটন কনটেইনারের স্টাইল */
+        #promptActionButtons {
+            display: flex;
+            justify-content: space-between; /* বাটনের মধ্যে সমান স্পেস */
+            gap: 8px; /* বাটনের মধ্যে দূরত্ব */
+            width: 100%;
+            margin-bottom: 10px; /* নিচে একটু স্পেস */
+        }
+        
+        .copy-button, .gemini-button, .chatgpt-button {
+            flex-grow: 1; /* সবাই সমান জায়গা নেবে */
+            width: auto; /* ফ্লেক্স গ্রো দিয়ে কন্ট্রোল হবে */
+            padding: 7px 3px;
+            margin: 0; /* উপরে থাকা মার্জিন সরানো হলো */
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 0.75rem; /* ফন্ট সাইজ একটু ছোট করা হলো */
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap; /* টেক্সট যাতে না ভাঙে */
+        }
+        
+        .copy-button i {
+            font-size: 1em;
+        }
+
+
+
+        /* 🔥 নতুন লোগো ইমেজের জন্য স্টাইল (পরিবর্তিত) */
+        .gemini-button img, .chatgpt-button img {
+            height: 25px; /* লোগোর উচ্চতা সেট করা হলো */
+            width: auto;border-radius: 6px;
+            object-fit: contain;
+            /* যদি লোগো সাদা না হয়, তাহলে filter দিয়ে সাদা করে নেওয়া যেতে পারে (যদি প্রয়োজন হয়) */
+            /* filter: brightness(0) invert(1); */
+        }
+        
+        .copy-button:active, .gemini-button:active, .chatgpt-button:active {
+            transform: scale(0.97);
+        }
+        
+        /* Copy Button (Original Style) */
+        .copy-button {
+            background-color: var(--copy-btn-bg);
+        }
+        
+        /* Gemini Button (Google Blue) */
+        .gemini-button {
+            background-color: var(--gemini-color); 
+        }
+        
+        /* ChatGPT Button (OpenAI Green) */
+        .chatgpt-button {
+            background-color: var(--chatgpt-color);
+        }
+
+    </style>
+</head>
+<body class="gallery-active initial-hidden"> <div id="preloader">
+        <video id="video-1" class="preloader-video" src="loading-Animation-2.mp4" autoplay loop muted playsinline></video>
+        </div>
+    <div class="all-bar">  
+        
+        <div class="heading-bar">
+            <div class="logo-container-left">
+                <img src="logo.png" alt="Logo">  
+            </div>
+            
+            <div class="search-container">
+                <input type="text" placeholder="Search prompts..!">
+            </div>
+            
+            <div class="header-actions">
+                <i class="fas fa-moon action-icon" id="themeToggleIcon" title="Toggle Light Mode"></i>  
+            </div>
+        </div>
+        
+        <div class="full-image-view" id="fullImageView">
+            
+            <div class="image-display-container">
+                
+                <div class="image-view-action-bar">
+                    <div id="closeImageViewBtn" class="action-btn-full" title="Back to Gallery">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    </div>
+                
+                <div id="imageWrapper">
+                    <img id="enlargedImage" src="" alt="1"> 
+                    <div id="likeImageViewBtn" class="action-btn-full like-in-image-corner" title="Like this image">
+                        <i class="far fa-heart like-icon-full"></i> 
+                    </div>
+                </div>
+                
+                <div class="image-details-overlay">
+                    <p class="image-title-view" id="enlargedImageTitle">Placeholder Title for the Image</p>
+                    
+                    <button class="generate-btn" id="generatePromptButton">
+                        <i class="fas fa-magic"></i> GENERATE PROMPT
+                    </button>
+                    
+                    <div class="loading-container" id="loadingContainer">
+                        <div class="loading-circle">
+                            <div class="loading-arc"></div>
+                            <span id="loadingPercentage">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="result-container" id="resultContainer" style="display: none;">
+                        <div class="result-box" id="resultBox">
+                            </div>
+                        
+                        <div id="promptActionButtons">
+                            <button class="copy-button" id="copyButton">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button class="gemini-button" id="geminiButton">
+                                <img src="logo-Gemini.png" alt="Gemini Logo">Open Gemini
+                            </button>
+                            <button class="chatgpt-button" id="chatGPTButton">
+                                <img src="logo-chatGPT.png" alt="ChatGPT Logo">Open chatGPT
+                            </button>
+                        </div>
+                        </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="content" id="imageGallery">
+            
+            
+            <div class="image-card-wrapper" data-views="0" 
+                 data-title="Colorful and Vibrant Indian Festival Art"
+                 data-full-title="🥰 Indian Festival Art🤔🥰🎟️👈🤨👉❣️👉🌺👉 figufiufufi" 
+                 data-prompt="A stylish young man with voluminous, well-styled hair and a neatly groomed beard, sitting casually on a modern chair against a plain background. He is wearing a deep maroon jacket over a black outfit, accessorized with a wristwatch. He holds a pair of sunglasses near his lips in a confident, charismatic pose, exuding modern elegance and charm. The image should be hyper-detailed with sharp focus on the subject, rich color grading, and have a cinematic quality.use reference face. Keep my face same 100% same as in the reference image."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-1.png" alt="1">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Colorful and Vibrant Indian Festival Art">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Cinematic Landscape View of Tuscany, Italy"
+                 data-full-title="Italy Landscape - Tuscany" 
+                 data-prompt="A breathtaking cinematic view of the rolling hills of Tuscany, Italy, bathed in golden hour light. Vineyards and cypress trees stretch into the distance, with a charming old stone villa nestled among them. Hyper-detailed, rich colors, atmospheric perspective."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-2.png" alt="2">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Cinematic Landscape View of Tuscany, Italy">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Vintage Royal Portrait with detailed golden frame"
+                 data-full-title="👑 Vintage Royal Portrait" 
+                 data-prompt="A vintage royal portrait of a queen, adorned with intricate jewelry and a regal gown, set within an ornate golden frame. The background features a lavish palace interior. Hyper-realistic, dramatic lighting, rich textures."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-3.png" alt="3">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Vintage Royal Portrait with detailed golden frame">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Iron Man Kid playing in the park with a shiny suit"
+                 data-full-title="🦸‍♂️ Iron Man Kid Playing" 
+                 data-prompt="A joyful little boy dressed as Iron Man, wearing a shiny, detailed suit, happily playing in a vibrant green park. Colorful toys are scattered around him, and the sun shines brightly. Whimsical, detailed, bright and cheerful atmosphere."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-4.png" alt="4">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Iron Man Kid playing in the park with a shiny suit">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Elegant Product Shot of a perfume bottle"
+                 data-full-title="✨ Perfume Product Shot" 
+                 data-prompt="An elegant product shot of a luxurious perfume bottle, exquisitely designed, standing on a sleek, minimalistic background. Soft studio lighting highlights its reflective surface. High-resolution, crisp focus, commercial photography style."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-5.png" alt="5">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Elegant Product Shot of a perfume bottle">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Fantasy Butterfly Art with glowing wings"
+                 data-full-title="🦋 Fantasy Butterfly Art" 
+                 data-prompt="A magnificent fantasy butterfly, with bioluminescent, intricate wings, glowing softly in an enchanted forest bathed in deep blue, mystical light. Dreamlike, highly detailed, magical atmosphere."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-6.png" alt="6">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Fantasy Butterfly Art with glowing wings">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Abstract Portrait of a woman with vibrant color splashes"
+                 data-full-title="🖼️ Abstract Woman Portrait" 
+                 data-prompt="An abstract portrait of a woman, rendered with dynamic, vibrant color splashes and energetic brushstrokes. Her features are subtly defined amidst the chaos of colors. Artistic, expressive, bold and colorful."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-7.png" alt="7">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Abstract Portrait of a woman with vibrant color splashes">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Modern Design of a geometrically complex interior space"
+                 data-full-title="📐 Modern Interior Design" 
+                 data-prompt="A stunning modern interior design featuring a geometrically complex layout with clean lines, minimalist furniture, and sophisticated lighting. Large windows overlook a city skyline. Architectural visualization, hyper-realistic, sleek and elegant."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-8.png" alt="8">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Modern Design of a geometrically complex interior space">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Lush forest and fog on a peaceful morning"
+                 data-full-title="🌿 Lush Forest & Fog" 
+                 data-prompt="A serene and peaceful morning scene in a lush, dense forest, with soft fog gently rolling through the trees. Sunbeams pierce through the canopy, illuminating dew-kissed leaves. Atmospheric, tranquil, natural beauty."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-9.png" alt="9">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Lush forest and fog on a peaceful morning">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Monochrome Art: Black and white photo of an old city street"
+                 data-full-title="⚫ Monochrome City Street" 
+                 data-prompt="A classic monochrome photograph of a bustling old city street, with vintage cars and pedestrians under a dramatic sky. High contrast, film noir aesthetic, timeless urban scene."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-10.png" alt="10">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Monochrome Art: Black and white photo of an old city street">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Red Theme - A striking portrait bathed in red light"
+                 data-full-title="🔴 Red Light Portrait" 
+                 data-prompt="A powerful and striking portrait of a subject, dramatically lit with deep red light. Shadows and highlights create an intense mood. High fashion, artistic lighting, bold and impactful."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-11.png" alt="11">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Red Theme - A striking portrait bathed in red light">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Blue Tones: An oceanic abstract image with varying shades"
+                 data-full-title="🔵 Oceanic Abstract Art" 
+                 data-prompt="An mesmerizing oceanic abstract image, showcasing a gradient of deep to light blue tones, reminiscent of underwater light and movement. Fluid, calming, abstract art."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-12.png" alt="12">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Blue Tones: An oceanic abstract image with varying shades">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Vibrant and colorful image of a bustling market street"
+                 data-full-title="Extra: Bustling Market" 
+                 data-prompt="A vibrant and colorful image of a bustling market street in an exotic city. People, food, and textiles create a rich tapestry of life. Documentary style, lively, full of energy."
+                 data-total-likes="0">
+                <div class="image-card">
+                    <img src="image-13.png" alt="13">
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    <div class="like-count" data-image-id="Vibrant and colorful image of a bustling market street">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                <p class="image-title"></p> </div>
+            
+            
+            
+            
+            
+            
+            <div class="image-card-wrapper" data-views="0" data-title="Futuristic Cyberpunk City with neon lights at night"
+                 data-full-title="Extra: Cyberpunk City" 
+                 data-prompt="
+                 
+                 A futuristic cityscape at night, with neon lights reflecting on wet streets and flying vehicles cruising between towering skyscrapers. Cyberpunk aesthetic, hyper-detailed, dynamic and atmospheric.
+                 
+                 "
+                 data-total-likes="0">
+                
+                
+                
+                
+                
+                <div class="image-card">
+                    <img src="image-14.png" alt="14">
+                    
+                    
+                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
+                    
+                    
+                    <div class="like-count" data-image-id="Futuristic Cyberpunk City with neon lights at night">
+                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+                    </div>
+                </div>
+                
+                
+                <p class="image-title"></p> </div>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        </div>
+        
+        <div class="more-container">
+            <button class="more-btn" id="loadMoreButton" onclick="loadMoreImages()">Load More</button>
+        </div>
+
+        <div class="footer-main">
+            <p class="developed-by-line">
+                Developed by <span id="developerNameLink" class="developer-name"> FA.SOBOJ</span>
+            </p>
+            
+            <div class="social-icons">
+                <a href="https://t.me/Soboj0144" target="_blank" class="social-icon">
+                    <img src="telegram_logo.png" alt="Telegram" class="social-image">
+                </a>
+                <a href="https://www.facebook.com" target="_blank" class="social-icon">
+                    <img src="facebook_logo.png" alt="Facebook" class="social-image">
+                </a>
+            </div>
+
+            <p class="policy-terms-line">
+                Privacy Policy <span class="separator">|</span> Terms of Service  
+            </p>
+            
+            <p class="copyright-text">
+© 2025 Ads to Earning. All Rights Reserved
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ===============================================
+        // 🔥 Firebase Connection and View Count Logic
+        // ===============================================
+
+        // ✅ ফায়ারবেস কনফিগারেশন - আপনার নিজের সেটিংস এখানে যুক্ত করুন
+        const firebaseConfig = {
+            apiKey: "AIzaSyDbjKG5kTZXXYd6ZfG3caa1cQE0r6zVHgM",
+            authDomain: "admin-15b0b.firebaseapp.com",
+            databaseURL: "https://admin-15b0b-default-rtdb.firebaseio.com",
+            projectId: "admin-15b0b",
+            storageBucket: "admin-15b0b.firebaseapp.com",
+            messagingSenderId: "362588279451",
+            appId: "1:362588279451:web:66d5d72b80d6a471826c3e",
+            measurementId: "G-4FD1HFPZT2"
+        };
+
+        // ✅ ফায়ারবেস ইনিশিয়ালাইজেশন
+        let database = null;
+        let viewsRef = null;
+        let likesRef = null; 
+        const USER_ID = 'anonymous_user_id'; // ব্যবহারকারী ট্র্যাক করার জন্য সাধারণ আইডি (লগইন না থাকায়)
+
+        if (typeof firebase !== 'undefined') {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            database = firebase.database();
+            viewsRef = database.ref('image_views');
+            likesRef = database.ref('image_likes'); 
+        } 
+        
+        // ফায়ারবেস পাথের জন্য টাইটেলকে নিরাপদ ফর্মে রূপান্তর
+        function sanitizeImageId(title) {
+            return title.replace(/[.#$\[\]\/]/g, '_');
+        }
+
+        /**
+         * ডেটাবেস থেকে ভিউ এবং লাইক কাউন্ট লোড করে এবং UI আপডেট করে।
+         */
+        function loadInitialViews(cardWrapper) {
+            const imageTitle = cardWrapper.getAttribute('data-title');
+            const imageId = sanitizeImageId(imageTitle);
+            const viewCountSpan = cardWrapper.querySelector('.view-count-number');
+            const likeCountSpan = cardWrapper.querySelector('.like-count-number');
+            const likeIcon = cardWrapper.querySelector('.like-icon');
+            
+            // ✅ আপডেট: data-full-title থেকে হোমপেজের p.image-title-এ লেখাটি সেট করা
+            const fullTitle = cardWrapper.getAttribute('data-full-title');
+            const imageTitleElement = cardWrapper.querySelector('.image-title');
+            if (imageTitleElement && fullTitle) {
+                imageTitleElement.textContent = fullTitle;
+            }
+            
+            // 1. ভিউ কাউন্ট লোড
+            if (viewsRef) {
+                viewsRef.child(imageId).child('count').once('value', (snapshot) => {
+                    const count = snapshot.val() || 0; 
+                    cardWrapper.setAttribute('data-views', count);
+                    viewCountSpan.textContent = count.toLocaleString('en-US');
+                }, (errorObject) => {
+                    console.error('Firebase view read failed:', errorObject.name);
+                });
+            }
+
+            // 2. লাইক কাউন্ট এবং ইউজার স্ট্যাটাস লোড
+            if (likesRef) {
+                const likeRef = likesRef.child(imageId);
+
+                // মোট লাইক লোড
+                likeRef.child('count').once('value', (snapshot) => {
+                    const totalLikes = snapshot.val() || 0;
+                    cardWrapper.setAttribute('data-total-likes', totalLikes);
+                    likeCountSpan.textContent = totalLikes.toLocaleString('en-US');
+                });
+
+                // ইউজার লাইক করেছে কিনা তা চেক
+                likeRef.child('users').child(USER_ID).once('value', (snapshot) => {
+                    if (snapshot.exists() && snapshot.val() === true) {
+                        likeIcon.classList.add('fas'); // লাইক করা থাকলে পূর্ণ হার্ট
+                        likeIcon.classList.remove('far');
+                    } else {
+                        likeIcon.classList.add('far'); // লাইক না করা থাকলে ফাঁকা হার্ট
+                        likeIcon.classList.remove('fas');
+                    }
+                });
+            }
+            
+            // ডেটা লোড হওয়ার পর কার্ড ডিসপ্লে করা
+            cardWrapper.style.display = 'block'; 
+            observer.observe(cardWrapper);
+            
+            // 🔥 সমাধান #2: প্রথম ব্যাচ লোড হওয়ার কাউন্টার আপডেট করা
+            if (currentIndex <= cardsPerLoad) { // নিশ্চিত করতে যে শুধু প্রথম লোডে এটি গণনা করা হচ্ছে
+                initialBatchLoadedCount++;
+                if (initialBatchLoadedCount === cardsPerLoad) {
+                    isInitialBatchReady = true;
+                    checkPreloaderConditions(); // পুরো কন্টেন্ট রেডি হলে প্রি-লোডার লুকানোর চেষ্টা করা
+                }
+            }
+        }
+
+        /**
+         * Firebase-এ ভিউ কাউন্ট বাড়ানোর জন্য Atomic update (Transaction) ব্যবহার করে।
+         */
+        function updateViewCountFirebase(cardWrapper) {
+            if (!viewsRef) return;
+            
+            const imageId = sanitizeImageId(cardWrapper.getAttribute('data-title'));
+            const viewCountSpan = cardWrapper.querySelector('.view-count-number');
+            
+            // ভিউ কাউন্ট Transaction 
+            viewsRef.child(imageId).child('count').transaction((currentCount) => {
+                return (currentCount || 0) + 1;
+            }, (error, committed, snapshot) => {
+                if (committed && snapshot.val()) {
+                    const newCount = snapshot.val();
+                    cardWrapper.setAttribute('data-views', newCount);
+                    viewCountSpan.textContent = newCount.toLocaleString('en-US');
+                } else if (error) {
+                    console.error("View transaction failed: ", error);
+                }
+            });
+        }
+
+        /**
+         * লাইক/আনলাইক টগল করে এবং Firebase-এ আপডেট করে।
+         * @param {HTMLElement} likeButtonElement - হোমপেজের .like-count div
+         */
+        function toggleLike(likeButtonElement) {
+            if (!likesRef) {
+                alert('Likes functionality is disabled: Firebase not initialized.');
+                return;
+            }
+            
+            const cardWrapper = likeButtonElement.closest('.image-card-wrapper');
+            const imageId = sanitizeImageId(cardWrapper.getAttribute('data-title'));
+            const likeIconHome = likeButtonElement.querySelector('.like-icon');
+            const likeCountSpanHome = likeButtonElement.querySelector('.like-count-number');
+            const userLikeRef = likesRef.child(imageId).child('users').child(USER_ID);
+            const countRef = likesRef.child(imageId).child('count');
+            
+            // ফুল ভিউয়ের আইকন
+            const likeIconFull = document.querySelector('#likeImageViewBtn .like-icon-full');
+
+            // 1. ইউজার লাইক স্ট্যাটাস আপডেট (Transaction)
+            userLikeRef.transaction((isCurrentlyLiked) => {
+                if (isCurrentlyLiked === true) {
+                    // আনলাইক করা হচ্ছে
+                    countRef.transaction((currentCount) => (currentCount || 0) - 1);
+                    return null; // ডেটাবেস থেকে ইউজারের লাইক মুছে যাবে
+                } else {
+                    // লাইক করা হচ্ছে
+                    countRef.transaction((currentCount) => (currentCount || 0) + 1);
+                    return true; // ডেটাবেসে true সেভ হবে
+                }
+            }, (error, committed, snapshot) => {
+                if (committed) {
+                    const isLiked = snapshot.val() === true;
+
+                    // UI আপডেট (হোমপেজ কার্ড)
+                    if (isLiked) {
+                        likeIconHome.classList.add('fas'); 
+                        likeIconHome.classList.remove('far');
+                    } else {
+                        likeIconHome.classList.add('far'); 
+                        likeIconHome.classList.remove('fas');
+                    }
+                    
+                    // UI আপডেট (ফুল ভিউ আইকন)
+                    if (likeIconFull) {
+                         if (isLiked) {
+                            likeIconFull.classList.add('fas'); 
+                            likeIconFull.classList.remove('far');
+                        } else {
+                            likeIconFull.classList.add('far'); 
+                            likeIconFull.classList.remove('fas');
+                        }
+                    }
+                    
+                    // 2. মোট লাইক কাউন্ট পুনরায় লোড করা
+                    countRef.once('value', (countSnapshot) => {
+                        const newCount = countSnapshot.val() || 0;
+                        cardWrapper.setAttribute('data-total-likes', newCount);
+                        likeCountSpanHome.textContent = newCount.toLocaleString('en-US');
+                    });
+
+                } else if (error) {
+                    console.error("Like transaction failed: ", error);
+                }
+            });
+        }
+        
+        /**
+         * ফুল ভিউয়ে লাইক বাটনে ক্লিক হলে এই ফাংশনটি কল হবে।
+         */
+        function handleLikeClickFullView() {
+            // enlargedImageTitle.textContent-এ এখন data-full-title এর মান আছে।
+            const currentTitle = enlargedImageTitle.textContent.trim(); 
+            const currentCard = Array.from(allCards).find(card => {
+                return card.getAttribute('data-full-title') === currentTitle; 
+            });
+
+            if (currentCard) {
+                // হোমপেজের কার্ডের লাইক বাটন এলিমেন্ট খুঁজে মূল toggleLike ফাংশনটি কল করা
+                const cardLikeButtonElement = currentCard.querySelector('.like-count');
+                if (cardLikeButtonElement) {
+                    toggleLike(cardLikeButtonElement); 
+                }
+            }
+        }
+        
+        // ===============================================
+        // ✅ আপনার অরজিনাল JavaScript কোড এবং প্রি-লোডার লজিক
+        // ===============================================
+
+        const body = document.body;
+        const allBar = document.querySelector('.all-bar');
+        const loadMoreButton = document.getElementById('loadMoreButton');
+        const enlargedImage = document.getElementById('enlargedImage');
+        const enlargedImageTitle = document.getElementById('enlargedImageTitle'); 
+        const developerNameLink = document.getElementById('developerNameLink');
+        const telegramLink = 'https://t.me/Soboj0144'; 
+        
+        const cardsPerLoad = 8;
+        let currentIndex = 0;    
+        let allCards;    
+        
+        let savedScrollPosition = 0; 
+        
+        const generatePromptButton = document.getElementById('generatePromptButton');
+        const fullImageView = document.getElementById('fullImageView');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const loadingPercentage = document.getElementById('loadingPercentage');
+        
+        const resultContainer = document.getElementById('resultContainer');
+        const resultBox = document.getElementById('resultBox');
+        
+        // 🔥 নতুন বাটন রেফারেন্স
+        const promptActionButtons = document.getElementById('promptActionButtons'); 
+        const copyButton = document.getElementById('copyButton');
+        const geminiButton = document.getElementById('geminiButton');
+        const chatGPTButton = document.getElementById('chatGPTButton');
+        
+        const defaultPrompt = "Generate a unique and creative image based on the current context.";
+
+        // 🔥 সমাধান #2 এর জন্য নতুন ভেরিয়েবল
+        let isInitialBatchReady = false;
+        let initialBatchLoadedCount = 0;
+
+        function simulateLoading() {
+            generatePromptButton.style.display = 'none';
+            resultContainer.style.display = 'none'; 
+            resultBox.textContent = ''; 
+            
+            // 🔥 বাটনগুলো লুকানো
+            promptActionButtons.style.display = 'none'; 
+            
+            loadingContainer.style.display = 'flex'; 
+            
+            let percentage = 0;
+            loadingPercentage.textContent = '0%';
+
+            const interval = setInterval(() => {
+                if (percentage < 100) {
+                    percentage += 1;
+                    loadingPercentage.textContent = `${percentage}%`;
+                } else {
+                    clearInterval(interval);
+                    loadingContainer.style.display = 'none'; 
+                    resultContainer.style.display = 'flex'; 
+                    startTypingEffect();
+                }
+            }, 30);
+        }
+        
+        let currentPromptText = ''; 
+        let charIndex = 0; 
+        let typingSpeed = 5; 
+        
+        function startTypingEffect() {
+            const currentImageAlt = enlargedImage.alt; 
+            let promptFromImage = defaultPrompt;
+
+            const matchingCard = Array.from(allCards).find(card => {
+                const imgElement = card.querySelector('img');
+                return imgElement && imgElement.alt === currentImageAlt; 
+            });
+
+            if (matchingCard) {
+                promptFromImage = matchingCard.getAttribute('data-prompt');
+            }
+            
+            currentPromptText = promptFromImage;
+            charIndex = 0; 
+            typingSpeed = 5;
+            resultBox.textContent = '';
+            
+            // 🔥 টাইপিং শেষ না হওয়া পর্যন্ত বাটন লুকানো
+            promptActionButtons.style.display = 'none'; 
+            typeNextCharacter();
+        }
+
+        function typeNextCharacter() {
+            if (charIndex < currentPromptText.length) {
+                resultBox.textContent += currentPromptText.charAt(charIndex);
+                charIndex++;
+                resultBox.scrollTop = resultBox.scrollHeight;
+                setTimeout(typeNextCharacter, typingSpeed);
+            } else {
+                // 🔥 টাইপিং শেষ হলে বাটনগুলো দেখানো
+                promptActionButtons.style.display = 'flex'; 
+            }
+        }
+
+        function copyText() {
+            const textToCopy = resultBox.textContent.trim();
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                }, 1500);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                copyButton.textContent = '❌ Failed';
+                setTimeout(() => {
+                    copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                }, 1500);
+            });
+        }
+        
+        // 🔥 নতুন জেমিনি ক্লিক হ্যান্ডলার
+        function handleGeminiClick() {
+            const textToCopy = resultBox.textContent.trim();
+            const url = `https://gemini.google.com/?prompt=${encodeURIComponent(textToCopy)}`;
+            window.open(url, '_blank');
+        }
+        
+        // 🔥 নতুন চ্যাটজিপিটি ক্লিক হ্যান্ডলার
+        function handleChatGPTClick() {
+            const textToCopy = resultBox.textContent.trim();
+             // সরাসরি চ্যাটবক্সে প্রম্পট ভরে দেওয়ার কোনো অফিসিয়াল URL নেই, তাই নতুন চ্যাট পেজে নিয়ে যাওয়া হলো।
+            const url = `https://chat.openai.com/chat`;
+            window.open(url, '_blank');
+        }
+        
+        // **পরিবর্তন:** Intersection Observer এ নতুন লজিক যোগ করা হয়েছে।
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                } else {
+                    entry.target.classList.remove('animated');
+                }
+            });
+        }, {
+            root: allBar,
+            rootMargin: '0px',
+            threshold: 0.1
+        });
+        
+        function updateViewCount(cardWrapper) {
+            savedScrollPosition = allBar.scrollTop;  
+            
+            // 1. Firebase-এ ভিউ কাউন্ট বাড়ানো
+            updateViewCountFirebase(cardWrapper);
+
+            // 2. UI আপডেট করা
+            const cardImage = cardWrapper.querySelector('img');
+            
+            // ✅ আপডেট: data-full-title থেকে সম্পূর্ণ লেখাটি নেওয়া (যা এখন হোমপেজের টাইটেলও)
+            const fullImageTitle = cardWrapper.getAttribute('data-full-title') || cardWrapper.getAttribute('data-title') || 'Title Not Found';
+            
+            enlargedImage.src = cardImage.src;
+            enlargedImageTitle.textContent = fullImageTitle;  // ✅ সম্পূর্ণ টাইটেল সেট করা
+            enlargedImage.alt = cardImage.alt; 
+            
+            // 3. লাইক স্ট্যাটাস লোড করে ফুল ভিউ আইকন আপডেট করা
+            if (likesRef) {
+                const imageId = sanitizeImageId(cardWrapper.getAttribute('data-title'));
+                const likeIconFull = document.querySelector('#likeImageViewBtn .like-icon-full');
+
+                likesRef.child(imageId).child('users').child(USER_ID).once('value', (snapshot) => {
+                    if (snapshot.exists() && snapshot.val() === true) {
+                        likeIconFull.classList.add('fas'); 
+                        likeIconFull.classList.remove('far');
+                    } else {
+                        likeIconFull.classList.add('far'); 
+                        likeIconFull.classList.remove('fas');
+                    }
+                });
+            }
+            
+            body.classList.remove('gallery-active');
+            body.classList.add('image-view-active');
+            
+            loadingContainer.style.display = 'none';
+            resultContainer.style.display = 'none'; 
+            
+            // 🔥 বাটন কনটেইনার লুকানো
+            promptActionButtons.style.display = 'none'; 
+            
+            generatePromptButton.style.display = 'flex'; 
+        }
+
+        function handleCardClick(event) {
+            // যদি ইউজার লাভ কাউন্ট আইকনে ক্লিক করে তবে ইমেজ ভিউ খোলা হবে না, শুধু লাইক টগল হবে।
+            if (event.target.closest('.like-count')) {
+                return;
+            }
+            
+            const cardWrapper = event.currentTarget;  
+            updateViewCount(cardWrapper);
+        }
+
+        function closeImageView() {
+            body.classList.remove('image-view-active');
+            body.classList.add('gallery-active');
+            
+            setTimeout(() => {
+                allBar.scrollTop = savedScrollPosition;
+            }, 10);  
+        }
+        
+        function setupCardClickListener(cards) {
+            cards.forEach(card => {
+                card.removeEventListener('click', handleCardClick);  
+                card.addEventListener('click', handleCardClick);
+            });
+        }
+        
+        function setupLikeListeners() {
+            const likeButtons = document.querySelectorAll('.like-count');
+            likeButtons.forEach(button => {
+                button.removeEventListener('click', handleLikeClickHome);
+                button.addEventListener('click', handleLikeClickHome);
+            });
+        }
+        
+        function handleLikeClickHome(event) {
+            event.stopPropagation(); // কার্ড ক্লিক ইভেন্টকে ব্লক করার জন্য
+            const likeButtonElement = event.currentTarget;
+            toggleLike(likeButtonElement);
+        }
+
+        function loadMoreImages() {
+            if (!allCards || currentIndex >= allCards.length) {
+                loadMoreButton.disabled = true;
+                loadMoreButton.textContent = "No More Images";
+                return;
+            }
+
+            loadMoreButton.disabled = true;
+            loadMoreButton.textContent = "Loading...";
+
+            setTimeout(() => {
+                const endIndex = Math.min(currentIndex + cardsPerLoad, allCards.length);
+
+                for (let i = currentIndex; i < endIndex; i++) {
+                    const card = allCards[i];
+                    loadInitialViews(card);  // loadInitialViews-এর মধ্যে isInitialBatchReady চেক করা হবে
+                }
+
+                currentIndex = endIndex;  
+
+                // নতুন লোড হওয়া কার্ডগুলির জন্য লাইক লিসেনার সেট করা
+                setupLikeListeners();
+
+                if (currentIndex >= allCards.length) {
+                    loadMoreButton.style.display = 'none';
+                } else {
+                    loadMoreButton.disabled = false;
+                    loadMoreButton.textContent = "Load More";
+                }
+            }, 3000);  
+        }
+
+        function setupDeveloperLink() {
+            if (developerNameLink) {
+                developerNameLink.addEventListener('click', (e) => {
+                    e.preventDefault();  
+                    window.open(telegramLink, '_blank');  
+                });
+            }
+        }
+        
+        function filterImages(searchTerm) {
+            allCards.forEach(card => {
+                // ✅ আপডেট: সার্চ করার সময় data-full-title ব্যবহার করা হয়েছে
+                const fullTitle = card.getAttribute('data-full-title').toLowerCase();
+                const prompt = card.getAttribute('data-prompt').toLowerCase();
+                
+                if (fullTitle.includes(searchTerm) || prompt.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    // অ্যানিমেশন বারবার ট্রিগার করার জন্য এখানে আবার observe করা হলো
+                    if(!card.classList.contains('animated')) {
+                       observer.observe(card);
+                    }
+                } else {
+                    card.style.display = 'none';
+                    observer.unobserve(card);  
+                    card.classList.remove('animated');  
+                }
+            });
+            loadMoreButton.style.display = searchTerm ? 'none' : 'inline-block';
+        }
+
+        // ===============================================
+        // 🚀 PRELOADER LOGIC (FIXED FOR VIDEO FLASH & CONTENT READY)
+        // ===============================================
+        const preloader = document.getElementById('preloader');
+        // 🔥 video-1 রিমুভ করে, video-2 কে এখানে video-1 হিসাবে রাখা হয়েছে 
+        const video1 = document.getElementById('video-1'); 
+        let videosLoaded = 0;
+        
+        const minDisplayTime = 5000; 
+        const startTime = Date.now(); // লোড টাইম শুরু
+        
+        // 🔥 সমাধান #3: সেশন স্টোরেজ কী (Session Storage Key)
+        const PRELOADER_SHOWN_KEY = 'preloader_shown'; 
+
+        /**
+         * 🔥 সমাধান #2: প্রি-লোডার লুকানোর চূড়ান্ত ফাংশন, যা সমস্ত শর্ত পূরণ হলে কল হবে।
+         */
+        function hidePreloader() {
+            // ইতোমধ্যে hidden বা transition শুরু না হলে কাজ করবে
+            if (preloader.classList.contains('preloader-hidden')) return;
+
+            // 🔥 চেক করার জন্য সংখ্যা 2 থেকে 1 এ পরিবর্তন করা হয়েছে
+            if (!(videosLoaded >= 1 && isInitialBatchReady)) return;
+
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
+
+            setTimeout(() => {
+                // 🔥 সমাধান #2: প্রি-লোডার লুকানোর ঠিক আগে কন্টেন্ট দৃশ্যমান করা
+                document.body.classList.remove('initial-hidden'); 
+                
+                preloader.classList.add('preloader-hidden');
+                
+                // 🔥 সমাধান #3: প্রথমবার লোডিং শেষ হলে সেশন স্টোরেজে সেভ করা 
+                sessionStorage.setItem(PRELOADER_SHOWN_KEY, 'true'); 
+                
+                // ট্রানজিশন শেষ হওয়ার পর এলিমেন্টটিকে DOM থেকে সরিয়ে দেওয়া
+                preloader.addEventListener('transitionend', () => {
+                    preloader.style.display = 'none';
+                }, { once: true }); 
+            }, remainingTime);
+        }
+        
+        /**
+         * সমস্ত রেডি শর্ত চেক করার জন্য একটি গেটওয়ে ফাংশন
+         */
+        function checkPreloaderConditions() {
+            hidePreloader(); 
+        }
+
+        function checkVideoLoad() {
+            videosLoaded++;
+            
+            // 🔥 সমাধান #1: ভিডিও লোড হলে Fade In করা
+            if (this) {
+                this.style.opacity = '1';
+            }
+            
+            // 🔥 চেক করার জন্য সংখ্যা 2 থেকে 1 এ পরিবর্তন করা হয়েছে
+            if (videosLoaded >= 1) { 
+                checkPreloaderConditions();
+            }
+        }
+        
+        /**
+         * শুধুমাত্র প্রথম ভিজিটের জন্য ভিডিও এবং ফলব্যাক লোড লিসেনার সেটআপ করে।
+         */
+        function runPreloaderSetup() {
+            // ভিডিও লোড হওয়ার ইভেন্ট লিসেনার সেট করা
+            if (video1) video1.addEventListener('canplaythrough', checkVideoLoad, { once: true });
+            
+            // ফলব্যাক: যদি কোনো কারণে ভিডিও ইভেন্ট ফায়ার না হয়, তাহলে window load-এর পরেও এটি hide হবে।
+            window.addEventListener('load', () => {
+                 // যদি প্রি-লোডার এখনো দৃশ্যমান থাকে
+                if (!preloader.classList.contains('preloader-hidden') && preloader.style.display !== 'none') {
+                     videosLoaded = 1; // 🔥 ফলব্যাক সংখ্যা 2 থেকে 1 এ পরিবর্তন করা হয়েছে
+                     isInitialBatchReady = true; // Assume content ready as fallback
+                     hidePreloader(); 
+                }
+            }, { once: true });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            allCards = document.querySelectorAll('.image-card-wrapper');
+            
+            // Common setup (always runs)
+            setupCardClickListener(allCards);  
+            setupDeveloperLink();  
+            
+            // ব্যাক বাটন ক্লিক
+            document.getElementById('closeImageViewBtn').addEventListener('click', closeImageView);
+            
+            // ফুল ভিউ লাইক বাটন ক্লিক
+            document.getElementById('likeImageViewBtn').addEventListener('click', handleLikeClickFullView);
+            
+            if(generatePromptButton) {
+                generatePromptButton.addEventListener('click', simulateLoading);
+            }
+            
+            // 🔥 কপি, জেমিনি, চ্যাটজিপিটি বাটনের জন্য নতুন লিসেনার
+            if(copyButton) {
+                copyButton.addEventListener('click', copyText);
+            }
+            if(geminiButton) {
+                geminiButton.addEventListener('click', handleGeminiClick);
+            }
+            if(chatGPTButton) {
+                chatGPTButton.addEventListener('click', handleChatGPTClick);
+            }
+            
+            const themeToggleIcon = document.getElementById('themeToggleIcon');
+        
+            themeToggleIcon.addEventListener('click', function() {
+                document.body.classList.toggle('light-mode');
+                
+                if (document.body.classList.contains('light-mode')) {
+                    themeToggleIcon.classList.remove('fa-moon');
+                    themeToggleIcon.classList.add('fa-sun');
+                    themeToggleIcon.title = "Toggle Dark Mode";
+                } else {
+                    themeToggleIcon.classList.remove('fa-sun');
+                    themeToggleIcon.classList.add('fa-moon');
+                    themeToggleIcon.title = "Toggle Light Mode";
+                }
+            });
+            
+            const searchInput = document.querySelector('.search-container input');
+            searchInput.addEventListener('input', function() {
+                filterImages(this.value.toLowerCase());
+            });
+            
+            // 🔥 সমাধান #৩: রিলোডে প্রি-লোডার স্কিপ করার লজিক
+            if (sessionStorage.getItem(PRELOADER_SHOWN_KEY) === 'true') {
+                // রিলোড হয়েছে, প্রি-লোডার স্কিপ করে কন্টেন্ট দেখানো
+                preloader.style.display = 'none';
+                document.body.classList.remove('initial-hidden');
+                loadMoreImages(); // কন্টেন্ট লোড করা
+                return; // বাকি প্রি-লোডার লজিক বাদ দেওয়া
+            }
+            
+            // প্রথমবার ভিজিট: প্রি-লোডার সেটআপ চালু করা
+            runPreloaderSetup(); 
+            loadMoreImages(); // কন্টেন্ট লোড করা, যা প্রি-লোডার লুকানোর জন্য isInitialBatchReady আপডেট করবে
+        });
+    </script>
+</body>
+</html>
