@@ -1,7 +1,9 @@
+<!-- START OF FILE text/plain -->
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
+    <!-- ZOOM DISABLED -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vault | Personal Cloud</title>
     <link rel="shortcut icon" id="dynamic-favicon" href="">
@@ -38,41 +40,64 @@
             --card-bg: rgba(30, 41, 59, 0.4);
         }
         
-        /* --- GAP FIX: STRICT LAYOUT CONTROL --- */
+        /* 1. STRICT LAYOUT RESET & NO SELECT/NO ZOOM */
+        * { box-sizing: border-box; }
+        
         html, body {
-            width: 102%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden; /* ডানে বামে স্ক্রল বন্ধ */
-            position: fixed; /* বডি ফিক্সড করে রাখা */
-            font-family: 'Inter', sans-serif; 
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden; 
+            font-family: 'Inter', sans-serif;
+            background-color: #000; 
+            
+            /* DISABLE ZOOM & SELECTION GLOBALLY */
+            touch-action: pan-x pan-y;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* ALLOW SELECTION IN INPUTS & SPECIFIC AREAS */
+        input, textarea, .select-text {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            cursor: text;
+        }
+
+        /* 2. DEDICATED GLOBAL BACKGROUND LAYER */
+        #global-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -10; 
             background-color: var(--main-bg); 
-            background-size: cover;
             background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
             background-attachment: fixed;
-            transition: background-color 0.5s ease;
+            transition: background-color 0.5s ease, background-image 0.5s ease;
         }
         
-        /* Mobile Wrapper */
+        /* 3. MOBILE WRAPPER */
         #mobile-wrapper {
             width: 100%;
             max-width: 480px;
             margin: 0 auto;
-            background-color: transparent; 
-            height: 100%;
+            height: 100vh; 
+            height: 100dvh; 
             position: relative;
-            /* গ্যাপ ফিক্সের মূল চাবিকাঠি */
+            background: transparent;
             overflow: hidden; 
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
             border-left: 1px solid rgba(255,255,255,0.05);
             border-right: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
 
+        /* 4. CONTENT WALLPAPER LAYER */
         #app-screen {
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.85); 
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -80,38 +105,47 @@
             overflow: hidden;
             width: 100%;
             height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 0.5s ease;
         }
 
-        /* সেটিংস প্যানেল পজিশন ফিক্স */
+        /* 5. SETTINGS PANEL */
+        #settings-backdrop {
+            position: absolute; inset: 0; 
+            background: rgba(0,0,0,0.6); 
+            z-index: 60; 
+            backdrop-filter: blur(2px);
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        #settings-backdrop.active { opacity: 1; pointer-events: auto; }
+        
         #settings-panel {
             position: absolute;
-            top: 0;
-            right: 0;
-            height: 100%;
-            width: 280px; /* ফিক্সড উইডথ */
+            top: 0; right: 0; bottom: 0;
+            width: 280px;
             background-color: var(--glass-bg);
             backdrop-filter: blur(20px);
             z-index: 70;
-            transform: translateX(100%); /* স্ক্রিনের বাইরে */
-            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-left: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; flex-direction: column;
         }
-        
-        /* যখন প্যানেল ওপেন হবে */
-        #settings-panel.open {
-            transform: translateX(0);
-        }
+        #settings-panel.open { transform: translateX(0); }
 
+        /* UI Elements */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            transition: background 0.5s ease;
         }
         
+        /* MODIFIED GLASS CARD - REDUCED BLUR FOR CLARITY */
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(3px); /* Reduced from 10px to 3px */
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.3s ease;
         }
@@ -128,16 +162,13 @@
         .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: var(--accent-color); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .fade-enter-active { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
+        /* Custom Inputs */
         input:read-only, textarea:read-only {
             background-color: rgba(15, 23, 42, 0.5) !important;
             border-color: transparent !important;
             color: #cbd5e1 !important;
             cursor: text;
         }
-        
         .input-wrapper { position: relative; }
         .input-icon {
             position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
@@ -146,6 +177,7 @@
         textarea ~ .input-icon { top: 12px; transform: none; }
         .req-dot { color: #f43f5e; font-size: 16px; margin-left: 3px; font-weight: bold; }
 
+        /* Dropdowns */
         .dropdown-content {
             max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, opacity 0.3s ease; opacity: 0;
         }
@@ -156,6 +188,7 @@
         .rotate-icon.open { transform: rotate(180deg); }
         .dynamic-bg { background-color: var(--card-bg); transition: background-color 0.5s ease; }
 
+        /* Loader */
         #startup-loader {
             position: fixed; inset: 0; z-index: 9999;
             background: #020617; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -179,7 +212,6 @@
         .settings-header-btn:hover { color: white; }
         
         .setting-label { font-size: 9px; color: #94a3b8; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; display: block; }
-        
         .sub-group-title {
             font-size: 9px; color: var(--accent-color); font-weight: 800; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 2px;
         }
@@ -187,6 +219,10 @@
 </head>
 <body class="text-slate-200 h-screen overflow-hidden flex justify-center selection:bg-indigo-500 selection:text-white">
 
+    <!-- GLOBAL WALLPAPER LAYER -->
+    <div id="global-background"></div>
+
+    <!-- Startup Loader -->
     <div id="startup-loader">
         <div class="spinner border-t-4 border-indigo-500 w-12 h-12"></div>
     </div>
@@ -254,8 +290,8 @@
             </nav>
 
             <!-- Settings Panel -->
-            <div id="settings-backdrop" onclick="toggleSettings()" class="absolute inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm transition-opacity"></div>
-            <div id="settings-panel" class="flex flex-col">
+            <div id="settings-backdrop" onclick="toggleSettings()"></div>
+            <div id="settings-panel">
                 <div class="p-5 border-b border-white/5 flex justify-between items-center bg-slate-900/50 shrink-0">
                     <h2 class="text-base font-bold text-white">Settings</h2>
                     <button onclick="toggleSettings()" class="text-slate-400 hover:text-white w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-800 transition"><i class="fa-solid fa-xmark"></i></button>
@@ -273,10 +309,10 @@
                                 </div>
                             </div>
                         </div>
-                        <p id="user-email" class="text-xs font-medium text-white truncate">user@email.com</p>
+                        <p id="user-email" class="text-xs font-medium text-white truncate select-text">user@email.com</p>
                     </div>
 
-                    <!-- 1. VISUAL ASSETS -->
+                    <!-- 1. VISUAL ASSETS (Modified) -->
                     <div class="border-b border-white/5 pb-2">
                         <button onclick="toggleDropdown('assets-dropdown', 'assets-icon')" class="settings-header-btn group">
                             <span>Visual Assets</span>
@@ -285,16 +321,6 @@
                         <div id="assets-dropdown" class="dropdown-content">
                             <div class="p-3 bg-slate-900/30 rounded-xl border border-white/5 space-y-4 mb-2">
                                 
-                                <!-- Body Wallpaper -->
-                                <div>
-                                    <span class="setting-label">Body Wallpaper</span>
-                                    <div class="flex gap-2">
-                                        <input type="text" id="custom-bg-input" placeholder="URL..." class="w-full bg-slate-800/50 border border-slate-700 rounded p-1.5 text-[10px] text-white focus:outline-none focus:border-[var(--accent-color)]">
-                                        <button onclick="saveBackground()" class="bg-[var(--accent-color)] text-white px-2.5 rounded text-[10px] hover:brightness-110"><i class="fa-solid fa-check"></i></button>
-                                        <button onclick="resetBackground()" class="bg-rose-500/20 text-rose-400 px-2.5 rounded text-[10px] hover:bg-rose-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-                                    </div>
-                                </div>
-
                                 <!-- Content Wallpaper -->
                                 <div>
                                     <span class="setting-label">Content Wallpaper</span>
@@ -364,6 +390,10 @@
                                         <div onclick="setCardBg('rgba(30, 41, 59, 0.4)')" class="color-doll bg-slate-700" title="Default"></div>
                                         <div onclick="setCardBg('rgba(0, 0, 0, 0.6)')" class="color-doll bg-black/60" title="Dark"></div>
                                         <div onclick="setCardBg('rgba(255, 255, 255, 0.1)')" class="color-doll bg-white/20" title="Frost"></div>
+                                        
+                                        <!-- UPDATED CRYSTAL CLEAR SYSTEM COLOR -->
+                                        <div onclick="setCardBg('rgba(255, 255, 255, 0.02)')" class="color-doll border border-white/30" style="background: rgba(255,255,255,0.02)" title="Crystal Clear"></div>
+                                        
                                         <div onclick="setCardBg('rgba(30, 58, 138, 0.4)')" class="color-doll bg-blue-900" title="Blue Tint"></div>
                                         <div onclick="setCardBg('rgba(88, 28, 135, 0.4)')" class="color-doll bg-purple-900" title="Purple Tint"></div>
                                         <button onclick="setCustomColor('card')" class="color-doll border-dashed border-slate-400 flex items-center justify-center text-[8px] text-slate-400 hover:text-white"><i class="fa-solid fa-plus"></i></button>
@@ -576,7 +606,7 @@
                     </div>
                     <div class="relative">
                         <i class="fa-solid fa-heading input-icon"></i>
-                        <input type="text" id="inp-title" placeholder="Entry Title" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none transition text-white">
+                        <input type="text" id="inp-title" placeholder="Entry Title" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none transition text-white select-text">
                     </div>
                 </div>
                 <!-- Content Fields -->
@@ -587,51 +617,51 @@
                     </div>
                     <div class="relative flex-1">
                         <i class="fa-solid fa-align-left input-icon top-4 translate-y-0"></i>
-                        <textarea id="inp-content" class="w-full h-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none font-mono text-slate-300 resize-none"></textarea>
+                        <textarea id="inp-content" class="w-full h-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none font-mono text-slate-300 resize-none select-text"></textarea>
                     </div>
                 </div>
                 <!-- API Fields -->
                 <div class="field-group hidden shrink-0" data-for="apis">
                     <div class="mb-2">
                         <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Endpoint URL (Optional)</label><button type="button" onclick="copyFromId('inp-api-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
-                        <div class="relative"><i class="fa-solid fa-globe input-icon"></i><input type="url" id="inp-api-url" placeholder="https://api.example.com/v1/" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white font-mono"></div>
+                        <div class="relative"><i class="fa-solid fa-globe input-icon"></i><input type="url" id="inp-api-url" placeholder="https://api.example.com/v1/" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white font-mono select-text"></div>
                     </div>
                     <div class="mb-2">
                         <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Gmail (Optional)</label><button type="button" onclick="copyFromId('inp-api-email')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
-                        <div class="relative"><i class="fa-solid fa-envelope input-icon"></i><input type="email" id="inp-api-email" placeholder="dev@example.com" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white"></div>
+                        <div class="relative"><i class="fa-solid fa-envelope input-icon"></i><input type="email" id="inp-api-email" placeholder="dev@example.com" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text"></div>
                     </div>
                     <div>
                         <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">API Key / Token <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-api-key')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
-                        <div class="relative"><i class="fa-solid fa-key input-icon top-4 translate-y-0"></i><textarea id="inp-api-key" rows="3" placeholder="Bearer..." class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-xs focus:border-[var(--accent-color)] focus:outline-none font-mono text-emerald-400"></textarea></div>
+                        <div class="relative"><i class="fa-solid fa-key input-icon top-4 translate-y-0"></i><textarea id="inp-api-key" rows="3" placeholder="Bearer..." class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-xs focus:border-[var(--accent-color)] focus:outline-none font-mono text-emerald-400 select-text"></textarea></div>
                     </div>
                 </div>
                 <!-- Link Fields -->
                 <div class="field-group hidden shrink-0" data-for="links">
                     <div class="mb-1">
                         <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">URL <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
-                        <div class="relative"><i class="fa-solid fa-link input-icon"></i><input type="url" id="inp-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white"></div>
+                        <div class="relative"><i class="fa-solid fa-link input-icon"></i><input type="url" id="inp-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text"></div>
                     </div>
                 </div>
                 <!-- Photo Fields -->
                 <div class="field-group hidden shrink-0" data-for="photos">
                     <div class="mb-1">
                         <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Image URL <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-img-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
-                        <div class="relative"><i class="fa-regular fa-image input-icon"></i><input type="url" id="inp-img-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white"></div>
+                        <div class="relative"><i class="fa-regular fa-image input-icon"></i><input type="url" id="inp-img-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text"></div>
                     </div>
                 </div>
                 <!-- Credential Fields -->
                 <div class="field-group hidden shrink-0" data-for="credentials">
                     <div class="mb-3">
                         <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Website/Link (Optional)</label><button type="button" onclick="copyFromId('inp-cred-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
-                        <div class="relative"><i class="fa-solid fa-link input-icon"></i><input type="url" id="inp-cred-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white"></div>
+                        <div class="relative"><i class="fa-solid fa-link input-icon"></i><input type="url" id="inp-cred-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text"></div>
                     </div>
                     <div class="mb-3">
                         <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Username <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-username')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
-                        <div class="relative"><i class="fa-solid fa-user input-icon"></i><input type="text" id="inp-username" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white"></div>
+                        <div class="relative"><i class="fa-solid fa-user input-icon"></i><input type="text" id="inp-username" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text"></div>
                     </div>
                     <div>
                         <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Password <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-password')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
-                        <div class="relative"><i class="fa-solid fa-lock input-icon"></i><input type="password" id="inp-password" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none font-mono text-white"><i id="toggle-pass-btn" onclick="togglePassVisibility(this)" class="fa-solid fa-eye absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-slate-500 hover:text-white transition text-xs"></i></div>
+                        <div class="relative"><i class="fa-solid fa-lock input-icon"></i><input type="password" id="inp-password" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none font-mono text-white select-text"><i id="toggle-pass-btn" onclick="togglePassVisibility(this)" class="fa-solid fa-eye absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-slate-500 hover:text-white transition text-xs"></i></div>
                     </div>
                 </div>
                 <div class="flex justify-end gap-2 pt-4 border-t border-white/5 mt-auto shrink-0">
@@ -677,7 +707,7 @@
 
         // Restore Settings
         const savedBg = localStorage.getItem('vault_custom_bg');
-        if(savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
+        if(savedBg) document.getElementById('global-background').style.backgroundImage = `url('${savedBg}')`;
         
         const savedContentBg = localStorage.getItem('vault_content_bg');
         if(savedContentBg) {
@@ -761,10 +791,18 @@
             const pass = document.getElementById('password').value;
             const btn = loginForm.querySelector('button');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner w-4 h-4 border-2"></span>';
+            
+            // NO SPINNER - Just text change
+            btn.innerHTML = 'Verifying...';
             btn.disabled = true;
+
+            // FIX: Set timestamp BEFORE sign in to prevent race condition logout
+            localStorage.setItem('vault_last_active', Date.now());
+
             signInWithEmailAndPassword(auth, email, pass)
-                .then(() => localStorage.setItem('vault_last_active', Date.now()))
+                .then(() => {
+                    // Success handled by onAuthStateChanged
+                })
                 .catch(err => {
                     document.getElementById('auth-msg').textContent = "Incorrect email or password.";
                     btn.innerHTML = originalText;
@@ -782,21 +820,6 @@
         };
 
         // --- VISUAL ASSETS SETTINGS ---
-        window.saveBackground = () => {
-            const url = document.getElementById('custom-bg-input').value;
-            if(url) {
-                document.body.style.backgroundImage = `url('${url}')`;
-                localStorage.setItem('vault_custom_bg', url);
-                showToast("Body BG Updated");
-            }
-        };
-        window.resetBackground = () => {
-            document.body.style.backgroundImage = '';
-            localStorage.removeItem('vault_custom_bg');
-            document.getElementById('custom-bg-input').value = '';
-            showToast("Body BG Reset");
-        };
-
         window.saveContentBg = () => {
             const url = document.getElementById('content-bg-input').value;
             if(url) {
@@ -816,6 +839,7 @@
              showToast("Content BG Reset");
         };
 
+        // 3. LOGO
         window.saveLogo = () => {
             const url = document.getElementById('custom-logo-input').value;
             if(url) {
@@ -841,7 +865,6 @@
             eyeIcon.classList.remove('fa-eye-slash'); eyeIcon.classList.add('fa-eye');
         }
 
-        // --- FIXED: OPEN MODAL FUNCTION ---
         window.openModal = () => {
             editingId = null; viewingId = null;
             resetModalState();
@@ -1069,10 +1092,14 @@
             const backdrop = document.getElementById('settings-backdrop');
             if (panel.classList.contains('open')) {
                 panel.classList.remove('open');
-                backdrop.classList.add('hidden');
+                backdrop.classList.remove('active');
+                setTimeout(() => backdrop.classList.add('hidden'), 300);
             } else {
-                panel.classList.add('open');
                 backdrop.classList.remove('hidden');
+                setTimeout(() => {
+                    panel.classList.add('open');
+                    backdrop.classList.add('active');
+                }, 10);
             }
         };
 
@@ -1140,15 +1167,15 @@
             const footer = `<div class="mt-auto pt-3 border-t border-white/5 flex justify-between items-center"><p class="text-[10px] text-sky-400 font-bold tracking-wider">${dateStr}</p><div class="flex gap-3"><button onclick="event.stopPropagation(); editItem('${item.id}')" class="text-blue-400 hover:text-blue-300 transition text-base p-1"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="text-rose-400 hover:text-rose-300 transition text-base p-1"><i class="fa-solid fa-trash"></i></button></div></div>`;
 
             let bodyHtml = '';
-            if (currentCategory === 'notes') { bodyHtml = `<div class="relative group/content mb-2 pointer-events-none"><div class="text-xs text-slate-300 whitespace-pre-wrap font-mono line-clamp-6 leading-relaxed bg-slate-900/30 p-2 rounded-lg border border-white/5 pr-6">${item.content || ''}</div></div>`; } 
+            if (currentCategory === 'notes') { bodyHtml = `<div class="relative group/content mb-2 pointer-events-none"><div class="text-xs text-slate-300 whitespace-pre-wrap font-mono line-clamp-6 leading-relaxed bg-slate-900/30 p-2 rounded-lg border border-white/5 pr-6 select-text">${item.content || ''}</div></div>`; } 
             else if (currentCategory === 'apis') {
-                const emailHtml = item.apiEmail ? `<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 mb-2"><span class="text-[9px] text-slate-500 uppercase font-bold block">Email</span><span class="font-mono text-xs text-indigo-300 truncate block">${item.apiEmail}</span></div>` : '';
-                bodyHtml = `<div class="space-y-2 mb-2 pointer-events-none">${emailHtml}<div class="bg-slate-900/50 p-2 rounded border border-white/5 relative group/url"><p class="text-[10px] text-slate-500 uppercase font-bold mb-0.5">Key/Token Preview</p><div class="text-[10px] font-mono text-cyan-300 break-all pr-5 line-clamp-2">${item.apiKey ? item.apiKey.substring(0,20)+'...' : 'No Key'}</div></div></div>`;
-            } else if (currentCategory === 'links') { bodyHtml = `<div class="relative mb-2"><div class="flex items-center gap-2 bg-slate-900/30 p-2 rounded border border-white/5"><i class="fa-solid fa-link text-xs text-slate-500"></i><span class="text-[10px] text-indigo-300 truncate flex-1">${item.url}</span></div></div>`; } 
+                const emailHtml = item.apiEmail ? `<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 mb-2"><span class="text-[9px] text-slate-500 uppercase font-bold block">Email</span><span class="font-mono text-xs text-indigo-300 truncate block select-text">${item.apiEmail}</span></div>` : '';
+                bodyHtml = `<div class="space-y-2 mb-2 pointer-events-none">${emailHtml}<div class="bg-slate-900/50 p-2 rounded border border-white/5 relative group/url"><p class="text-[10px] text-slate-500 uppercase font-bold mb-0.5">Key/Token Preview</p><div class="text-[10px] font-mono text-cyan-300 break-all pr-5 line-clamp-2 select-text">${item.apiKey ? item.apiKey.substring(0,20)+'...' : 'No Key'}</div></div></div>`;
+            } else if (currentCategory === 'links') { bodyHtml = `<div class="relative mb-2"><div class="flex items-center gap-2 bg-slate-900/30 p-2 rounded border border-white/5"><i class="fa-solid fa-link text-xs text-slate-500"></i><span class="text-[10px] text-indigo-300 truncate flex-1 select-text">${item.url}</span></div></div>`; } 
             else if (currentCategory === 'photos') { bodyHtml = `<div class="relative group/img aspect-video bg-slate-900 rounded-lg overflow-hidden mb-2 border border-white/10 shadow-inner pointer-events-none"><img src="${item.imgUrl}" onerror="this.src='https://placehold.co/600x400/1e293b/FFF?text=Image+Broken'" class="w-full h-full object-cover"></div>`; } 
             else if (currentCategory === 'credentials') {
-                const urlHtml = item.url ? `<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 mb-2"><span class="text-[9px] text-slate-500 uppercase font-bold block">Site</span><span class="font-mono text-xs text-indigo-300 truncate block">${item.url}</span></div>` : '';
-                bodyHtml = `<div class="text-sm mb-2 pointer-events-none">${urlHtml}<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 flex items-center justify-between"><div><span class="text-[9px] text-slate-500 uppercase font-bold block">User</span><span class="font-mono text-xs text-slate-300">${item.username}</span></div></div></div>`;
+                const urlHtml = item.url ? `<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 mb-2"><span class="text-[9px] text-slate-500 uppercase font-bold block">Site</span><span class="font-mono text-xs text-indigo-300 truncate block select-text">${item.url}</span></div>` : '';
+                bodyHtml = `<div class="text-sm mb-2 pointer-events-none">${urlHtml}<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 flex items-center justify-between"><div><span class="text-[9px] text-slate-500 uppercase font-bold block">User</span><span class="font-mono text-xs text-slate-300 select-text">${item.username}</span></div></div></div>`;
             }
             div.innerHTML = header + bodyHtml + footer; return div;
         }
@@ -1204,10 +1231,57 @@
 
         window.setAccent = (c) => { document.documentElement.style.setProperty('--accent-color', c); localStorage.setItem('vault_accent', c); if(currentCategory !== 'dashboard') loadData(); };
         const savedAccent = localStorage.getItem('vault_accent'); if(savedAccent) setAccent(savedAccent);
-        window.setGlassBg = (rgba, hex) => { document.documentElement.style.setProperty('--glass-bg', rgba); document.documentElement.style.setProperty('--main-bg', hex); localStorage.setItem('vault_glass_bg', rgba); localStorage.setItem('vault_main_bg', hex); };
+        
+        window.setGlassBg = (rgba, hex) => { 
+            document.documentElement.style.setProperty('--glass-bg', rgba); 
+            document.documentElement.style.setProperty('--main-bg', hex); 
+            localStorage.setItem('vault_glass_bg', rgba); 
+            localStorage.setItem('vault_main_bg', hex); 
+        };
         const savedGlass = localStorage.getItem('vault_glass_bg'); const savedMain = localStorage.getItem('vault_main_bg'); if(savedGlass && savedMain) window.setGlassBg(savedGlass, savedMain);
+        
         window.setCardBg = (rgba) => { document.documentElement.style.setProperty('--card-bg', rgba); localStorage.setItem('vault_card_bg', rgba); };
         const savedCardBg = localStorage.getItem('vault_card_bg'); if(savedCardBg) window.setCardBg(savedCardBg);
+        
+        window.copyToClip = (txt) => { navigator.clipboard.writeText(txt); showToast('Copied to clipboard'); };
+        
+        window.showToast = (msg) => { 
+            const t = document.getElementById('toast'); 
+            document.getElementById('toast-msg').textContent = msg; 
+            t.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
+            setTimeout(() => { 
+                t.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none'); 
+            }, 3000); 
+        };
+        
+        window.updateProfilePic = async () => {
+            const url = prompt("Enter Image URL for Profile:");
+            if(url) {
+                try {
+                    await update(ref(db, `users/${currentUser.uid}`), { profilePic: url });
+                    showToast("Profile Updated");
+                } catch(e) {
+                    alert("Error updating profile");
+                }
+            }
+        };
+        
+        window.updateUserPassword = async () => {
+            const newPass = document.getElementById('new-password-input').value;
+            if(newPass.length < 6) return alert("Password must be at least 6 characters.");
+            try {
+                await updatePassword(currentUser, newPass);
+                showToast("Password Updated!");
+                document.getElementById('new-password-input').value = "";
+            } catch(e) {
+                if(e.code === 'auth/requires-recent-login') {
+                    alert("Please logout and login again to change password.");
+                    logout();
+                } else {
+                    alert("Error: " + e.message);
+                }
+            }
+        };
     </script>
 </body>
 </html>
