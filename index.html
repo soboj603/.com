@@ -391,7 +391,6 @@
                                         <div onclick="setCardBg('rgba(0, 0, 0, 0.6)')" class="color-doll bg-black/60" title="Dark"></div>
                                         <div onclick="setCardBg('rgba(255, 255, 255, 0.1)')" class="color-doll bg-white/20" title="Frost"></div>
                                         
-                                        <!-- UPDATED CRYSTAL CLEAR SYSTEM COLOR -->
                                         <div onclick="setCardBg('rgba(255, 255, 255, 0.02)')" class="color-doll border border-white/30" style="background: rgba(255,255,255,0.02)" title="Crystal Clear"></div>
                                         
                                         <div onclick="setCardBg('rgba(30, 58, 138, 0.4)')" class="color-doll bg-blue-900" title="Blue Tint"></div>
@@ -635,8 +634,17 @@
                         <div class="relative"><i class="fa-solid fa-key input-icon top-4 translate-y-0"></i><textarea id="inp-api-key" rows="3" placeholder="Bearer..." class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-xs focus:border-[var(--accent-color)] focus:outline-none font-mono text-emerald-400 select-text"></textarea></div>
                     </div>
                 </div>
-                <!-- Link Fields -->
+                <!-- Link Fields (UPDATED) -->
                 <div class="field-group hidden shrink-0" data-for="links">
+                    <div class="mb-2">
+                        <div class="flex justify-between items-end mb-1">
+                            <label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Tag / Subtitle (Optional)</label>
+                        </div>
+                        <div class="relative">
+                            <i class="fa-solid fa-tag input-icon"></i>
+                            <input type="text" id="inp-link-subtitle" placeholder="e.g. Work, News, Important" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text">
+                        </div>
+                    </div>
                     <div class="mb-1">
                         <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">URL <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
                         <div class="relative"><i class="fa-solid fa-link input-icon"></i><input type="url" id="inp-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text"></div>
@@ -941,7 +949,10 @@
                 document.getElementById('inp-api-email').value = item.apiEmail || "";
                 document.getElementById('inp-api-key').value = item.apiKey || "";
             }
-            else if(currentCategory === 'links') document.getElementById('inp-url').value = item.url || "";
+            else if(currentCategory === 'links') {
+                document.getElementById('inp-url').value = item.url || "";
+                document.getElementById('inp-link-subtitle').value = item.subtitle || "";
+            }
             else if(currentCategory === 'photos') document.getElementById('inp-img-url').value = item.imgUrl || "";
             else if(currentCategory === 'credentials') {
                 document.getElementById('inp-username').value = item.username || "";
@@ -974,7 +985,10 @@
                 document.getElementById('inp-api-email').value = item.apiEmail || "";
                 document.getElementById('inp-api-key').value = item.apiKey || "";
             }
-            else if(currentCategory === 'links') document.getElementById('inp-url').value = item.url || "";
+            else if(currentCategory === 'links') {
+                document.getElementById('inp-url').value = item.url || "";
+                document.getElementById('inp-link-subtitle').value = item.subtitle || "";
+            }
             else if(currentCategory === 'photos') document.getElementById('inp-img-url').value = item.imgUrl || "";
             else if(currentCategory === 'credentials') {
                 document.getElementById('inp-username').value = item.username || "";
@@ -990,6 +1004,17 @@
         };
 
         window.copyFromId = (id) => { const el = document.getElementById(id); if(el) copyToClip(el.value); };
+        
+        // Link Share Feature
+        window.shareLink = async (url, title) => {
+            if (navigator.share) {
+                try { await navigator.share({ title: title || 'Shared Link', url: url }); } 
+                catch (err) { console.log('Share canceled'); }
+            } else {
+                copyToClip(url);
+                showToast('Link Copied (Share not supported)');
+            }
+        };
 
         window.switchCategory = (cat) => {
             currentCategory = cat;
@@ -1147,31 +1172,76 @@
             const div = document.createElement('div');
             const safe = (txt) => (txt || "").replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
             const titleSafe = safe(item.title);
+            const urlSafe = item.url ? safe(item.url) : "";
+            
             let catName = currentCategory;
             if(catName === 'credentials') catName = 'User';
             if(catName === 'photos') catName = 'Image';
             if(catName === 'links') catName = 'Link';
             if(catName === 'notes') catName = 'Note';
             if(catName === 'apis') catName = 'API';
+            
             const displayTitle = item.title ? item.title : `Untitled ${catName}`;
             
             div.className = "glass-card p-4 rounded-xl flex flex-col h-full relative group cursor-pointer active:scale-[0.98]";
-            div.onclick = (e) => { if(e.target.closest('button')) return; viewItem(item.id); };
+            div.onclick = (e) => { 
+                if(e.target.closest('button') || e.target.closest('a')) return; 
+                viewItem(item.id); 
+            };
             
             const bytes = calculateObjectSize(item, currentCategory);
             const sizeStr = formatBytes(bytes);
             const sizeInfo = `<span class="ml-2 px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/20 text-[8px] text-emerald-400 font-mono tracking-tight shrink-0 select-none">${sizeStr}</span>`;
 
-            const header = `<div class="flex justify-between items-start mb-3"><div class="flex items-center gap-2 overflow-hidden pr-2 w-full"><i class="fa-solid fa-folder-open text-[var(--accent-color)] opacity-70 text-xs shrink-0"></i><div class="flex items-center overflow-hidden flex-1"><h3 class="font-bold text-sm text-slate-100 truncate cursor-text select-text ${!item.title ? 'italic text-slate-500' : ''}">${displayTitle}</h3>${sizeInfo}</div><button onclick="event.stopPropagation(); copyToClip('${titleSafe}')" class="text-slate-500 hover:text-white transition px-2 shrink-0"><i class="fa-regular fa-copy text-xs"></i></button></div></div>`;
+            // ICON LOGIC: Favicon handling for Links and Credentials
+            let iconHtml = `<i class="fa-solid fa-folder-open text-[var(--accent-color)] opacity-70 text-xs shrink-0"></i>`;
+            
+            if (currentCategory === 'links' && item.url) {
+                try {
+                    const domain = new URL(item.url).hostname;
+                    iconHtml = `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" class="w-5 h-5 rounded-full bg-white/10 shrink-0" onerror="this.src='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/link.svg'">`;
+                } catch(e) { iconHtml = `<i class="fa-solid fa-link text-[var(--accent-color)] text-xs shrink-0"></i>`; }
+            } else if (currentCategory === 'credentials') {
+                if (item.url) {
+                    try {
+                        const domain = new URL(item.url).hostname;
+                        iconHtml = `<a href="${item.url}" target="_blank" onclick="event.stopPropagation()" title="Open Site"><img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" class="w-6 h-6 rounded-full bg-white/10 shrink-0 border border-white/20 hover:scale-110 transition-transform"></a>`;
+                    } catch(e) { iconHtml = `<i class="fa-solid fa-user-shield text-[var(--accent-color)] text-base shrink-0"></i>`; }
+                } else {
+                    iconHtml = `<i class="fa-solid fa-user-shield text-[var(--accent-color)] text-base shrink-0"></i>`;
+                }
+            }
+
+            const header = `<div class="flex justify-between items-start mb-3"><div class="flex items-center gap-2 overflow-hidden pr-2 w-full">${iconHtml}<div class="flex items-center overflow-hidden flex-1"><h3 class="font-bold text-sm text-slate-100 truncate cursor-text select-text ${!item.title ? 'italic text-slate-500' : ''}">${displayTitle}</h3>${sizeInfo}</div><button onclick="event.stopPropagation(); copyToClip('${titleSafe}')" class="text-slate-500 hover:text-white transition px-2 shrink-0"><i class="fa-regular fa-copy text-xs"></i></button></div></div>`;
             const dateStr = new Date(item.createdAt).toLocaleDateString('en-US');
-            const footer = `<div class="mt-auto pt-3 border-t border-white/5 flex justify-between items-center"><p class="text-[10px] text-sky-400 font-bold tracking-wider">${dateStr}</p><div class="flex gap-3"><button onclick="event.stopPropagation(); editItem('${item.id}')" class="text-blue-400 hover:text-blue-300 transition text-base p-1"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="text-rose-400 hover:text-rose-300 transition text-base p-1"><i class="fa-solid fa-trash"></i></button></div></div>`;
+            
+            let footerActions = `
+                <button onclick="event.stopPropagation(); editItem('${item.id}')" class="text-blue-400 hover:text-blue-300 transition text-base p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                <button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="text-rose-400 hover:text-rose-300 transition text-base p-1"><i class="fa-solid fa-trash"></i></button>
+            `;
+
+            // Extra buttons for Links
+            if(currentCategory === 'links') {
+                footerActions = `
+                    <button onclick="event.stopPropagation(); shareLink('${urlSafe}', '${titleSafe}')" class="text-indigo-400 hover:text-indigo-300 transition text-base p-1 mr-1" title="Share"><i class="fa-solid fa-share-nodes"></i></button>
+                    <a href="${item.url}" target="_blank" onclick="event.stopPropagation()" class="text-emerald-400 hover:text-emerald-300 transition text-base p-1 mr-2" title="Open Link"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                    <span class="w-[1px] h-4 bg-white/10 mx-1"></span>
+                    ${footerActions}
+                `;
+            }
+
+            const footer = `<div class="mt-auto pt-3 border-t border-white/5 flex justify-between items-center"><p class="text-[10px] text-sky-400 font-bold tracking-wider">${dateStr}</p><div class="flex items-center gap-1">${footerActions}</div></div>`;
 
             let bodyHtml = '';
             if (currentCategory === 'notes') { bodyHtml = `<div class="relative group/content mb-2 pointer-events-none"><div class="text-xs text-slate-300 whitespace-pre-wrap font-mono line-clamp-6 leading-relaxed bg-slate-900/30 p-2 rounded-lg border border-white/5 pr-6 select-text">${item.content || ''}</div></div>`; } 
             else if (currentCategory === 'apis') {
                 const emailHtml = item.apiEmail ? `<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 mb-2"><span class="text-[9px] text-slate-500 uppercase font-bold block">Email</span><span class="font-mono text-xs text-indigo-300 truncate block select-text">${item.apiEmail}</span></div>` : '';
                 bodyHtml = `<div class="space-y-2 mb-2 pointer-events-none">${emailHtml}<div class="bg-slate-900/50 p-2 rounded border border-white/5 relative group/url"><p class="text-[10px] text-slate-500 uppercase font-bold mb-0.5">Key/Token Preview</p><div class="text-[10px] font-mono text-cyan-300 break-all pr-5 line-clamp-2 select-text">${item.apiKey ? item.apiKey.substring(0,20)+'...' : 'No Key'}</div></div></div>`;
-            } else if (currentCategory === 'links') { bodyHtml = `<div class="relative mb-2"><div class="flex items-center gap-2 bg-slate-900/30 p-2 rounded border border-white/5"><i class="fa-solid fa-link text-xs text-slate-500"></i><span class="text-[10px] text-indigo-300 truncate flex-1 select-text">${item.url}</span></div></div>`; } 
+            } 
+            else if (currentCategory === 'links') { 
+                const subtitleHtml = item.subtitle ? `<div class="mb-1.5"><span class="text-[9px] font-bold text-[var(--accent-color)] bg-[var(--accent-color)]/10 px-1.5 py-0.5 rounded border border-[var(--accent-color)]/20 uppercase tracking-wider">${item.subtitle}</span></div>` : '';
+                bodyHtml = `<div class="relative mb-2 pointer-events-none">${subtitleHtml}<div class="flex items-center gap-2 bg-slate-900/30 p-2 rounded border border-white/5"><i class="fa-solid fa-globe text-xs text-slate-500"></i><span class="text-[10px] text-indigo-300 truncate flex-1 select-text">${item.url}</span></div></div>`; 
+            } 
             else if (currentCategory === 'photos') { bodyHtml = `<div class="relative group/img aspect-video bg-slate-900 rounded-lg overflow-hidden mb-2 border border-white/10 shadow-inner pointer-events-none"><img src="${item.imgUrl}" onerror="this.src='https://placehold.co/600x400/1e293b/FFF?text=Image+Broken'" class="w-full h-full object-cover"></div>`; } 
             else if (currentCategory === 'credentials') {
                 const urlHtml = item.url ? `<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 mb-2"><span class="text-[9px] text-slate-500 uppercase font-bold block">Site</span><span class="font-mono text-xs text-indigo-300 truncate block select-text">${item.url}</span></div>` : '';
@@ -1194,7 +1264,7 @@
 
         window.backupData = async () => { if(!currentUser) return; const snap = await get(ref(db, `users/${currentUser.uid}`)); const data = snap.val(); if(!data) return showToast("No data"); const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data)); a.download = "backup.json"; a.click(); };
         
-        const draftIds = ['inp-title', 'inp-content', 'inp-api-url', 'inp-api-email', 'inp-api-key', 'inp-url', 'inp-img-url', 'inp-cred-url', 'inp-username', 'inp-password'];
+        const draftIds = ['inp-title', 'inp-content', 'inp-api-url', 'inp-api-email', 'inp-api-key', 'inp-url', 'inp-link-subtitle', 'inp-img-url', 'inp-cred-url', 'inp-username', 'inp-password'];
         draftIds.forEach(id => {
             const el = document.getElementById(id);
             if(el) { el.addEventListener('input', (e) => { if(!editingId && !viewingId) localStorage.setItem('draft_' + id, e.target.value); }); }
@@ -1212,10 +1282,15 @@
                     } 
                 });
             } else { activeCat = currentCategory; }
+            
             const payload = { title: document.getElementById('inp-title').value.trim(), createdAt: editingId ? (itemsData[editingId]?.createdAt || Date.now()) : Date.now() };
+            
             if(activeCat === 'notes') payload.content = document.getElementById('inp-content').value;
             else if(activeCat === 'apis') { payload.apiUrl = document.getElementById('inp-api-url').value; payload.apiEmail = document.getElementById('inp-api-email').value; payload.apiKey = document.getElementById('inp-api-key').value; }
-            else if(activeCat === 'links') { payload.url = document.getElementById('inp-url').value; }
+            else if(activeCat === 'links') { 
+                payload.url = document.getElementById('inp-url').value; 
+                payload.subtitle = document.getElementById('inp-link-subtitle').value;
+            }
             else if(activeCat === 'photos') { payload.imgUrl = document.getElementById('inp-img-url').value; }
             else if(activeCat === 'credentials') { payload.username = document.getElementById('inp-username').value; payload.password = document.getElementById('inp-password').value; payload.url = document.getElementById('inp-cred-url').value; }
 
