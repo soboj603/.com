@@ -1,1792 +1,1213 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Image Font Manager</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vault | Personal Cloud</title>
+    <link rel="shortcut icon" id="dynamic-favicon" href="">
     
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <style>
-        /* ✨ ============================================= */
-        /* ✨        NEW HIGH-QUALITY COLOR PALETTE         */
-        /* ✨ ============================================= */
-        
-        /* --- DARK THEME (Cosmic Night) --- */
-        :root {
-            --primary-color: #4a90e2;        /* Vibrant Blue */
-            --secondary-color: #9c27b0;      /* Deep Violet */
-            --text-color: #f0f0f0;           /* Soft White */
-            --text-color-dark: #1a1a2e;      /* Dark Text for light elements */
-            --bg-dark: #12121c;              /* Deep Navy/Purple Background */
-            --card-dark: #1d1d2b;            /* Slightly Lighter Card BG */
-            --header-icon-color: #ffd700;    /* Gold Icon */
-            --header-border-color: rgba(255, 255, 255, 0.1);
-            --footer-bg: #1d1d2b;            /* Match card color */
-            --copy-btn-bg: var(--primary-color);
-            --shadow-color: rgba(0, 0, 0, 0.4);
-            --result-box-bg: #2a2a3f;
-            --result-box-border: var(--primary-color);
-            /* NEW COLORS FOR AI BUTTONS */
-            --gemini-color: #4285F4; /* Google Blue */
-            --chatgpt-color: #10a37f; /* ChatGPT Green */
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: "#020617",
+                        card: "#0f172a",
+                        glass: "rgba(15, 23, 42, 0.7)",
+                        accent: "var(--accent-color)"
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
         }
-        
-        /* --- LIGHT THEME (Clean & Fresh) */
-        .light-mode {
-            --primary-color: #ff6b6b;        /* Coral Pink */
-            --secondary-color: #8e44ad;      /* Soft Purple */
-            --text-color: #2c3e50;           /* Charcoal Text */
-            --text-color-dark: #FFFFFF;      /* White text for buttons */
-            --bg-dark: #f4f7f9;              /* Light Gray Background */
-            --card-dark: #ffffff;            /* White Cards */
-            --header-icon-color: var(--primary-color);
-            --header-border-color: #e0e0e0;   /* Light Gray Border */
-            --footer-bg: #ffffff;            /* White Footer */
-            --copy-btn-bg: var(--secondary-color);
-            --shadow-color: rgba(44, 62, 80, 0.15);
-            --result-box-bg: #fff0f0;
-            --result-box-border: var(--primary-color);
-            /* NEW COLORS FOR AI BUTTONS */
-            --gemini-color: #4285F4; 
-            --chatgpt-color: #10a37f;
-        }
+    </script>
 
-        * {
-            box-sizing: border-box;
+    <style>
+        :root { 
+            --accent-color: #6366f1; 
+            --glass-bg: rgba(15, 23, 42, 0.95);
+            --main-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.4);
+        }
+        
+        /* --- GAP FIX: STRICT LAYOUT CONTROL --- */
+        html, body {
+            width: 100%;
+            height: 100%;
             margin: 0;
             padding: 0;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            overflow: hidden; /* ডানে বামে স্ক্রল বন্ধ */
+            position: fixed; /* বডি ফিক্সড করে রাখা */
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--main-bg); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-color 0.5s ease;
         }
         
-        a, button, .image-card-wrapper, .developer-name, .more-btn, .generate-btn, input, .header-actions {
-            -webkit-tap-highlight-color: transparent;  
-            outline: none;  
-            touch-action: manipulation;
-        }
-        
-        #closeImageViewBtn, #likeImageViewBtn {
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
-        .footer-main, .developer-name, .policy-terms-line, .copyright-text, 
-        .image-title, .more-btn, .generate-btn, .view-count, 
-        .action-icon, .header-actions, .image-title-view, 
-        .result-box, .like-count, .image-view-action-bar, .action-btn-full
-        {
-            user-select: none;  
-            -webkit-user-select: none;  
-            -moz-user-select: none;  
-            -ms-user-select: none;  
-        }
-        
-        img {
-            -webkit-user-drag: none;  
-            user-select: none;  
-            -webkit-user-select: none;  
-            -moz-user-select: none;  
-            -ms-user-select: none;  
-            pointer-events: none;
-        }
-
-        body {
+        /* Mobile Wrapper */
+        #mobile-wrapper {
             width: 100%;
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--text-color);
-            padding: 0;  
-            background: linear-gradient(135deg, #1f2833 0%, #171c26 100%);
-            overflow-x: hidden;
-            display: flex;
-            justify-content: center;
-        }
-        .light-mode body {
-            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-        }
-        
-        /* 🔥 সমাধান #2: প্রি-লোডার সরে যাওয়ার আগে সম্পূর্ণ কন্টেন্ট লুকানো */
-        .initial-hidden .all-bar {
-            visibility: hidden; 
-        }
-
-        .all-bar {
-            width: 100%;
-            max-width: 400px;
-            height: 100vh;  
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            background-color: var(--bg-dark); /* 🔥 মূল ব্যাকগ্রাউন্ড কালার */
-            display: flex;
-            flex-direction: column;
+            max-width: 480px;
             margin: 0 auto;
-            position: relative;
-        }
-
-
-
-
-
-
-
-        
-        /* 🌟 PRELOADER STYLES START */
-
-        #preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+            background-color: transparent; 
             height: 100%;
-            /* 🔥 ব্যাকগ্রাউন্ড কালার var(--bg-dark) সেট করা হয়েছে seamless ম্যাচিং এর জন্য */
-            background-color: #000000; 
-            z-index: 2000; 
+            position: relative;
+            /* গ্যাপ ফিক্সের মূল চাবিকাঠি */
+            overflow: hidden; 
             display: flex;
             flex-direction: column;
-            align-items: center;
-            /* 🔥 কন্টেন্টকে উপরের দিকে শুরু করার জন্য */
-            justify-content: flex-start; 
-            /* 🔥 উপর থেকে চাপ দিয়ে নামানো (ভিডিওকে উপরে দেখানোর জন্য) */
-            transition: opacity 0.5s ease-out; 
-            gap: 15px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            border-left: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255,255,255,0.05);
         }
 
-        .preloader-video {
-            width: 90%; /* ভিডিওর সাইজ নিয়ন্ত্রণ */
-            max-width: 300px; /* বেস ম্যাক্স উইডথ */
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            /* 🔥 সমাধান #1: ইনিশিয়াল ফেড-ইন অ্যানিমেশন সরানো হয়েছে। এটি এখন JS দ্বারা নিয়ন্ত্রিত। */
-            transition: opacity 0.5s ease-in; 
-            object-fit: contain; /* ভিডিও যেন সাইজের সাথে মানানসই হয় */
-        }
-        
-        /* 🔥 সিঙ্গেল ভিডিওকে মাঝখানে রাখা হয়েছে */
-        #video-1 {
-            max-width: 300px; 
-            margin-top: 50px; /* স্ক্রিনের উপরে থেকে একটু নামিয়ে আনা */
-        }
-
-        
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-        
-        .preloader-hidden {
-            opacity: 0;
-            pointer-events: none; 
-        }
-        /* 🌟 PRELOADER STYLES END */
-    
-        .gallery-active .all-bar {
-            overflow-y: auto;
-        }
-    
-        .image-view-active .all-bar {
-            overflow-y: hidden;
-        }
-        
-        .heading-bar {  
-            width: 100%;  
-            height: 60px;
-            background-color: var(--card-dark);
+        #app-screen {
+            background: rgba(15, 23, 42, 0.85);
+            flex: 1;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            border-bottom: 1px solid var(--header-border-color);  
-            flex-shrink: 0;
-            position: sticky;  
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .logo-container-left {
-            width: 40px;  
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .logo-container-left img {
-            width: 100%;  
-            height: 100%;
-            object-fit: contain;  
-            border-radius: 8px;
-        }
-        
-        .search-container {
-            flex-grow: 1;  
-            max-width: 200px;  
-            height: 40px;
-            margin: 0 15px;
+            flex-direction: column;
             position: relative;
-            transition: opacity 0.3s;
-        }
-        
-        .search-container input {
-            width: 100%;
-            height: 100%;
-            border-radius: 20px;
-            border: 1px solid var(--header-border-color);
-            padding: 0 15px;    
-            background-color: var(--bg-dark);
-            color: var(--text-color);
-            outline: none;
-            font-size: 14px;
-        }
-        .search-container input:focus {
-            border-color: var(--primary-color);
-        }
-        
-        .image-view-active .search-container {
-            opacity: 0;  
-            pointer-events: none;
-        }
-        
-        .header-actions {
-            width: 40px;  
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        
-        .action-icon {
-            font-size: 1.4em;
-            color: var(--header-icon-color);
-        }
-        
-        .content {
-            flex-grow: 1;
-            padding: 10px;  
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            width: 100%;
-        }
-        
-        .image-view-active .content,
-        .image-view-active .more-container {
-            display: none;
-        }
-
-        /* **পরিবর্তন:** নতুন অ্যানিমেশন সংজ্ঞায়িত করা হয়েছে */
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.8) translateY(20px); 
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-        /* পুরানো slideUp অ্যানিমেশন সরানো হয়েছে */
-
-        .image-card-wrapper {
-            text-align: center;
-            background-color: var(--card-dark);
-            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 15px var(--shadow-color);
-            opacity: 0;  
-            transform: translateY(50px); 
-            align-self: start; 
-            display: none; 
-            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; 
-            cursor: pointer;
-            position: relative; 
-        }
-        .image-card-wrapper:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px var(--shadow-color);
-        }
-        
-        .image-card-wrapper.animated {
-            opacity: 1;
-            transform: translateY(0);
-            /* **পরিবর্তন:** নতুন অ্যানিমেশন ব্যবহার */
-            animation: fadeInScale 0.4s ease-out forwards; 
-        }
-        
-        .image-card {
-            position: relative;
-            width: 100%;
-            height: 170px;
-            overflow: hidden;
-        }
-        .image-card img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
         }
-        
-        /* 👁️ ভিউ কাউন্ট (বাম দিকে) */
-        .view-count {
+
+        /* সেটিংস প্যানেল পজিশন ফিক্স */
+        #settings-panel {
             position: absolute;
-            bottom: 8px;
-            left: 8px;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;  
-            display: flex;  
-            align-items: center;  
-            gap: 5px;
-            z-index: 10;  
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);  
-        }
-
-        /* 💖 লাইক কাউন্ট (ডান দিকে) */
-        .like-count {
-            position: absolute;
-            bottom: 8px;
-            right: 8px; 
-            color: white;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;  
-            display: flex;  
-            align-items: center;  
-            gap: 5px;
-            z-index: 10;  
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            cursor: pointer; 
-            transition: color 0.2s, background-color 0.2s;
-        }
-        
-        /* লাইক আইকনে ক্লিক করলে লাল হবে */
-        .like-count .fas.fa-heart {
-            color: red !important;
-            transition: color 0.2s, transform 0.1s;
-        }
-
-        .image-card-wrapper .image-title {
-            color: var(--text-color);
-            padding: 12px 8px; 
-            font-weight: 500;
-            font-size: 0.95rem;
-            width: 100%;
-            text-align: center;
-            white-space: nowrap;  
-            overflow: hidden;  
-            text-overflow: ellipsis;  
-        }
-        
-        .more-container {
-            padding: 20px 0;
-            display: flex;
-            justify-content: center;
-            flex-shrink: 0;
-            width: 100%;  
-            background-color: var(--bg-dark);
-        }
-        
-        .more-btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 25px;
-            background-image: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
-            color: white; 
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .more-btn:active {
-            transform: scale(0.97);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .more-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            pointer-events: all;
-        }
-        
-        .footer-main {
-            width: 100%;
-            padding: 20px 15px 15px 15px;  
-            display: flex;
-            flex-direction: column;  
-            align-items: center;
-            justify-content: center;
-            background-color: var(--footer-bg);  
-            border-top: 1px solid var(--header-border-color);  
-            flex-shrink: 0;
-            border-radius: 15px 15px 0 0;  
-            margin-top: auto;  
-            text-align: center;
-        }
-        
-        .image-view-active .footer-main {
-            display: none;
-        }
-
-        .developed-by-line {
-            color: var(--text-color);  
-            font-size: 0.95rem;
-            margin-bottom: 10px;  
-            line-height: 1.4;
-        }
-
-        .developer-name {
-            color: var(--primary-color);
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;  
-            transition: color 0.2s;
-        }
-        .developer-name:hover {
-            filter: brightness(1.2); 
-        }
-
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 10px;
-            margin-left: -10px; 
-        }
-
-        .social-icon {
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-            padding: 2px;  
-            -webkit-tap-highlight-color: transparent;
-        }
-        .social-icon:hover {
-            transform: scale(1.1);
-        }
-        
-        .social-image {
-            width: 100%;  
+            top: 0;
+            right: 0;
             height: 100%;
-            object-fit: contain;  
-            border-radius: 20%;  
+            width: 280px; /* ফিক্সড উইডথ */
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            z-index: 70;
+            transform: translateX(100%); /* স্ক্রিনের বাইরে */
+            transition: transform 0.3s ease-in-out;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .policy-terms-line {
-            font-size: 0.9rem;
-            color: var(--text-color);
-            opacity: 0.7;
-            margin-top: 5px;  
-            margin-bottom: 8px;  
-            display: flex;  
-            align-items: center;
-            justify-content: center;
+        /* যখন প্যানেল ওপেন হবে */
+        #settings-panel.open {
+            transform: translateX(0);
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: background 0.5s ease;
         }
         
-        .policy-terms-line .separator {
-            margin: 0 8px;  
-            opacity: 0.5;
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+        .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: var(--accent-color); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .fade-enter-active { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        input:read-only, textarea:read-only {
+            background-color: rgba(15, 23, 42, 0.5) !important;
+            border-color: transparent !important;
+            color: #cbd5e1 !important;
+            cursor: text;
         }
         
-        .copyright-text {
-            font-size: 0.8rem;
-            color: var(--text-color);
-            opacity: 0.5;
+        .input-wrapper { position: relative; }
+        .input-icon {
+            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+            color: #64748b; font-size: 14px; pointer-events: none; z-index: 10;
         }
-        
-        .full-image-view {
-            display: none;  
-            width: 100%;
-            flex-grow: 1;  
-            flex-direction: column;
-            background-color: var(--bg-dark);
-            height: calc(100vh - 60px);  
-            overflow-y: hidden;  
+        textarea ~ .input-icon { top: 12px; transform: none; }
+        .req-dot { color: #f43f5e; font-size: 16px; margin-left: 3px; font-weight: bold; }
+
+        .dropdown-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, opacity 0.3s ease; opacity: 0;
         }
-        
-        .image-view-active .full-image-view {
-            display: flex;  
+        .dropdown-content.open {
+            max-height: 800px; opacity: 1; transition: max-height 0.5s ease-in, opacity 0.5s ease;
         }
-        
-        .image-display-container {
-            flex-grow: 1;  
-            width: 100%;
-            display: flex;
-            flex-direction: column;  
-            align-items: center;  
-            justify-content: flex-start; 
-            padding-top: 20px; 
-            background-color: var(--bg-dark);
-            overflow: hidden;  
-            z-index: 999;  
+        .rotate-icon { transition: transform 0.3s ease; }
+        .rotate-icon.open { transform: rotate(180deg); }
+        .dynamic-bg { background-color: var(--card-bg); transition: background-color 0.5s ease; }
+
+        #startup-loader {
+            position: fixed; inset: 0; z-index: 9999;
+            background: #020617; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Doll Style Buttons */
+        .color-doll {
+            width: 24px; height: 24px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: transform 0.2s; cursor: pointer;
             position: relative;
         }
+        .color-doll:hover { transform: scale(1.2); border-color: white; z-index: 10; }
         
-        /* 🎨 ফুল ভিউয়ের জন্য অ্যাকশন বার (শুধুমাত্র ব্যাক বাটন) */
-        .image-view-action-bar {
-            position: absolute;  
-            top: 10px;  
-            width: calc(100% - 30px); 
-            max-width: 370px;
-            display: flex;
-            justify-content: flex-start; /* শুধু বাম দিকে থাকবে */
-            align-items: center;
-            padding: 0 10px;
-            z-index: 1005;  
+        .settings-header-btn {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            font-size: 10px; font-weight: bold; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px; padding: 12px 0;
         }
-
-        .action-btn-full {
-            width: 35px;
-            height: 35px;
-            background-color: rgba(0, 0, 0, 0.4);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .action-btn-full:hover {
-            background-color: rgba(0, 0, 0, 0.6);
-        }
+        .settings-header-btn:hover { color: white; }
         
-        /* ব্যাক বাটনকে আগের মতো স্কোয়ার শেপ এবং বর্ডার দেওয়া হলো */
-        #closeImageViewBtn {
-            border-bottom: 2px solid #B468C4;
-        }
-
-        .action-btn-full i {
-            font-size: 1.2em;  
-            color: #ffffff;
-        }
+        .setting-label { font-size: 9px; color: #94a3b8; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; display: block; }
         
-        /* ✨ ছবির জন্য নতুন র্যাপার ও লাভ আইকন */
-        #imageWrapper {
-            position: relative;
-            max-width: 100%;
-            max-height: 40vh; 
-            height: auto;
-            margin-bottom: 10px; 
-            margin-top:  -18px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
+        .sub-group-title {
+            font-size: 9px; color: var(--accent-color); font-weight: 800; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 2px;
         }
-        
-        .image-display-container img {
-            max-width: 100%;  
-            max-height: 40vh;  
-            height: auto;  
-            object-fit: contain;
-            display: block;
-            margin-bottom: 0; 
-        }
-        
-        /* 💖 ছবির ভিতরে নিচে ডানদিকের লাভ বাটন (বৃত্তাকার) */
-        .like-in-image-corner {
-            position: absolute;
-            bottom: 10px; 
-            right: 10px;  
-            width: 35px; /* একটু বড় করা হলো */
-            height: 35px;
-            background-color: rgba(0, 0, 0, 0.6); 
-            border-radius: 30%; /* গোল করে দেওয়া হলো */
-            border-bottom: none !important; 
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-            z-index: 1001; 
-        }
-
-        /* ফুল ভিউ লাইক আইকনের কালার */
-        .like-icon-full {
-            color: white !important; /* Default color (far) */
-        }
-
-        .like-icon-full.fas {
-            color: red !important; /* Liked color (fas) */
-        }
-        /* End of new full-view action bar styles */
-
-
-        .image-details-overlay {
-            width: 100%;
-            flex-grow: 1; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start; 
-            padding: 5px 15px 5px 15px; 
-            background: var(--card-dark);
-            border-radius: 20px 20px 0 0;  
-            text-align: center;
-            z-index: 1000;
-            margin-top: -10px;
-           border-top: 2px solid #B468C4;
-           flex-shrink: 0;
-           overflow-y: auto; 
-        }
-
-        .image-title-view {
-            font-size: 1.0rem;    
-            font-weight: 600;     
-            color: var(--text-color);
-            line-height: 1.0;
-            text-align: center;
-            margin-bottom: 5px;  
-            width: 100%;
-            white-space: normal;
-            word-wrap: break-word;
-            border-bottom: 2px solid transparent;
-            border-image: linear-gradient(to right, transparent, #B468C4, transparent) 1;
-            padding-bottom: 10px;
-        }
-
-        .generate-btn {
-            width: 220px;  
-            padding: 14px;
-            border: none;
-            border-radius: 15px;
-            background-image: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
-            color: white;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;  
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .generate-btn:active {
-            transform: scale(0.97);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        #generatePromptButton {
-            display: flex; 
-            margin-bottom: 10px; /* স্পেসের জন্য */
-        }
-
-        .loading-container {
-            display: none; 
-            width: 100px;
-            height: 100px;
-            position: relative;
-            margin: 20px auto 10px auto;
-        }
-
-        .loading-circle {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 8px solid rgba(255, 255, 255, 0.2); 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--text-color);
-            position: relative;
-        }
-        .light-mode .loading-circle {
-            border-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .loading-arc {
-            position: absolute;
-            top: -8px; 
-            left: -8px;
-            width: calc(100% + 16px);
-            height: calc(100% + 16px);
-            border-radius: 50%;
-            border: 8px solid transparent; 
-            border-top-color: var(--primary-color);
-            border-right-color: var(--primary-color);
-            animation: spin 1.5s linear infinite; 
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .result-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 5px; 
-            min-height: 130px; 
-            width: 100%;
-        }
-
-        .result-box {
-            padding: 10px 10px;
-            margin: 0 auto 10px auto; /* মার্জিন পরিবর্তন */
-            background-color: var(--result-box-bg); 
-            color: var(--text-color);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
-            border: 1px solid var(--result-box-border);
-            text-align: left; 
-            width: 100%; 
-            height: 120px; 
-            overflow-y: auto; 
-            white-space: pre-wrap; 
-            word-wrap: break-word; 
-        }
-        
-        /* 🔥 নতুন বাটন কনটেইনারের স্টাইল */
-        #promptActionButtons {
-            display: flex;
-            justify-content: space-between; /* বাটনের মধ্যে সমান স্পেস */
-            gap: 8px; /* বাটনের মধ্যে দূরত্ব */
-            width: 100%;
-            margin-bottom: 10px; /* নিচে একটু স্পেস */
-        }
-        
-        .copy-button, .gemini-button, .chatgpt-button {
-            flex-grow: 1; /* সবাই সমান জায়গা নেবে */
-            width: auto; /* ফ্লেক্স গ্রো দিয়ে কন্ট্রোল হবে */
-            padding: 7px 3px;
-            margin: 0; /* উপরে থাকা মার্জিন সরানো হলো */
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            color: white;
-            font-size: 0.75rem; /* ফন্ট সাইজ একটু ছোট করা হলো */
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            white-space: nowrap; /* টেক্সট যাতে না ভাঙে */
-        }
-        
-        .copy-button i {
-            font-size: 1em;
-        }
-
-
-
-        /* 🔥 নতুন লোগো ইমেজের জন্য স্টাইল (পরিবর্তিত) */
-        .gemini-button img, .chatgpt-button img {
-            height: 25px; /* লোগোর উচ্চতা সেট করা হলো */
-            width: auto;border-radius: 6px;
-            object-fit: contain;
-            /* যদি লোগো সাদা না হয়, তাহলে filter দিয়ে সাদা করে নেওয়া যেতে পারে (যদি প্রয়োজন হয়) */
-            /* filter: brightness(0) invert(1); */
-        }
-        
-        .copy-button:active, .gemini-button:active, .chatgpt-button:active {
-            transform: scale(0.97);
-        }
-        
-        /* Copy Button (Original Style) */
-        .copy-button {
-            background-color: var(--copy-btn-bg);
-        }
-        
-        /* Gemini Button (Google Blue) */
-        .gemini-button {
-            background-color: var(--gemini-color); 
-        }
-        
-        /* ChatGPT Button (OpenAI Green) */
-        .chatgpt-button {
-            background-color: var(--chatgpt-color);
-        }
-
     </style>
 </head>
-<body class="gallery-active initial-hidden"> <div id="preloader">
-        <video id="video-1" class="preloader-video" src="loading-Animation-2.mp4" autoplay loop muted playsinline></video>
-        </div>
-    <div class="all-bar">  
-        
-        <div class="heading-bar">
-            <div class="logo-container-left">
-                <img src="logo.png" alt="Logo">  
-            </div>
-            
-            <div class="search-container">
-                <input type="text" placeholder="Search prompts..!">
-            </div>
-            
-            <div class="header-actions">
-                <i class="fas fa-moon action-icon" id="themeToggleIcon" title="Toggle Light Mode"></i>  
-            </div>
-        </div>
-        
-        <div class="full-image-view" id="fullImageView">
-            
-            <div class="image-display-container">
-                
-                <div class="image-view-action-bar">
-                    <div id="closeImageViewBtn" class="action-btn-full" title="Back to Gallery">
-                        <i class="fas fa-arrow-left"></i>
+<body class="text-slate-200 h-screen overflow-hidden flex justify-center selection:bg-indigo-500 selection:text-white">
+
+    <div id="startup-loader">
+        <div class="spinner border-t-4 border-indigo-500 w-12 h-12"></div>
+    </div>
+
+    <!-- Mobile Wrapper -->
+    <div id="mobile-wrapper">
+
+        <!-- LOGIN SCREEN -->
+        <div id="auth-screen" class="hidden absolute inset-0 z-[100] flex items-center justify-center bg-dark/95 backdrop-blur-xl">
+            <div class="glass-panel p-8 rounded-2xl w-full max-w-sm mx-4 shadow-2xl relative overflow-hidden border border-white/10">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--accent-color)] to-transparent"></div>
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 mx-auto bg-slate-800/50 rounded-full flex items-center justify-center mb-4 shadow-inner border border-white/5">
+                        <i class="fa-solid fa-vault text-3xl text-[var(--accent-color)]"></i>
                     </div>
-                    </div>
-                
-                <div id="imageWrapper">
-                    <img id="enlargedImage" src="" alt="1"> 
-                    <div id="likeImageViewBtn" class="action-btn-full like-in-image-corner" title="Like this image">
-                        <i class="far fa-heart like-icon-full"></i> 
-                    </div>
+                    <h1 class="text-3xl font-bold tracking-tight text-white">Private Vault</h1>
+                    <p class="text-slate-400 text-sm mt-2">Secure Personal Cloud</p>
                 </div>
-                
-                <div class="image-details-overlay">
-                    <p class="image-title-view" id="enlargedImageTitle">Placeholder Title for the Image</p>
-                    
-                    <button class="generate-btn" id="generatePromptButton">
-                        <i class="fas fa-magic"></i> GENERATE PROMPT
+                <form id="login-form" class="space-y-4">
+                    <div class="relative">
+                        <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                        <input type="email" id="email" placeholder="Email Address" class="w-full bg-slate-900/60 border border-slate-700 rounded-xl pl-10 px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-color)] transition" required>
+                    </div>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                        <input type="password" id="password" placeholder="Password" class="w-full bg-slate-900/60 border border-slate-700 rounded-xl pl-10 px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-color)] transition" required>
+                    </div>
+                    <button type="submit" class="w-full bg-[var(--accent-color)] hover:opacity-90 text-white font-semibold py-3 rounded-xl shadow-lg shadow-indigo-500/20 transition-all mt-2 flex justify-center items-center gap-2">
+                        Unlock Vault
                     </button>
-                    
-                    <div class="loading-container" id="loadingContainer">
-                        <div class="loading-circle">
-                            <div class="loading-arc"></div>
-                            <span id="loadingPercentage">0%</span>
-                        </div>
-                    </div>
+                </form>
+                <div id="auth-msg" class="text-rose-400 text-xs text-center mt-4 h-4 font-medium"></div>
+            </div>
+        </div>
 
-                    <div class="result-container" id="resultContainer" style="display: none;">
-                        <div class="result-box" id="resultBox">
+        <!-- MAIN APP -->
+        <div id="app-screen" class="hidden">
+            
+            <!-- Navbar -->
+            <nav class="glass-panel h-[70px] flex items-center justify-between px-4 z-20 sticky top-0 shrink-0 shadow-sm transition-all w-full">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--accent-color)] to-purple-800 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 border border-white/10 shrink-0">
+                        <i class="fa-solid fa-shield-cat text-xs"></i>
+                    </div>
+                    <div class="flex flex-col justify-center whitespace-nowrap">
+                        <span class="font-bold text-base tracking-wide text-white font-mono leading-none">VAULT<span class="text-[var(--accent-color)]">.IO</span></span>
+                        <span class="text-[8px] text-slate-400 tracking-wider font-medium block mt-0.5">SECURE CLOUD</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="relative flex items-center justify-end">
+                        <input type="text" id="search-input" 
+                            class="bg-slate-800/50 border border-white/10 rounded-full w-9 h-9 text-transparent placeholder-transparent 
+                                   focus:w-32 focus:h-9 focus:bg-slate-900 focus:text-slate-200 focus:placeholder-slate-500 
+                                   focus:pl-4 focus:pr-8 focus:border-[var(--accent-color)] 
+                                   transition-all duration-500 ease-out outline-none cursor-pointer focus:cursor-text z-10 peer shadow-inner text-[11px]"
+                            placeholder="Search..."
+                        >
+                        <i class="fa-solid fa-search absolute right-3 text-slate-400 text-xs z-0 pointer-events-none peer-focus:text-[var(--accent-color)] transition-colors duration-300"></i>
+                    </div>
+                    <button onclick="toggleSettings()" class="w-9 h-9 rounded-full bg-slate-800/50 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition-all border border-white/10 active:scale-90 shrink-0">
+                        <i class="fa-solid fa-bars-staggered text-xs"></i>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Settings Panel -->
+            <div id="settings-backdrop" onclick="toggleSettings()" class="absolute inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm transition-opacity"></div>
+            <div id="settings-panel" class="flex flex-col">
+                <div class="p-5 border-b border-white/5 flex justify-between items-center bg-slate-900/50 shrink-0">
+                    <h2 class="text-base font-bold text-white">Settings</h2>
+                    <button onclick="toggleSettings()" class="text-slate-400 hover:text-white w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-800 transition"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="p-5 flex-1 overflow-y-auto space-y-4">
+                    
+                    <!-- Profile Info -->
+                    <div class="text-center p-4 rounded-xl border border-white/5 dynamic-bg">
+                        <div onclick="updateProfilePic()" class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-[var(--accent-color)] to-purple-600 p-[2px] mb-3 cursor-pointer group relative">
+                            <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden relative">
+                                <i id="settings-icon" class="fa-solid fa-user text-2xl text-slate-200"></i>
+                                <img id="settings-avatar" src="" class="w-full h-full object-cover absolute inset-0 hidden">
+                                <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                    <i class="fa-solid fa-camera text-white text-lg"></i>
+                                </div>
                             </div>
-                        
-                        <div id="promptActionButtons">
-                            <button class="copy-button" id="copyButton">
-                                <i class="fas fa-copy"></i> Copy
-                            </button>
-                            <button class="gemini-button" id="geminiButton">
-                                <img src="logo-Gemini.png" alt="Gemini Logo">Open Gemini
-                            </button>
-                            <button class="chatgpt-button" id="chatGPTButton">
-                                <img src="logo-chatGPT.png" alt="ChatGPT Logo">Open chatGPT
-                            </button>
                         </div>
+                        <p id="user-email" class="text-xs font-medium text-white truncate">user@email.com</p>
+                    </div>
+
+                    <!-- 1. VISUAL ASSETS -->
+                    <div class="border-b border-white/5 pb-2">
+                        <button onclick="toggleDropdown('assets-dropdown', 'assets-icon')" class="settings-header-btn group">
+                            <span>Visual Assets</span>
+                            <i id="assets-icon" class="fa-solid fa-chevron-down rotate-icon"></i>
+                        </button>
+                        <div id="assets-dropdown" class="dropdown-content">
+                            <div class="p-3 bg-slate-900/30 rounded-xl border border-white/5 space-y-4 mb-2">
+                                
+                                <!-- Body Wallpaper -->
+                                <div>
+                                    <span class="setting-label">Body Wallpaper</span>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="custom-bg-input" placeholder="URL..." class="w-full bg-slate-800/50 border border-slate-700 rounded p-1.5 text-[10px] text-white focus:outline-none focus:border-[var(--accent-color)]">
+                                        <button onclick="saveBackground()" class="bg-[var(--accent-color)] text-white px-2.5 rounded text-[10px] hover:brightness-110"><i class="fa-solid fa-check"></i></button>
+                                        <button onclick="resetBackground()" class="bg-rose-500/20 text-rose-400 px-2.5 rounded text-[10px] hover:bg-rose-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- Content Wallpaper -->
+                                <div>
+                                    <span class="setting-label">Content Wallpaper</span>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="content-bg-input" placeholder="URL..." class="w-full bg-slate-800/50 border border-slate-700 rounded p-1.5 text-[10px] text-white focus:outline-none focus:border-[var(--accent-color)]">
+                                        <button onclick="saveContentBg()" class="bg-[var(--accent-color)] text-white px-2.5 rounded text-[10px] hover:brightness-110"><i class="fa-solid fa-check"></i></button>
+                                        <button onclick="resetContentBg()" class="bg-rose-500/20 text-rose-400 px-2.5 rounded text-[10px] hover:bg-rose-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- App Logo -->
+                                <div>
+                                    <span class="setting-label">App Logo / Icon</span>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="custom-logo-input" placeholder="URL..." class="w-full bg-slate-800/50 border border-slate-700 rounded p-1.5 text-[10px] text-white focus:outline-none focus:border-[var(--accent-color)]">
+                                        <button onclick="saveLogo()" class="bg-[var(--accent-color)] text-white px-2.5 rounded text-[10px] hover:brightness-110"><i class="fa-solid fa-check"></i></button>
+                                        <button onclick="resetLogo()" class="bg-rose-500/20 text-rose-400 px-2.5 rounded text-[10px] hover:bg-rose-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- 2. COLOR THEME -->
+                    <div class="border-b border-white/5 pb-2">
+                        <button onclick="toggleDropdown('color-theme-dropdown', 'color-theme-icon')" class="settings-header-btn group">
+                            <span>Color Theme</span>
+                            <i id="color-theme-icon" class="fa-solid fa-chevron-down rotate-icon"></i>
+                        </button>
+                        <div id="color-theme-dropdown" class="dropdown-content">
+                            <div class="p-3 bg-slate-900/30 rounded-xl border border-white/5 space-y-4 mb-2">
+                                
+                                <!-- Accent Color -->
+                                <div>
+                                    <div class="sub-group-title">Accent Color</div>
+                                    <div class="flex flex-wrap gap-2 justify-start">
+                                        <div onclick="setAccent('#6366f1')" class="color-doll bg-indigo-500"></div>
+                                        <div onclick="setAccent('#10b981')" class="color-doll bg-emerald-500"></div>
+                                        <div onclick="setAccent('#f43f5e')" class="color-doll bg-rose-500"></div>
+                                        <div onclick="setAccent('#f59e0b')" class="color-doll bg-amber-500"></div>
+                                        <div onclick="setAccent('#06b6d4')" class="color-doll bg-cyan-500"></div>
+                                        <div onclick="setAccent('#d946ef')" class="color-doll bg-fuchsia-500"></div>
+                                        <div onclick="setAccent('#ea580c')" class="color-doll bg-orange-600"></div>
+                                        <button onclick="setCustomColor('accent')" class="color-doll border-dashed border-slate-400 flex items-center justify-center text-[8px] text-slate-400 hover:text-white"><i class="fa-solid fa-plus"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- Theme BG (Page) -->
+                                <div>
+                                    <div class="sub-group-title">Theme BG (Page)</div>
+                                    <div class="flex flex-wrap gap-2 justify-start">
+                                        <div onclick="setGlassBg('rgba(15, 23, 42, 0.95)', '#0f172a')" class="color-doll bg-[#0f172a]" title="Slate"></div>
+                                        <div onclick="setGlassBg('rgba(0, 0, 0, 0.95)', '#000000')" class="color-doll bg-black" title="Black"></div>
+                                        <div onclick="setGlassBg('rgba(23, 37, 84, 0.95)', '#172554')" class="color-doll bg-blue-950" title="Blue"></div>
+                                        <div onclick="setGlassBg('rgba(69, 10, 10, 0.95)', '#450a0a')" class="color-doll bg-red-950" title="Red"></div>
+                                        <div onclick="setGlassBg('rgba(2, 44, 34, 0.95)', '#022c22')" class="color-doll bg-emerald-950" title="Green"></div>
+                                        <div onclick="setGlassBg('rgba(38, 30, 25, 0.95)', '#261e19')" class="color-doll bg-[#261e19]" title="Coffee"></div>
+                                        <button onclick="setCustomColor('main')" class="color-doll border-dashed border-slate-400 flex items-center justify-center text-[8px] text-slate-400 hover:text-white"><i class="fa-solid fa-plus"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- Item BG (Cards) -->
+                                <div>
+                                    <div class="sub-group-title">Item BG (Cards)</div>
+                                    <div class="flex flex-wrap gap-2 justify-start">
+                                        <div onclick="setCardBg('rgba(30, 41, 59, 0.4)')" class="color-doll bg-slate-700" title="Default"></div>
+                                        <div onclick="setCardBg('rgba(0, 0, 0, 0.6)')" class="color-doll bg-black/60" title="Dark"></div>
+                                        <div onclick="setCardBg('rgba(255, 255, 255, 0.1)')" class="color-doll bg-white/20" title="Frost"></div>
+                                        <div onclick="setCardBg('rgba(30, 58, 138, 0.4)')" class="color-doll bg-blue-900" title="Blue Tint"></div>
+                                        <div onclick="setCardBg('rgba(88, 28, 135, 0.4)')" class="color-doll bg-purple-900" title="Purple Tint"></div>
+                                        <button onclick="setCustomColor('card')" class="color-doll border-dashed border-slate-400 flex items-center justify-center text-[8px] text-slate-400 hover:text-white"><i class="fa-solid fa-plus"></i></button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security -->
+                    <div class="pt-2">
+                        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Security</h3>
+                        <div class="space-y-2">
+                            <input type="password" id="new-password-input" placeholder="New Password" class="w-full bg-slate-800/40 border border-slate-700 rounded-lg px-3 py-2 text-xs focus:border-[var(--accent-color)] focus:outline-none text-white">
+                            <button onclick="updateUserPassword()" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold border border-white/5 transition">UPDATE PASSWORD</button>
+                        </div>
+                    </div>
+
+                    <!-- Data -->
+                    <div class="border-t border-white/5 pt-4">
+                        <button onclick="backupData()" class="w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 border border-white/5 transition text-xs text-slate-300 group mb-2">
+                            <span><i class="fa-solid fa-cloud-download-alt mr-2 text-[var(--accent-color)]"></i> Backup Data (JSON)</span>
+                        </button>
+                    </div>
+
+                </div>
+                <div class="p-5 border-t border-white/5 bg-slate-900/30">
+                    <button onclick="logout()" class="w-full py-2.5 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 transition text-xs font-bold uppercase tracking-wide">Sign Out</button>
                 </div>
             </div>
-            
-        </div>
 
-        <div class="content" id="imageGallery">
-            
-            
-            <div class="image-card-wrapper" data-views="0" 
-                 data-title="Colorful and Vibrant Indian Festival Art"
-                 data-full-title="🥰 Indian Festival Art🤔🥰🎟️👈🤨👉❣️👉🌺👉 figufiufufi" 
-                 data-prompt="A stylish young man with voluminous, well-styled hair and a neatly groomed beard, sitting casually on a modern chair against a plain background. He is wearing a deep maroon jacket over a black outfit, accessorized with a wristwatch. He holds a pair of sunglasses near his lips in a confident, charismatic pose, exuding modern elegance and charm. The image should be hyper-detailed with sharp focus on the subject, rich color grading, and have a cinematic quality.use reference face. Keep my face same 100% same as in the reference image."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-1.png" alt="1">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Colorful and Vibrant Indian Festival Art">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-5 relative scroll-smooth z-10 w-full">
+                <!-- Dashboard View -->
+                <div id="dashboard-view" class="hidden fade-enter-active pb-20">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-white">Dashboard</h2>
+                            <p class="text-[10px] text-slate-400 font-mono flex items-center gap-2">Overview 
+                                <span id="total-storage" class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/20 text-[9px]">0 KB</span>
+                            </p>
+                        </div>
+                        <button onclick="openModal()" class="w-9 h-9 rounded-full bg-[var(--accent-color)] hover:brightness-110 text-white shadow-lg shadow-indigo-500/20 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 group z-40 relative">
+                            <i class="fa-solid fa-plus text-xs group-hover:rotate-90 transition-transform duration-300"></i>
+                        </button>
                     </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Cinematic Landscape View of Tuscany, Italy"
-                 data-full-title="Italy Landscape - Tuscany" 
-                 data-prompt="A breathtaking cinematic view of the rolling hills of Tuscany, Italy, bathed in golden hour light. Vineyards and cypress trees stretch into the distance, with a charming old stone villa nestled among them. Hyper-detailed, rich colors, atmospheric perspective."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-2.png" alt="2">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Cinematic Landscape View of Tuscany, Italy">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Vintage Royal Portrait with detailed golden frame"
-                 data-full-title="👑 Vintage Royal Portrait" 
-                 data-prompt="A vintage royal portrait of a queen, adorned with intricate jewelry and a regal gown, set within an ornate golden frame. The background features a lavish palace interior. Hyper-realistic, dramatic lighting, rich textures."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-3.png" alt="3">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Vintage Royal Portrait with detailed golden frame">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Iron Man Kid playing in the park with a shiny suit"
-                 data-full-title="🦸‍♂️ Iron Man Kid Playing" 
-                 data-prompt="A joyful little boy dressed as Iron Man, wearing a shiny, detailed suit, happily playing in a vibrant green park. Colorful toys are scattered around him, and the sun shines brightly. Whimsical, detailed, bright and cheerful atmosphere."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-4.png" alt="4">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Iron Man Kid playing in the park with a shiny suit">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Elegant Product Shot of a perfume bottle"
-                 data-full-title="✨ Perfume Product Shot" 
-                 data-prompt="An elegant product shot of a luxurious perfume bottle, exquisitely designed, standing on a sleek, minimalistic background. Soft studio lighting highlights its reflective surface. High-resolution, crisp focus, commercial photography style."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-5.png" alt="5">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Elegant Product Shot of a perfume bottle">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Fantasy Butterfly Art with glowing wings"
-                 data-full-title="🦋 Fantasy Butterfly Art" 
-                 data-prompt="A magnificent fantasy butterfly, with bioluminescent, intricate wings, glowing softly in an enchanted forest bathed in deep blue, mystical light. Dreamlike, highly detailed, magical atmosphere."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-6.png" alt="6">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Fantasy Butterfly Art with glowing wings">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Abstract Portrait of a woman with vibrant color splashes"
-                 data-full-title="🖼️ Abstract Woman Portrait" 
-                 data-prompt="An abstract portrait of a woman, rendered with dynamic, vibrant color splashes and energetic brushstrokes. Her features are subtly defined amidst the chaos of colors. Artistic, expressive, bold and colorful."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-7.png" alt="7">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Abstract Portrait of a woman with vibrant color splashes">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Modern Design of a geometrically complex interior space"
-                 data-full-title="📐 Modern Interior Design" 
-                 data-prompt="A stunning modern interior design featuring a geometrically complex layout with clean lines, minimalist furniture, and sophisticated lighting. Large windows overlook a city skyline. Architectural visualization, hyper-realistic, sleek and elegant."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-8.png" alt="8">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Modern Design of a geometrically complex interior space">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Lush forest and fog on a peaceful morning"
-                 data-full-title="🌿 Lush Forest & Fog" 
-                 data-prompt="A serene and peaceful morning scene in a lush, dense forest, with soft fog gently rolling through the trees. Sunbeams pierce through the canopy, illuminating dew-kissed leaves. Atmospheric, tranquil, natural beauty."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-9.png" alt="9">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Lush forest and fog on a peaceful morning">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Monochrome Art: Black and white photo of an old city street"
-                 data-full-title="⚫ Monochrome City Street" 
-                 data-prompt="A classic monochrome photograph of a bustling old city street, with vintage cars and pedestrians under a dramatic sky. High contrast, film noir aesthetic, timeless urban scene."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-10.png" alt="10">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Monochrome Art: Black and white photo of an old city street">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Red Theme - A striking portrait bathed in red light"
-                 data-full-title="🔴 Red Light Portrait" 
-                 data-prompt="A powerful and striking portrait of a subject, dramatically lit with deep red light. Shadows and highlights create an intense mood. High fashion, artistic lighting, bold and impactful."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-11.png" alt="11">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Red Theme - A striking portrait bathed in red light">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Blue Tones: An oceanic abstract image with varying shades"
-                 data-full-title="🔵 Oceanic Abstract Art" 
-                 data-prompt="An mesmerizing oceanic abstract image, showcasing a gradient of deep to light blue tones, reminiscent of underwater light and movement. Fluid, calming, abstract art."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-12.png" alt="12">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Blue Tones: An oceanic abstract image with varying shades">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Vibrant and colorful image of a bustling market street"
-                 data-full-title="Extra: Bustling Market" 
-                 data-prompt="A vibrant and colorful image of a bustling market street in an exotic city. People, food, and textiles create a rich tapestry of life. Documentary style, lively, full of energy."
-                 data-total-likes="0">
-                <div class="image-card">
-                    <img src="image-13.png" alt="13">
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    <div class="like-count" data-image-id="Vibrant and colorful image of a bustling market street">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                <p class="image-title"></p> </div>
-            
-            
-            
-            
-            
-            
-            <div class="image-card-wrapper" data-views="0" data-title="Futuristic Cyberpunk City with neon lights at night"
-                 data-full-title="Extra: Cyberpunk City" 
-                 data-prompt="
-                 
-                 A futuristic cityscape at night, with neon lights reflecting on wet streets and flying vehicles cruising between towering skyscrapers. Cyberpunk aesthetic, hyper-detailed, dynamic and atmospheric.
-                 
-                 "
-                 data-total-likes="0">
-                
-                
-                
-                
-                
-                <div class="image-card">
-                    <img src="image-14.png" alt="14">
-                    
-                    
-                    <div class="view-count"><i class="fas fa-eye"></i> <span class="view-count-number">0</span></div>
-                    
-                    
-                    <div class="like-count" data-image-id="Futuristic Cyberpunk City with neon lights at night">
-                        <i class="far fa-heart like-icon"></i> <span class="like-count-number">0</span>
-                    </div>
-                </div>
-                
-                
-                <p class="image-title"></p> </div>
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-        </div>
-        
-        <div class="more-container">
-            <button class="more-btn" id="loadMoreButton" onclick="loadMoreImages()">Load More</button>
-        </div>
 
-        <div class="footer-main">
-            <p class="developed-by-line">
-                Developed by <span id="developerNameLink" class="developer-name"> FA.SOBOJ</span>
-            </p>
+                    <!-- Stat Cards Grid -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div onclick="switchCategory('notes')" class="glass-card p-4 rounded-xl cursor-pointer group border-l-4 border-l-indigo-500/50">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition"><i class="fa-solid fa-note-sticky text-base"></i></div>
+                                <div class="text-right">
+                                    <span class="text-lg font-bold text-white block leading-none" id="count-notes">0</span>
+                                    <span id="size-notes" class="text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/10">0 KB</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-400 font-medium">Notes</p>
+                        </div>
+                        <div onclick="switchCategory('links')" class="glass-card p-4 rounded-xl cursor-pointer group border-l-4 border-l-emerald-500/50">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition"><i class="fa-solid fa-link text-base"></i></div>
+                                <div class="text-right">
+                                    <span class="text-lg font-bold text-white block leading-none" id="count-links">0</span>
+                                    <span id="size-links" class="text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/10">0 KB</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-400 font-medium">Links</p>
+                        </div>
+                        <div onclick="switchCategory('credentials')" class="glass-card p-4 rounded-xl cursor-pointer group col-span-2 border-l-4 border-l-amber-500/50">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition"><i class="fa-solid fa-user-shield text-base"></i></div>
+                                    <div>
+                                        <p class="text-xs text-slate-400 font-medium">User</p>
+                                        <p class="text-[10px] text-slate-500">Logins & Info</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span id="size-credentials" class="text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/10">0 KB</span>
+                                    <span class="text-xl font-bold text-white pr-2" id="count-credentials">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div onclick="switchCategory('photos')" class="glass-card p-4 rounded-xl cursor-pointer group col-span-2 border-l-4 border-l-pink-500/50">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-lg bg-pink-500/10 text-pink-400 group-hover:bg-pink-500 group-hover:text-white transition"><i class="fa-solid fa-image text-base"></i></div>
+                                    <div>
+                                        <p class="text-xs text-slate-400 font-medium">Saved Images</p>
+                                        <p class="text-[10px] text-slate-500">Gallery Links</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span id="size-photos" class="text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/10">0 KB</span>
+                                    <span class="text-xl font-bold text-white pr-2" id="count-photos">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div onclick="switchCategory('apis')" class="glass-card p-4 rounded-xl cursor-pointer group col-span-2 border-l-4 border-l-cyan-500/50">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500 group-hover:text-white transition"><i class="fa-solid fa-network-wired text-base"></i></div>
+                                    <div>
+                                        <p class="text-xs text-slate-400 font-medium">API Manager</p>
+                                        <p class="text-[10px] text-slate-500">Endpoints & Keys</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span id="size-apis" class="text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/10">0 KB</span>
+                                    <span class="text-xl font-bold text-white pr-2" id="count-apis">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <div class="glass-card p-5 rounded-xl text-center text-slate-400 border border-dashed border-slate-700 bg-slate-900/20">
+                            <i class="fa-solid fa-shield-halved text-2xl mb-2 opacity-30 text-[var(--accent-color)]"></i>
+                            <p class="text-[10px] font-mono opacity-50 uppercase tracking-widest">End-to-End Encrypted</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- List View Header -->
+                <div id="list-header" class="flex justify-between items-end mb-4 fade-enter-active hidden">
+                    <div>
+                        <h2 class="text-xl font-bold text-white capitalize tracking-tight" id="page-title">Notes</h2>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-color)]"></span>
+                            <p class="text-[10px] text-slate-400 font-mono uppercase" id="item-count">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="flex bg-slate-800/50 p-1 rounded-lg border border-white/5">
+                        <button onclick="toggleView('grid')" class="text-slate-400 hover:text-white p-1.5 rounded hover:bg-slate-700/50 transition"><i class="fa-solid fa-grid-2 text-xs"></i></button>
+                        <button onclick="toggleView('list')" class="text-slate-400 hover:text-white p-1.5 rounded hover:bg-slate-700/50 transition"><i class="fa-solid fa-list text-xs"></i></button>
+                    </div>
+                </div>
+
+                <!-- Loader -->
+                <div id="loader-state" class="hidden flex justify-center py-20">
+                    <div class="spinner"></div>
+                </div>
+
+                <!-- Content Grid -->
+                <div id="content-grid" class="grid grid-cols-1 gap-3 pb-20 hidden"></div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="hidden flex flex-col items-center justify-center py-16 opacity-50">
+                    <div class="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mb-3 border border-slate-700 border-dashed">
+                        <i class="fa-solid fa-box-open text-2xl text-slate-500"></i>
+                    </div>
+                    <p class="text-sm text-slate-500">No items found</p>
+                    <button onclick="openModal()" class="mt-4 text-xs text-[var(--accent-color)] hover:underline font-bold">CREATE NEW</button>
+                </div>
+            </main>
+
+            <!-- Bottom Nav -->
+            <div id="bottom-navbar" class="shrink-0 px-2 py-2 border-t border-white/5 grid grid-cols-5 gap-1 backdrop-blur-md z-50 transition-all duration-300 w-full" style="background: var(--glass-bg)">
+                <button onclick="switchCategory('dashboard')" class="mobile-nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-[10px] font-medium bg-[var(--accent-color)] text-white shadow-lg transition-all duration-300">
+                    <i class="fa-solid fa-house mb-0.5 text-sm"></i>Home
+                </button>
+                <button onclick="switchCategory('notes')" class="mobile-nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-[10px] font-medium text-slate-400 border border-slate-700/50 transition-all duration-300 dynamic-bg">
+                    <i class="fa-solid fa-note-sticky mb-0.5 text-sm"></i>Note
+                </button>
+                <button onclick="switchCategory('photos')" class="mobile-nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-[10px] font-medium text-slate-400 border border-slate-700/50 transition-all duration-300 dynamic-bg">
+                    <i class="fa-solid fa-image mb-0.5 text-sm"></i>Img
+                </button>
+                <button onclick="switchCategory('links')" class="mobile-nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-[10px] font-medium text-slate-400 border border-slate-700/50 transition-all duration-300 dynamic-bg">
+                    <i class="fa-solid fa-link mb-0.5 text-sm"></i>Link
+                </button>
+                <button onclick="switchCategory('credentials')" class="mobile-nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-[10px] font-medium text-slate-400 border border-slate-700/50 transition-all duration-300 dynamic-bg">
+                    <i class="fa-solid fa-user-shield mb-0.5 text-sm"></i>User
+                </button>
+            </div>
             
-            <div class="social-icons">
-                <a href="https://t.me/Soboj0144" target="_blank" class="social-icon">
-                    <img src="telegram_logo.png" alt="Telegram" class="social-image">
-                </a>
-                <a href="https://www.facebook.com" target="_blank" class="social-icon">
-                    <img src="facebook_logo.png" alt="Facebook" class="social-image">
-                </a>
+            <!-- Toast Notification -->
+            <div id="toast" class="absolute top-[80px] left-1/2 -translate-x-1/2 z-[90] glass-panel px-4 py-3 rounded-full shadow-2xl transition-all duration-300 flex items-center gap-3 border border-[var(--accent-color)] w-max max-w-[90%] opacity-0 -translate-y-4 pointer-events-none">
+                <div class="w-5 h-5 rounded-full bg-[var(--accent-color)] flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check"></i></div>
+                <p id="toast-msg" class="text-xs text-white font-medium">Success</p>
             </div>
 
-            <p class="policy-terms-line">
-                Privacy Policy <span class="separator">|</span> Terms of Service  
-            </p>
-            
-            <p class="copyright-text">
-© 2025 Ads to Earning. All Rights Reserved
-            </p>
         </div>
     </div>
 
-    <script>
-        // ===============================================
-        // 🔥 Firebase Connection and View Count Logic
-        // ===============================================
+    <!-- MODAL -->
+    <div id="main-modal" class="absolute inset-0 z-[80] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel p-5 rounded-2xl w-full max-w-[340px] transform scale-95 opacity-0 transition-all duration-300 border border-white/10 shadow-2xl flex flex-col" id="modal-content">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-3 shrink-0">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2"><span id="modal-title">New Entry</span></h3>
+                <button type="button" onclick="closeModal()" class="w-8 h-8 rounded-full bg-rose-500 hover:bg-rose-600 flex items-center justify-center text-white shadow-lg transition transform hover:rotate-90"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <!-- Category Selector -->
+            <div id="modal-cat-select" class="grid grid-cols-5 gap-1.5 mb-4 shrink-0">
+                <button onclick="setModalType('notes')" class="modal-cat-btn flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--accent-color)] text-white text-[9px] border border-transparent shadow-lg transition"><i class="fa-solid fa-note-sticky mb-1 text-sm"></i> Note</button>
+                <button onclick="setModalType('links')" class="modal-cat-btn flex flex-col items-center justify-center p-2 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 text-[9px] border border-slate-700 transition"><i class="fa-solid fa-link mb-1 text-sm"></i> Link</button>
+                <button onclick="setModalType('photos')" class="modal-cat-btn flex flex-col items-center justify-center p-2 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 text-[9px] border border-slate-700 transition"><i class="fa-solid fa-image mb-1 text-sm"></i> Img</button>
+                <button onclick="setModalType('credentials')" class="modal-cat-btn flex flex-col items-center justify-center p-2 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 text-[9px] border border-slate-700 transition"><i class="fa-solid fa-user-shield mb-1 text-sm"></i> User</button>
+                <button onclick="setModalType('apis')" class="modal-cat-btn flex flex-col items-center justify-center p-2 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 text-[9px] border border-slate-700 transition"><i class="fa-solid fa-network-wired mb-1 text-sm"></i> API</button>
+            </div>
+            <!-- Form -->
+            <form id="entry-form" class="space-y-3 flex-1 flex flex-col overflow-hidden">
+                <input type="hidden" id="entry-id">
+                <div class="shrink-0 input-wrapper">
+                    <div class="flex justify-between items-end mb-1">
+                        <label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Title (Optional)</label>
+                        <button type="button" onclick="copyFromId('inp-title')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <div class="relative">
+                        <i class="fa-solid fa-heading input-icon"></i>
+                        <input type="text" id="inp-title" placeholder="Entry Title" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none transition text-white">
+                    </div>
+                </div>
+                <!-- Content Fields -->
+                <div class="field-group hidden flex-1 flex flex-col h-full" data-for="notes">
+                    <div class="flex justify-between items-end mb-1">
+                        <label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Content <span class="req-dot">*</span></label>
+                        <button type="button" onclick="copyFromId('inp-content')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-align-left input-icon top-4 translate-y-0"></i>
+                        <textarea id="inp-content" class="w-full h-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none font-mono text-slate-300 resize-none"></textarea>
+                    </div>
+                </div>
+                <!-- API Fields -->
+                <div class="field-group hidden shrink-0" data-for="apis">
+                    <div class="mb-2">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Endpoint URL (Optional)</label><button type="button" onclick="copyFromId('inp-api-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="relative"><i class="fa-solid fa-globe input-icon"></i><input type="url" id="inp-api-url" placeholder="https://api.example.com/v1/" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white font-mono"></div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Gmail (Optional)</label><button type="button" onclick="copyFromId('inp-api-email')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="relative"><i class="fa-solid fa-envelope input-icon"></i><input type="email" id="inp-api-email" placeholder="dev@example.com" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white"></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">API Key / Token <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-api-key')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="relative"><i class="fa-solid fa-key input-icon top-4 translate-y-0"></i><textarea id="inp-api-key" rows="3" placeholder="Bearer..." class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-xs focus:border-[var(--accent-color)] focus:outline-none font-mono text-emerald-400"></textarea></div>
+                    </div>
+                </div>
+                <!-- Link Fields -->
+                <div class="field-group hidden shrink-0" data-for="links">
+                    <div class="mb-1">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">URL <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="relative"><i class="fa-solid fa-link input-icon"></i><input type="url" id="inp-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white"></div>
+                    </div>
+                </div>
+                <!-- Photo Fields -->
+                <div class="field-group hidden shrink-0" data-for="photos">
+                    <div class="mb-1">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Image URL <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-img-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="relative"><i class="fa-regular fa-image input-icon"></i><input type="url" id="inp-img-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white"></div>
+                    </div>
+                </div>
+                <!-- Credential Fields -->
+                <div class="field-group hidden shrink-0" data-for="credentials">
+                    <div class="mb-3">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Website/Link (Optional)</label><button type="button" onclick="copyFromId('inp-cred-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="relative"><i class="fa-solid fa-link input-icon"></i><input type="url" id="inp-cred-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white"></div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Username <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-username')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="relative"><i class="fa-solid fa-user input-icon"></i><input type="text" id="inp-username" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white"></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Password <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-password')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="relative"><i class="fa-solid fa-lock input-icon"></i><input type="password" id="inp-password" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none font-mono text-white"><i id="toggle-pass-btn" onclick="togglePassVisibility(this)" class="fa-solid fa-eye absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-slate-500 hover:text-white transition text-xs"></i></div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-4 border-t border-white/5 mt-auto shrink-0">
+                    <button type="submit" id="btn-save" class="bg-[var(--accent-color)] hover:brightness-110 text-white px-6 py-2 rounded-lg text-xs font-bold shadow-lg shadow-indigo-500/20">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        // ✅ ফায়ারবেস কনফিগারেশন - আপনার নিজের সেটিংস এখানে যুক্ত করুন
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { getDatabase, ref, push, set, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
         const firebaseConfig = {
-            apiKey: "AIzaSyDbjKG5kTZXXYd6ZfG3caa1cQE0r6zVHgM",
-            authDomain: "admin-15b0b.firebaseapp.com",
-            databaseURL: "https://admin-15b0b-default-rtdb.firebaseio.com",
-            projectId: "admin-15b0b",
-            storageBucket: "admin-15b0b.firebaseapp.com",
-            messagingSenderId: "362588279451",
-            appId: "1:362588279451:web:66d5d72b80d6a471826c3e",
-            measurementId: "G-4FD1HFPZT2"
+            apiKey: "AIzaSyDzlvAxm4nAOsLQykYVbTnJBeFdfaaHxkU",
+            authDomain: "data-manager-af3dc.firebaseapp.com",
+            databaseURL: "https://data-manager-af3dc-default-rtdb.firebaseio.com",
+            projectId: "data-manager-af3dc",
+            storageBucket: "data-manager-af3dc.firebasestorage.app",
+            messagingSenderId: "140237513200",
+            appId: "1:140237513200:web:2dd854ee93827d36d1fd35"
         };
 
-        // ✅ ফায়ারবেস ইনিশিয়ালাইজেশন
-        let database = null;
-        let viewsRef = null;
-        let likesRef = null; 
-        const USER_ID = 'anonymous_user_id'; // ব্যবহারকারী ট্র্যাক করার জন্য সাধারণ আইডি (লগইন না থাকায়)
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
 
-        if (typeof firebase !== 'undefined') {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            database = firebase.database();
-            viewsRef = database.ref('image_views');
-            likesRef = database.ref('image_likes'); 
-        } 
+        const SESSION_DURATION = 5 * 60 * 1000; 
+
+        let currentUser = null;
+        let currentCategory = localStorage.getItem('vault_active_category') || 'dashboard'; 
+        let itemsData = {};
+        let viewMode = 'grid';
+        let editingId = null;
+        let viewingId = null; 
+
+        const authScreen = document.getElementById('auth-screen');
+        const appScreen = document.getElementById('app-screen');
+        const loginForm = document.getElementById('login-form');
+        const bottomNavbar = document.getElementById('bottom-navbar');
+        const startupLoader = document.getElementById('startup-loader');
+
+        // Restore Settings
+        const savedBg = localStorage.getItem('vault_custom_bg');
+        if(savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
         
-        // ফায়ারবেস পাথের জন্য টাইটেলকে নিরাপদ ফর্মে রূপান্তর
-        function sanitizeImageId(title) {
-            return title.replace(/[.#$\[\]\/]/g, '_');
+        const savedContentBg = localStorage.getItem('vault_content_bg');
+        if(savedContentBg) {
+             const appScreen = document.getElementById('app-screen');
+             appScreen.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.8)), url('${savedContentBg}')`;
+             appScreen.style.backgroundSize = "cover";
+             appScreen.style.backgroundPosition = "center";
         }
 
-        /**
-         * ডেটাবেস থেকে ভিউ এবং লাইক কাউন্ট লোড করে এবং UI আপডেট করে।
-         */
-        function loadInitialViews(cardWrapper) {
-            const imageTitle = cardWrapper.getAttribute('data-title');
-            const imageId = sanitizeImageId(imageTitle);
-            const viewCountSpan = cardWrapper.querySelector('.view-count-number');
-            const likeCountSpan = cardWrapper.querySelector('.like-count-number');
-            const likeIcon = cardWrapper.querySelector('.like-icon');
-            
-            // ✅ আপডেট: data-full-title থেকে হোমপেজের p.image-title-এ লেখাটি সেট করা
-            const fullTitle = cardWrapper.getAttribute('data-full-title');
-            const imageTitleElement = cardWrapper.querySelector('.image-title');
-            if (imageTitleElement && fullTitle) {
-                imageTitleElement.textContent = fullTitle;
-            }
-            
-            // 1. ভিউ কাউন্ট লোড
-            if (viewsRef) {
-                viewsRef.child(imageId).child('count').once('value', (snapshot) => {
-                    const count = snapshot.val() || 0; 
-                    cardWrapper.setAttribute('data-views', count);
-                    viewCountSpan.textContent = count.toLocaleString('en-US');
-                }, (errorObject) => {
-                    console.error('Firebase view read failed:', errorObject.name);
-                });
-            }
+        const savedLogo = localStorage.getItem('vault_custom_logo');
+        if(savedLogo) document.getElementById('dynamic-favicon').href = savedLogo;
 
-            // 2. লাইক কাউন্ট এবং ইউজার স্ট্যাটাস লোড
-            if (likesRef) {
-                const likeRef = likesRef.child(imageId);
-
-                // মোট লাইক লোড
-                likeRef.child('count').once('value', (snapshot) => {
-                    const totalLikes = snapshot.val() || 0;
-                    cardWrapper.setAttribute('data-total-likes', totalLikes);
-                    likeCountSpan.textContent = totalLikes.toLocaleString('en-US');
-                });
-
-                // ইউজার লাইক করেছে কিনা তা চেক
-                likeRef.child('users').child(USER_ID).once('value', (snapshot) => {
-                    if (snapshot.exists() && snapshot.val() === true) {
-                        likeIcon.classList.add('fas'); // লাইক করা থাকলে পূর্ণ হার্ট
-                        likeIcon.classList.remove('far');
-                    } else {
-                        likeIcon.classList.add('far'); // লাইক না করা থাকলে ফাঁকা হার্ট
-                        likeIcon.classList.remove('fas');
-                    }
-                });
-            }
-            
-            // ডেটা লোড হওয়ার পর কার্ড ডিসপ্লে করা
-            cardWrapper.style.display = 'block'; 
-            observer.observe(cardWrapper);
-            
-            // 🔥 সমাধান #2: প্রথম ব্যাচ লোড হওয়ার কাউন্টার আপডেট করা
-            if (currentIndex <= cardsPerLoad) { // নিশ্চিত করতে যে শুধু প্রথম লোডে এটি গণনা করা হচ্ছে
-                initialBatchLoadedCount++;
-                if (initialBatchLoadedCount === cardsPerLoad) {
-                    isInitialBatchReady = true;
-                    checkPreloaderConditions(); // পুরো কন্টেন্ট রেডি হলে প্রি-লোডার লুকানোর চেষ্টা করা
-                }
-            }
-        }
-
-        /**
-         * Firebase-এ ভিউ কাউন্ট বাড়ানোর জন্য Atomic update (Transaction) ব্যবহার করে।
-         */
-        function updateViewCountFirebase(cardWrapper) {
-            if (!viewsRef) return;
-            
-            const imageId = sanitizeImageId(cardWrapper.getAttribute('data-title'));
-            const viewCountSpan = cardWrapper.querySelector('.view-count-number');
-            
-            // ভিউ কাউন্ট Transaction 
-            viewsRef.child(imageId).child('count').transaction((currentCount) => {
-                return (currentCount || 0) + 1;
-            }, (error, committed, snapshot) => {
-                if (committed && snapshot.val()) {
-                    const newCount = snapshot.val();
-                    cardWrapper.setAttribute('data-views', newCount);
-                    viewCountSpan.textContent = newCount.toLocaleString('en-US');
-                } else if (error) {
-                    console.error("View transaction failed: ", error);
-                }
-            });
-        }
-
-        /**
-         * লাইক/আনলাইক টগল করে এবং Firebase-এ আপডেট করে।
-         * @param {HTMLElement} likeButtonElement - হোমপেজের .like-count div
-         */
-        function toggleLike(likeButtonElement) {
-            if (!likesRef) {
-                alert('Likes functionality is disabled: Firebase not initialized.');
-                return;
-            }
-            
-            const cardWrapper = likeButtonElement.closest('.image-card-wrapper');
-            const imageId = sanitizeImageId(cardWrapper.getAttribute('data-title'));
-            const likeIconHome = likeButtonElement.querySelector('.like-icon');
-            const likeCountSpanHome = likeButtonElement.querySelector('.like-count-number');
-            const userLikeRef = likesRef.child(imageId).child('users').child(USER_ID);
-            const countRef = likesRef.child(imageId).child('count');
-            
-            // ফুল ভিউয়ের আইকন
-            const likeIconFull = document.querySelector('#likeImageViewBtn .like-icon-full');
-
-            // 1. ইউজার লাইক স্ট্যাটাস আপডেট (Transaction)
-            userLikeRef.transaction((isCurrentlyLiked) => {
-                if (isCurrentlyLiked === true) {
-                    // আনলাইক করা হচ্ছে
-                    countRef.transaction((currentCount) => (currentCount || 0) - 1);
-                    return null; // ডেটাবেস থেকে ইউজারের লাইক মুছে যাবে
-                } else {
-                    // লাইক করা হচ্ছে
-                    countRef.transaction((currentCount) => (currentCount || 0) + 1);
-                    return true; // ডেটাবেসে true সেভ হবে
-                }
-            }, (error, committed, snapshot) => {
-                if (committed) {
-                    const isLiked = snapshot.val() === true;
-
-                    // UI আপডেট (হোমপেজ কার্ড)
-                    if (isLiked) {
-                        likeIconHome.classList.add('fas'); 
-                        likeIconHome.classList.remove('far');
-                    } else {
-                        likeIconHome.classList.add('far'); 
-                        likeIconHome.classList.remove('fas');
-                    }
-                    
-                    // UI আপডেট (ফুল ভিউ আইকন)
-                    if (likeIconFull) {
-                         if (isLiked) {
-                            likeIconFull.classList.add('fas'); 
-                            likeIconFull.classList.remove('far');
-                        } else {
-                            likeIconFull.classList.add('far'); 
-                            likeIconFull.classList.remove('fas');
-                        }
-                    }
-                    
-                    // 2. মোট লাইক কাউন্ট পুনরায় লোড করা
-                    countRef.once('value', (countSnapshot) => {
-                        const newCount = countSnapshot.val() || 0;
-                        cardWrapper.setAttribute('data-total-likes', newCount);
-                        likeCountSpanHome.textContent = newCount.toLocaleString('en-US');
-                    });
-
-                } else if (error) {
-                    console.error("Like transaction failed: ", error);
-                }
-            });
-        }
-        
-        /**
-         * ফুল ভিউয়ে লাইক বাটনে ক্লিক হলে এই ফাংশনটি কল হবে।
-         */
-        function handleLikeClickFullView() {
-            // enlargedImageTitle.textContent-এ এখন data-full-title এর মান আছে।
-            const currentTitle = enlargedImageTitle.textContent.trim(); 
-            const currentCard = Array.from(allCards).find(card => {
-                return card.getAttribute('data-full-title') === currentTitle; 
-            });
-
-            if (currentCard) {
-                // হোমপেজের কার্ডের লাইক বাটন এলিমেন্ট খুঁজে মূল toggleLike ফাংশনটি কল করা
-                const cardLikeButtonElement = currentCard.querySelector('.like-count');
-                if (cardLikeButtonElement) {
-                    toggleLike(cardLikeButtonElement); 
-                }
-            }
-        }
-        
-        // ===============================================
-        // ✅ আপনার অরজিনাল JavaScript কোড এবং প্রি-লোডার লজিক
-        // ===============================================
-
-        const body = document.body;
-        const allBar = document.querySelector('.all-bar');
-        const loadMoreButton = document.getElementById('loadMoreButton');
-        const enlargedImage = document.getElementById('enlargedImage');
-        const enlargedImageTitle = document.getElementById('enlargedImageTitle'); 
-        const developerNameLink = document.getElementById('developerNameLink');
-        const telegramLink = 'https://t.me/Soboj0144'; 
-        
-        const cardsPerLoad = 8;
-        let currentIndex = 0;    
-        let allCards;    
-        
-        let savedScrollPosition = 0; 
-        
-        const generatePromptButton = document.getElementById('generatePromptButton');
-        const fullImageView = document.getElementById('fullImageView');
-        const loadingContainer = document.getElementById('loadingContainer');
-        const loadingPercentage = document.getElementById('loadingPercentage');
-        
-        const resultContainer = document.getElementById('resultContainer');
-        const resultBox = document.getElementById('resultBox');
-        
-        // 🔥 নতুন বাটন রেফারেন্স
-        const promptActionButtons = document.getElementById('promptActionButtons'); 
-        const copyButton = document.getElementById('copyButton');
-        const geminiButton = document.getElementById('geminiButton');
-        const chatGPTButton = document.getElementById('chatGPTButton');
-        
-        const defaultPrompt = "Generate a unique and creative image based on the current context.";
-
-        // 🔥 সমাধান #2 এর জন্য নতুন ভেরিয়েবল
-        let isInitialBatchReady = false;
-        let initialBatchLoadedCount = 0;
-
-        function simulateLoading() {
-            generatePromptButton.style.display = 'none';
-            resultContainer.style.display = 'none'; 
-            resultBox.textContent = ''; 
-            
-            // 🔥 বাটনগুলো লুকানো
-            promptActionButtons.style.display = 'none'; 
-            
-            loadingContainer.style.display = 'flex'; 
-            
-            let percentage = 0;
-            loadingPercentage.textContent = '0%';
-
-            const interval = setInterval(() => {
-                if (percentage < 100) {
-                    percentage += 1;
-                    loadingPercentage.textContent = `${percentage}%`;
-                } else {
-                    clearInterval(interval);
-                    loadingContainer.style.display = 'none'; 
-                    resultContainer.style.display = 'flex'; 
-                    startTypingEffect();
-                }
-            }, 30);
-        }
-        
-        let currentPromptText = ''; 
-        let charIndex = 0; 
-        let typingSpeed = 5; 
-        
-        function startTypingEffect() {
-            const currentImageAlt = enlargedImage.alt; 
-            let promptFromImage = defaultPrompt;
-
-            const matchingCard = Array.from(allCards).find(card => {
-                const imgElement = card.querySelector('img');
-                return imgElement && imgElement.alt === currentImageAlt; 
-            });
-
-            if (matchingCard) {
-                promptFromImage = matchingCard.getAttribute('data-prompt');
-            }
-            
-            currentPromptText = promptFromImage;
-            charIndex = 0; 
-            typingSpeed = 5;
-            resultBox.textContent = '';
-            
-            // 🔥 টাইপিং শেষ না হওয়া পর্যন্ত বাটন লুকানো
-            promptActionButtons.style.display = 'none'; 
-            typeNextCharacter();
-        }
-
-        function typeNextCharacter() {
-            if (charIndex < currentPromptText.length) {
-                resultBox.textContent += currentPromptText.charAt(charIndex);
-                charIndex++;
-                resultBox.scrollTop = resultBox.scrollHeight;
-                setTimeout(typeNextCharacter, typingSpeed);
+        const initialHeight = window.innerHeight;
+        window.addEventListener('resize', () => {
+            const currentHeight = window.innerHeight;
+            if (currentHeight < initialHeight * 0.8) {
+                bottomNavbar.style.display = 'none';
             } else {
-                // 🔥 টাইপিং শেষ হলে বাটনগুলো দেখানো
-                promptActionButtons.style.display = 'flex'; 
+                bottomNavbar.style.display = 'grid';
             }
-        }
-
-        function copyText() {
-            const textToCopy = resultBox.textContent.trim();
-            
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                setTimeout(() => {
-                    copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy';
-                }, 1500);
-            }).catch(err => {
-                console.error('Could not copy text: ', err);
-                copyButton.textContent = '❌ Failed';
-                setTimeout(() => {
-                    copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy';
-                }, 1500);
-            });
-        }
-        
-        // 🔥 নতুন জেমিনি ক্লিক হ্যান্ডলার
-        function handleGeminiClick() {
-            const textToCopy = resultBox.textContent.trim();
-            const url = `https://gemini.google.com/?prompt=${encodeURIComponent(textToCopy)}`;
-            window.open(url, '_blank');
-        }
-        
-        // 🔥 নতুন চ্যাটজিপিটি ক্লিক হ্যান্ডলার
-        function handleChatGPTClick() {
-            const textToCopy = resultBox.textContent.trim();
-             // সরাসরি চ্যাটবক্সে প্রম্পট ভরে দেওয়ার কোনো অফিসিয়াল URL নেই, তাই নতুন চ্যাট পেজে নিয়ে যাওয়া হলো।
-            const url = `https://chat.openai.com/chat`;
-            window.open(url, '_blank');
-        }
-        
-        // **পরিবর্তন:** Intersection Observer এ নতুন লজিক যোগ করা হয়েছে।
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animated');
-                } else {
-                    entry.target.classList.remove('animated');
-                }
-            });
-        }, {
-            root: allBar,
-            rootMargin: '0px',
-            threshold: 0.1
         });
-        
-        function updateViewCount(cardWrapper) {
-            savedScrollPosition = allBar.scrollTop;  
-            
-            // 1. Firebase-এ ভিউ কাউন্ট বাড়ানো
-            updateViewCountFirebase(cardWrapper);
 
-            // 2. UI আপডেট করা
-            const cardImage = cardWrapper.querySelector('img');
-            
-            // ✅ আপডেট: data-full-title থেকে সম্পূর্ণ লেখাটি নেওয়া (যা এখন হোমপেজের টাইটেলও)
-            const fullImageTitle = cardWrapper.getAttribute('data-full-title') || cardWrapper.getAttribute('data-title') || 'Title Not Found';
-            
-            enlargedImage.src = cardImage.src;
-            enlargedImageTitle.textContent = fullImageTitle;  // ✅ সম্পূর্ণ টাইটেল সেট করা
-            enlargedImage.alt = cardImage.alt; 
-            
-            // 3. লাইক স্ট্যাটাস লোড করে ফুল ভিউ আইকন আপডেট করা
-            if (likesRef) {
-                const imageId = sanitizeImageId(cardWrapper.getAttribute('data-title'));
-                const likeIconFull = document.querySelector('#likeImageViewBtn .like-icon-full');
-
-                likesRef.child(imageId).child('users').child(USER_ID).once('value', (snapshot) => {
-                    if (snapshot.exists() && snapshot.val() === true) {
-                        likeIconFull.classList.add('fas'); 
-                        likeIconFull.classList.remove('far');
+        // AUTH & SESSION MANAGEMENT
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const lastActive = localStorage.getItem('vault_last_active');
+                const now = Date.now();
+                if (lastActive && (now - parseInt(lastActive)) < SESSION_DURATION) {
+                    proceedToApp(user);
+                } else {
+                    if (!lastActive) {
+                         signOut(auth).then(() => showLoginScreen());
                     } else {
-                        likeIconFull.classList.add('far'); 
-                        likeIconFull.classList.remove('fas');
+                        localStorage.removeItem('vault_last_active');
+                        signOut(auth).then(() => showLoginScreen());
                     }
-                });
-            }
-            
-            body.classList.remove('gallery-active');
-            body.classList.add('image-view-active');
-            
-            loadingContainer.style.display = 'none';
-            resultContainer.style.display = 'none'; 
-            
-            // 🔥 বাটন কনটেইনার লুকানো
-            promptActionButtons.style.display = 'none'; 
-            
-            generatePromptButton.style.display = 'flex'; 
-        }
-
-        function handleCardClick(event) {
-            // যদি ইউজার লাভ কাউন্ট আইকনে ক্লিক করে তবে ইমেজ ভিউ খোলা হবে না, শুধু লাইক টগল হবে।
-            if (event.target.closest('.like-count')) {
-                return;
-            }
-            
-            const cardWrapper = event.currentTarget;  
-            updateViewCount(cardWrapper);
-        }
-
-        function closeImageView() {
-            body.classList.remove('image-view-active');
-            body.classList.add('gallery-active');
-            
-            setTimeout(() => {
-                allBar.scrollTop = savedScrollPosition;
-            }, 10);  
-        }
-        
-        function setupCardClickListener(cards) {
-            cards.forEach(card => {
-                card.removeEventListener('click', handleCardClick);  
-                card.addEventListener('click', handleCardClick);
-            });
-        }
-        
-        function setupLikeListeners() {
-            const likeButtons = document.querySelectorAll('.like-count');
-            likeButtons.forEach(button => {
-                button.removeEventListener('click', handleLikeClickHome);
-                button.addEventListener('click', handleLikeClickHome);
-            });
-        }
-        
-        function handleLikeClickHome(event) {
-            event.stopPropagation(); // কার্ড ক্লিক ইভেন্টকে ব্লক করার জন্য
-            const likeButtonElement = event.currentTarget;
-            toggleLike(likeButtonElement);
-        }
-
-        function loadMoreImages() {
-            if (!allCards || currentIndex >= allCards.length) {
-                loadMoreButton.disabled = true;
-                loadMoreButton.textContent = "No More Images";
-                return;
-            }
-
-            loadMoreButton.disabled = true;
-            loadMoreButton.textContent = "Loading...";
-
-            setTimeout(() => {
-                const endIndex = Math.min(currentIndex + cardsPerLoad, allCards.length);
-
-                for (let i = currentIndex; i < endIndex; i++) {
-                    const card = allCards[i];
-                    loadInitialViews(card);  // loadInitialViews-এর মধ্যে isInitialBatchReady চেক করা হবে
                 }
-
-                currentIndex = endIndex;  
-
-                // নতুন লোড হওয়া কার্ডগুলির জন্য লাইক লিসেনার সেট করা
-                setupLikeListeners();
-
-                if (currentIndex >= allCards.length) {
-                    loadMoreButton.style.display = 'none';
-                } else {
-                    loadMoreButton.disabled = false;
-                    loadMoreButton.textContent = "Load More";
-                }
-            }, 3000);  
-        }
-
-        function setupDeveloperLink() {
-            if (developerNameLink) {
-                developerNameLink.addEventListener('click', (e) => {
-                    e.preventDefault();  
-                    window.open(telegramLink, '_blank');  
-                });
+            } else {
+                showLoginScreen();
             }
-        }
-        
-        function filterImages(searchTerm) {
-            allCards.forEach(card => {
-                // ✅ আপডেট: সার্চ করার সময় data-full-title ব্যবহার করা হয়েছে
-                const fullTitle = card.getAttribute('data-full-title').toLowerCase();
-                const prompt = card.getAttribute('data-prompt').toLowerCase();
-                
-                if (fullTitle.includes(searchTerm) || prompt.includes(searchTerm)) {
-                    card.style.display = 'block';
-                    // অ্যানিমেশন বারবার ট্রিগার করার জন্য এখানে আবার observe করা হলো
-                    if(!card.classList.contains('animated')) {
-                       observer.observe(card);
-                    }
-                } else {
-                    card.style.display = 'none';
-                    observer.unobserve(card);  
-                    card.classList.remove('animated');  
-                }
-            });
-            loadMoreButton.style.display = searchTerm ? 'none' : 'inline-block';
-        }
-
-        // ===============================================
-        // 🚀 PRELOADER LOGIC (FIXED FOR VIDEO FLASH & CONTENT READY)
-        // ===============================================
-        const preloader = document.getElementById('preloader');
-        // 🔥 video-1 রিমুভ করে, video-2 কে এখানে video-1 হিসাবে রাখা হয়েছে 
-        const video1 = document.getElementById('video-1'); 
-        let videosLoaded = 0;
-        
-        const minDisplayTime = 5000; 
-        const startTime = Date.now(); // লোড টাইম শুরু
-        
-        // 🔥 সমাধান #3: সেশন স্টোরেজ কী (Session Storage Key)
-        const PRELOADER_SHOWN_KEY = 'preloader_shown'; 
-
-        /**
-         * 🔥 সমাধান #2: প্রি-লোডার লুকানোর চূড়ান্ত ফাংশন, যা সমস্ত শর্ত পূরণ হলে কল হবে।
-         */
-        function hidePreloader() {
-            // ইতোমধ্যে hidden বা transition শুরু না হলে কাজ করবে
-            if (preloader.classList.contains('preloader-hidden')) return;
-
-            // 🔥 চেক করার জন্য সংখ্যা 2 থেকে 1 এ পরিবর্তন করা হয়েছে
-            if (!(videosLoaded >= 1 && isInitialBatchReady)) return;
-
-            const elapsedTime = Date.now() - startTime;
-            const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
-
-            setTimeout(() => {
-                // 🔥 সমাধান #2: প্রি-লোডার লুকানোর ঠিক আগে কন্টেন্ট দৃশ্যমান করা
-                document.body.classList.remove('initial-hidden'); 
-                
-                preloader.classList.add('preloader-hidden');
-                
-                // 🔥 সমাধান #3: প্রথমবার লোডিং শেষ হলে সেশন স্টোরেজে সেভ করা 
-                sessionStorage.setItem(PRELOADER_SHOWN_KEY, 'true'); 
-                
-                // ট্রানজিশন শেষ হওয়ার পর এলিমেন্টটিকে DOM থেকে সরিয়ে দেওয়া
-                preloader.addEventListener('transitionend', () => {
-                    preloader.style.display = 'none';
-                }, { once: true }); 
-            }, remainingTime);
-        }
-        
-        /**
-         * সমস্ত রেডি শর্ত চেক করার জন্য একটি গেটওয়ে ফাংশন
-         */
-        function checkPreloaderConditions() {
-            hidePreloader(); 
-        }
-
-        function checkVideoLoad() {
-            videosLoaded++;
-            
-            // 🔥 সমাধান #1: ভিডিও লোড হলে Fade In করা
-            if (this) {
-                this.style.opacity = '1';
-            }
-            
-            // 🔥 চেক করার জন্য সংখ্যা 2 থেকে 1 এ পরিবর্তন করা হয়েছে
-            if (videosLoaded >= 1) { 
-                checkPreloaderConditions();
-            }
-        }
-        
-        /**
-         * শুধুমাত্র প্রথম ভিজিটের জন্য ভিডিও এবং ফলব্যাক লোড লিসেনার সেটআপ করে।
-         */
-        function runPreloaderSetup() {
-            // ভিডিও লোড হওয়ার ইভেন্ট লিসেনার সেট করা
-            if (video1) video1.addEventListener('canplaythrough', checkVideoLoad, { once: true });
-            
-            // ফলব্যাক: যদি কোনো কারণে ভিডিও ইভেন্ট ফায়ার না হয়, তাহলে window load-এর পরেও এটি hide হবে।
-            window.addEventListener('load', () => {
-                 // যদি প্রি-লোডার এখনো দৃশ্যমান থাকে
-                if (!preloader.classList.contains('preloader-hidden') && preloader.style.display !== 'none') {
-                     videosLoaded = 1; // 🔥 ফলব্যাক সংখ্যা 2 থেকে 1 এ পরিবর্তন করা হয়েছে
-                     isInitialBatchReady = true; // Assume content ready as fallback
-                     hidePreloader(); 
-                }
-            }, { once: true });
-        }
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            allCards = document.querySelectorAll('.image-card-wrapper');
-            
-            // Common setup (always runs)
-            setupCardClickListener(allCards);  
-            setupDeveloperLink();  
-            
-            // ব্যাক বাটন ক্লিক
-            document.getElementById('closeImageViewBtn').addEventListener('click', closeImageView);
-            
-            // ফুল ভিউ লাইক বাটন ক্লিক
-            document.getElementById('likeImageViewBtn').addEventListener('click', handleLikeClickFullView);
-            
-            if(generatePromptButton) {
-                generatePromptButton.addEventListener('click', simulateLoading);
-            }
-            
-            // 🔥 কপি, জেমিনি, চ্যাটজিপিটি বাটনের জন্য নতুন লিসেনার
-            if(copyButton) {
-                copyButton.addEventListener('click', copyText);
-            }
-            if(geminiButton) {
-                geminiButton.addEventListener('click', handleGeminiClick);
-            }
-            if(chatGPTButton) {
-                chatGPTButton.addEventListener('click', handleChatGPTClick);
-            }
-            
-            const themeToggleIcon = document.getElementById('themeToggleIcon');
-        
-            themeToggleIcon.addEventListener('click', function() {
-                document.body.classList.toggle('light-mode');
-                
-                if (document.body.classList.contains('light-mode')) {
-                    themeToggleIcon.classList.remove('fa-moon');
-                    themeToggleIcon.classList.add('fa-sun');
-                    themeToggleIcon.title = "Toggle Dark Mode";
-                } else {
-                    themeToggleIcon.classList.remove('fa-sun');
-                    themeToggleIcon.classList.add('fa-moon');
-                    themeToggleIcon.title = "Toggle Light Mode";
-                }
-            });
-            
-            const searchInput = document.querySelector('.search-container input');
-            searchInput.addEventListener('input', function() {
-                filterImages(this.value.toLowerCase());
-            });
-            
-            // 🔥 সমাধান #৩: রিলোডে প্রি-লোডার স্কিপ করার লজিক
-            if (sessionStorage.getItem(PRELOADER_SHOWN_KEY) === 'true') {
-                // রিলোড হয়েছে, প্রি-লোডার স্কিপ করে কন্টেন্ট দেখানো
-                preloader.style.display = 'none';
-                document.body.classList.remove('initial-hidden');
-                loadMoreImages(); // কন্টেন্ট লোড করা
-                return; // বাকি প্রি-লোডার লজিক বাদ দেওয়া
-            }
-            
-            // প্রথমবার ভিজিট: প্রি-লোডার সেটআপ চালু করা
-            runPreloaderSetup(); 
-            loadMoreImages(); // কন্টেন্ট লোড করা, যা প্রি-লোডার লুকানোর জন্য isInitialBatchReady আপডেট করবে
         });
+
+        function showLoginScreen() {
+            currentUser = null;
+            startupLoader.style.opacity = '0';
+            setTimeout(() => startupLoader.style.display = 'none', 500);
+            authScreen.classList.remove('hidden');
+            appScreen.classList.add('hidden');
+        }
+
+        function proceedToApp(user) {
+            currentUser = user;
+            localStorage.setItem('vault_last_active', Date.now());
+            startupLoader.style.opacity = '0';
+            setTimeout(() => startupLoader.style.display = 'none', 500);
+            authScreen.classList.add('hidden');
+            appScreen.classList.remove('hidden');
+            document.getElementById('user-email').textContent = user.email;
+            loadProfilePic(user.uid);
+            const savedCat = localStorage.getItem('vault_active_category') || 'dashboard';
+            switchCategory(savedCat);
+            document.addEventListener('visibilitychange', () => {
+                if(document.visibilityState === 'hidden') localStorage.setItem('vault_last_active', Date.now());
+            });
+            setInterval(() => localStorage.setItem('vault_last_active', Date.now()), 60000);
+        }
+
+        function loadProfilePic(uid) {
+            onValue(ref(db, `users/${uid}/profilePic`), (snap) => {
+                const url = snap.val();
+                const settingsAvatar = document.getElementById('settings-avatar');
+                const settingsIcon = document.getElementById('settings-icon');
+                if(url) { settingsAvatar.src = url; settingsAvatar.classList.remove('hidden'); settingsIcon.classList.add('hidden'); } 
+                else { settingsAvatar.classList.add('hidden'); settingsIcon.classList.remove('hidden'); }
+            });
+        }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const btn = loginForm.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner w-4 h-4 border-2"></span>';
+            btn.disabled = true;
+            signInWithEmailAndPassword(auth, email, pass)
+                .then(() => localStorage.setItem('vault_last_active', Date.now()))
+                .catch(err => {
+                    document.getElementById('auth-msg').textContent = "Incorrect email or password.";
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        });
+
+        // --- GLOBAL FUNCTIONS ---
+        window.logout = () => { localStorage.removeItem('vault_last_active'); signOut(auth); };
+
+        window.togglePassVisibility = (el) => {
+            const input = document.getElementById('inp-password');
+            if (input.type === "password") { input.type = "text"; el.classList.remove('fa-eye'); el.classList.add('fa-eye-slash'); } 
+            else { input.type = "password"; el.classList.remove('fa-eye-slash'); el.classList.add('fa-eye'); }
+        };
+
+        // --- VISUAL ASSETS SETTINGS ---
+        window.saveBackground = () => {
+            const url = document.getElementById('custom-bg-input').value;
+            if(url) {
+                document.body.style.backgroundImage = `url('${url}')`;
+                localStorage.setItem('vault_custom_bg', url);
+                showToast("Body BG Updated");
+            }
+        };
+        window.resetBackground = () => {
+            document.body.style.backgroundImage = '';
+            localStorage.removeItem('vault_custom_bg');
+            document.getElementById('custom-bg-input').value = '';
+            showToast("Body BG Reset");
+        };
+
+        window.saveContentBg = () => {
+            const url = document.getElementById('content-bg-input').value;
+            if(url) {
+                const appScreen = document.getElementById('app-screen');
+                appScreen.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.8)), url('${url}')`;
+                appScreen.style.backgroundSize = "cover";
+                appScreen.style.backgroundPosition = "center";
+                localStorage.setItem('vault_content_bg', url);
+                showToast("Content BG Updated");
+            }
+        };
+        window.resetContentBg = () => {
+             const appScreen = document.getElementById('app-screen');
+             appScreen.style.backgroundImage = '';
+             localStorage.removeItem('vault_content_bg');
+             document.getElementById('content-bg-input').value = '';
+             showToast("Content BG Reset");
+        };
+
+        window.saveLogo = () => {
+            const url = document.getElementById('custom-logo-input').value;
+            if(url) {
+                document.getElementById('dynamic-favicon').href = url;
+                localStorage.setItem('vault_custom_logo', url);
+                showToast("Logo Updated");
+            }
+        };
+        window.resetLogo = () => {
+             document.getElementById('dynamic-favicon').href = '';
+             localStorage.removeItem('vault_custom_logo');
+             document.getElementById('custom-logo-input').value = '';
+             showToast("Logo Reset");
+        };
+
+        function resetModalState() {
+            document.querySelectorAll('#entry-form input, #entry-form textarea').forEach(el => el.readOnly = false);
+            document.getElementById('btn-save').classList.remove('hidden');
+            document.getElementById('toggle-pass-btn').classList.remove('hidden');
+            document.querySelectorAll('.modal-copy-btn').forEach(btn => btn.classList.add('hidden'));
+            document.getElementById('inp-password').type = "password";
+            const eyeIcon = document.getElementById('toggle-pass-btn');
+            eyeIcon.classList.remove('fa-eye-slash'); eyeIcon.classList.add('fa-eye');
+        }
+
+        // --- FIXED: OPEN MODAL FUNCTION ---
+        window.openModal = () => {
+            editingId = null; viewingId = null;
+            resetModalState();
+            document.getElementById('entry-form').reset();
+            draftIds.forEach(id => {
+                const savedVal = localStorage.getItem('draft_' + id);
+                if(savedVal) { const el = document.getElementById(id); if(el) el.value = savedVal; }
+            });
+            document.getElementById('modal-title').textContent = "New Entry";
+            const modal = document.getElementById('main-modal');
+            const content = document.getElementById('modal-content');
+            document.getElementById('modal-cat-select').classList.remove('hidden');
+            content.classList.remove('max-w-[340px]', 'p-5');
+            content.classList.add('w-full', 'h-full', 'max-w-none', 'rounded-2xl', 'p-6');
+            modal.classList.remove('hidden');
+            const typeToSet = currentCategory === 'dashboard' ? 'notes' : currentCategory;
+            window.setModalType(typeToSet);
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        };
+
+        window.closeModal = () => {
+            const modal = document.getElementById('main-modal');
+            const content = document.getElementById('modal-content');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); editingId = null; viewingId = null; }, 300);
+        };
+
+        window.setModalType = (type) => {
+            document.querySelectorAll('.modal-cat-btn').forEach(btn => {
+                const txt = btn.textContent.toLowerCase().trim();
+                let match = type;
+                if(type === 'photos') match = 'img';
+                if(type === 'credentials') match = 'user'; 
+                if(type === 'apis') match = 'api';
+                if(txt.includes(match.slice(0,3))) {
+                    btn.classList.remove('bg-slate-800', 'text-slate-400', 'hover:bg-slate-700', 'border-slate-700');
+                    btn.classList.add('bg-[var(--accent-color)]', 'text-white', 'border-transparent', 'shadow-lg');
+                } else {
+                    btn.classList.add('bg-slate-800', 'text-slate-400', 'hover:bg-slate-700', 'border-slate-700');
+                    btn.classList.remove('bg-[var(--accent-color)]', 'text-white', 'border-transparent', 'shadow-lg');
+                }
+            });
+            document.querySelectorAll('.field-group').forEach(grp => {
+                if(grp.dataset.for === type) grp.classList.remove('hidden');
+                else grp.classList.add('hidden');
+            });
+        };
+
+        window.viewItem = (id) => {
+            const item = itemsData[id]; if(!item) return;
+            viewingId = id; editingId = null;
+            const modal = document.getElementById('main-modal');
+            const content = document.getElementById('modal-content');
+            document.getElementById('modal-cat-select').classList.add('hidden');
+            content.classList.remove('max-w-[340px]', 'p-5');
+            content.classList.add('w-full', 'h-full', 'max-w-none', 'rounded-2xl', 'p-6');
+            document.querySelectorAll('#entry-form input, #entry-form textarea').forEach(el => el.readOnly = true);
+            document.getElementById('btn-save').classList.add('hidden');
+            document.getElementById('toggle-pass-btn').classList.add('hidden');
+            document.getElementById('inp-password').type = "text"; 
+            document.querySelectorAll('.modal-copy-btn').forEach(btn => btn.classList.remove('hidden'));
+            document.getElementById('modal-title').textContent = "View Entry";
+            document.getElementById('entry-id').value = id;
+            document.getElementById('inp-title').value = item.title || "";
+            window.setModalType(currentCategory);
+            
+            if(currentCategory === 'notes') document.getElementById('inp-content').value = item.content || "";
+            else if(currentCategory === 'apis') {
+                document.getElementById('inp-api-url').value = item.apiUrl || "";
+                document.getElementById('inp-api-email').value = item.apiEmail || "";
+                document.getElementById('inp-api-key').value = item.apiKey || "";
+            }
+            else if(currentCategory === 'links') document.getElementById('inp-url').value = item.url || "";
+            else if(currentCategory === 'photos') document.getElementById('inp-img-url').value = item.imgUrl || "";
+            else if(currentCategory === 'credentials') {
+                document.getElementById('inp-username').value = item.username || "";
+                document.getElementById('inp-password').value = item.password || "";
+                document.getElementById('inp-cred-url').value = item.url || "";
+            }
+            modal.classList.remove('hidden');
+            setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
+        };
+
+        window.editItem = (id) => {
+            const item = itemsData[id]; if(!item) return;
+            resetModalState(); 
+            const modal = document.getElementById('main-modal');
+            const content = document.getElementById('modal-content');
+            document.getElementById('modal-cat-select').classList.add('hidden');
+            content.classList.remove('max-w-[340px]', 'p-5');
+            content.classList.add('w-full', 'h-full', 'max-w-none', 'rounded-2xl', 'p-6'); 
+            modal.classList.remove('hidden');
+            setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
+            editingId = id; viewingId = null;
+            document.getElementById('modal-title').textContent = "Edit Entry";
+            document.getElementById('entry-id').value = id;
+            document.getElementById('inp-title').value = item.title || "";
+            window.setModalType(currentCategory);
+            
+            if(currentCategory === 'notes') document.getElementById('inp-content').value = item.content || "";
+            else if(currentCategory === 'apis') {
+                document.getElementById('inp-api-url').value = item.apiUrl || "";
+                document.getElementById('inp-api-email').value = item.apiEmail || "";
+                document.getElementById('inp-api-key').value = item.apiKey || "";
+            }
+            else if(currentCategory === 'links') document.getElementById('inp-url').value = item.url || "";
+            else if(currentCategory === 'photos') document.getElementById('inp-img-url').value = item.imgUrl || "";
+            else if(currentCategory === 'credentials') {
+                document.getElementById('inp-username').value = item.username || "";
+                document.getElementById('inp-password').value = item.password || "";
+                document.getElementById('inp-cred-url').value = item.url || "";
+            }
+        };
+
+        window.deleteItem = async (id) => {
+            if(confirm('Are you sure you want to delete this item?')) {
+                try { await remove(ref(db, `users/${currentUser.uid}/${currentCategory}/${id}`)); showToast('Item deleted'); } catch(e) { alert(e.message); }
+            }
+        };
+
+        window.copyFromId = (id) => { const el = document.getElementById(id); if(el) copyToClip(el.value); };
+
+        window.switchCategory = (cat) => {
+            currentCategory = cat;
+            localStorage.setItem('vault_active_category', cat);
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = ''; 
+            
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                const txt = btn.textContent.toLowerCase().trim();
+                let match = cat;
+                if(cat === 'dashboard') match = 'home';
+                if(cat === 'photos') match = 'img';
+                if(cat === 'credentials') match = 'user'; 
+                if(cat === 'apis') match = 'api';
+                if(cat === 'links') match = 'link';
+                if(cat === 'notes') match = 'note';
+                
+                btn.classList.remove('bg-[var(--accent-color)]', 'text-white', 'shadow-lg');
+                btn.classList.add('text-slate-400');
+                btn.style.backgroundColor = '';
+                
+                if(txt.includes(match)) {
+                    btn.classList.remove('dynamic-bg');
+                    btn.classList.add('bg-[var(--accent-color)]', 'text-white', 'shadow-lg');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    btn.classList.add('dynamic-bg');
+                }
+            });
+
+            const dashboard = document.getElementById('dashboard-view');
+            const listHeader = document.getElementById('list-header');
+            const contentGrid = document.getElementById('content-grid');
+            const emptyState = document.getElementById('empty-state');
+            if(cat === 'dashboard') {
+                dashboard.classList.remove('hidden');
+                listHeader.classList.add('hidden');
+                contentGrid.classList.add('hidden');
+                emptyState.classList.add('hidden');
+                searchInput.disabled = false; 
+                searchInput.style.opacity = "1";
+                loadDashboardStats();
+            } else {
+                dashboard.classList.add('hidden');
+                listHeader.classList.remove('hidden');
+                searchInput.disabled = false;
+                searchInput.style.opacity = "1";
+                document.getElementById('page-title').textContent = cat === 'apis' ? 'API Store' : cat;
+                loadData();
+            }
+        };
+
+        function formatBytes(bytes, decimals = 2) {
+            if (!+bytes) return '0 KB';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['KB', 'MB', 'GB', 'TB'];
+            if(bytes < 1024) return (bytes / 1024).toFixed(3) + " KB";
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            const sizesFull = ['Bytes', 'KB', 'MB', 'GB'];
+            const iFull = Math.floor(Math.log(bytes) / Math.log(k));
+            return `${parseFloat((bytes / Math.pow(k, iFull)).toFixed(dm))} ${sizesFull[iFull]}`;
+        }
+
+        function calculateObjectSize(obj, type) {
+            let str = "";
+            if(!obj) return 0;
+            if (type === 'notes') str = (obj.title||"") + (obj.content||"");
+            else if (type === 'links') str = (obj.title||"") + (obj.url||"");
+            else if (type === 'photos') str = (obj.title||"") + (obj.imgUrl||"");
+            else if (type === 'credentials') str = (obj.title||"") + (obj.username||"") + (obj.password||"") + (obj.url||"");
+            else if (type === 'apis') str = (obj.title||"") + (obj.apiUrl||"") + (obj.apiKey||"") + (obj.apiEmail||"");
+            return new Blob([str]).size;
+        }
+
+        function loadDashboardStats() {
+            if(!currentUser) return;
+            const refAll = ref(db, `users/${currentUser.uid}`);
+            onValue(refAll, (snap) => {
+                const data = snap.val() || {};
+                document.getElementById('count-notes').textContent = data.notes ? Object.keys(data.notes).length : 0;
+                document.getElementById('count-links').textContent = data.links ? Object.keys(data.links).length : 0;
+                document.getElementById('count-photos').textContent = data.photos ? Object.keys(data.photos).length : 0;
+                document.getElementById('count-credentials').textContent = data.credentials ? Object.keys(data.credentials).length : 0;
+                document.getElementById('count-apis').textContent = data.apis ? Object.keys(data.apis).length : 0;
+
+                let totalBytes = 0;
+                let notesBytes = 0; Object.values(data.notes || {}).forEach(i => notesBytes += calculateObjectSize(i, 'notes')); document.getElementById('size-notes').textContent = formatBytes(notesBytes); totalBytes += notesBytes;
+                let linksBytes = 0; Object.values(data.links || {}).forEach(i => linksBytes += calculateObjectSize(i, 'links')); document.getElementById('size-links').textContent = formatBytes(linksBytes); totalBytes += linksBytes;
+                let photosBytes = 0; Object.values(data.photos || {}).forEach(i => photosBytes += calculateObjectSize(i, 'photos')); document.getElementById('size-photos').textContent = formatBytes(photosBytes); totalBytes += photosBytes;
+                let credsBytes = 0; Object.values(data.credentials || {}).forEach(i => credsBytes += calculateObjectSize(i, 'credentials')); document.getElementById('size-credentials').textContent = formatBytes(credsBytes); totalBytes += credsBytes;
+                let apisBytes = 0; Object.values(data.apis || {}).forEach(i => apisBytes += calculateObjectSize(i, 'apis')); document.getElementById('size-apis').textContent = formatBytes(apisBytes); totalBytes += apisBytes;
+
+                document.getElementById('total-storage').textContent = formatBytes(totalBytes);
+            });
+        }
+
+        window.toggleSettings = () => {
+            const panel = document.getElementById('settings-panel');
+            const backdrop = document.getElementById('settings-backdrop');
+            if (panel.classList.contains('open')) {
+                panel.classList.remove('open');
+                backdrop.classList.add('hidden');
+            } else {
+                panel.classList.add('open');
+                backdrop.classList.remove('hidden');
+            }
+        };
+
+        window.toggleView = (mode) => {
+            const grid = document.getElementById('content-grid');
+            if(mode === 'list') { grid.classList.remove('grid-cols-2'); grid.classList.add('grid-cols-1'); }
+            else { grid.classList.add('grid-cols-2'); grid.classList.remove('grid-cols-1'); }
+        };
+
+        function loadData() {
+            if (!currentUser || currentCategory === 'dashboard') return;
+            document.getElementById('loader-state').classList.remove('hidden');
+            document.getElementById('content-grid').classList.add('hidden');
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('item-count').textContent = 'Syncing...';
+            const dataRef = ref(db, `users/${currentUser.uid}/${currentCategory}`);
+            onValue(dataRef, (snapshot) => {
+                const grid = document.getElementById('content-grid');
+                grid.innerHTML = '';
+                itemsData = snapshot.val() || {};
+                const itemsArray = Object.entries(itemsData).map(([key, val]) => ({id: key, ...val}));
+                itemsArray.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                
+                let catTotalBytes = 0;
+                itemsArray.forEach(i => catTotalBytes += calculateObjectSize(i, currentCategory));
+                
+                const query = document.getElementById('search-input').value.toLowerCase();
+                const filtered = itemsArray.filter(i => (i.title || "Untitled").toLowerCase().includes(query));
+                
+                document.getElementById('loader-state').classList.add('hidden');
+                document.getElementById('item-count').innerHTML = `${filtered.length} entries <span class="ml-2 px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/20 text-[9px]">${formatBytes(catTotalBytes)}</span>`;
+                
+                if (filtered.length === 0) {
+                    document.getElementById('content-grid').classList.add('hidden');
+                    document.getElementById('empty-state').classList.remove('hidden');
+                } else {
+                    document.getElementById('empty-state').classList.add('hidden');
+                    document.getElementById('content-grid').classList.remove('hidden');
+                    filtered.forEach(item => grid.appendChild(createCard(item)));
+                }
+            });
+        }
+
+        function createCard(item) {
+            const div = document.createElement('div');
+            const safe = (txt) => (txt || "").replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+            const titleSafe = safe(item.title);
+            let catName = currentCategory;
+            if(catName === 'credentials') catName = 'User';
+            if(catName === 'photos') catName = 'Image';
+            if(catName === 'links') catName = 'Link';
+            if(catName === 'notes') catName = 'Note';
+            if(catName === 'apis') catName = 'API';
+            const displayTitle = item.title ? item.title : `Untitled ${catName}`;
+            
+            div.className = "glass-card p-4 rounded-xl flex flex-col h-full relative group cursor-pointer active:scale-[0.98]";
+            div.onclick = (e) => { if(e.target.closest('button')) return; viewItem(item.id); };
+            
+            const bytes = calculateObjectSize(item, currentCategory);
+            const sizeStr = formatBytes(bytes);
+            const sizeInfo = `<span class="ml-2 px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/20 text-[8px] text-emerald-400 font-mono tracking-tight shrink-0 select-none">${sizeStr}</span>`;
+
+            const header = `<div class="flex justify-between items-start mb-3"><div class="flex items-center gap-2 overflow-hidden pr-2 w-full"><i class="fa-solid fa-folder-open text-[var(--accent-color)] opacity-70 text-xs shrink-0"></i><div class="flex items-center overflow-hidden flex-1"><h3 class="font-bold text-sm text-slate-100 truncate cursor-text select-text ${!item.title ? 'italic text-slate-500' : ''}">${displayTitle}</h3>${sizeInfo}</div><button onclick="event.stopPropagation(); copyToClip('${titleSafe}')" class="text-slate-500 hover:text-white transition px-2 shrink-0"><i class="fa-regular fa-copy text-xs"></i></button></div></div>`;
+            const dateStr = new Date(item.createdAt).toLocaleDateString('en-US');
+            const footer = `<div class="mt-auto pt-3 border-t border-white/5 flex justify-between items-center"><p class="text-[10px] text-sky-400 font-bold tracking-wider">${dateStr}</p><div class="flex gap-3"><button onclick="event.stopPropagation(); editItem('${item.id}')" class="text-blue-400 hover:text-blue-300 transition text-base p-1"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="text-rose-400 hover:text-rose-300 transition text-base p-1"><i class="fa-solid fa-trash"></i></button></div></div>`;
+
+            let bodyHtml = '';
+            if (currentCategory === 'notes') { bodyHtml = `<div class="relative group/content mb-2 pointer-events-none"><div class="text-xs text-slate-300 whitespace-pre-wrap font-mono line-clamp-6 leading-relaxed bg-slate-900/30 p-2 rounded-lg border border-white/5 pr-6">${item.content || ''}</div></div>`; } 
+            else if (currentCategory === 'apis') {
+                const emailHtml = item.apiEmail ? `<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 mb-2"><span class="text-[9px] text-slate-500 uppercase font-bold block">Email</span><span class="font-mono text-xs text-indigo-300 truncate block">${item.apiEmail}</span></div>` : '';
+                bodyHtml = `<div class="space-y-2 mb-2 pointer-events-none">${emailHtml}<div class="bg-slate-900/50 p-2 rounded border border-white/5 relative group/url"><p class="text-[10px] text-slate-500 uppercase font-bold mb-0.5">Key/Token Preview</p><div class="text-[10px] font-mono text-cyan-300 break-all pr-5 line-clamp-2">${item.apiKey ? item.apiKey.substring(0,20)+'...' : 'No Key'}</div></div></div>`;
+            } else if (currentCategory === 'links') { bodyHtml = `<div class="relative mb-2"><div class="flex items-center gap-2 bg-slate-900/30 p-2 rounded border border-white/5"><i class="fa-solid fa-link text-xs text-slate-500"></i><span class="text-[10px] text-indigo-300 truncate flex-1">${item.url}</span></div></div>`; } 
+            else if (currentCategory === 'photos') { bodyHtml = `<div class="relative group/img aspect-video bg-slate-900 rounded-lg overflow-hidden mb-2 border border-white/10 shadow-inner pointer-events-none"><img src="${item.imgUrl}" onerror="this.src='https://placehold.co/600x400/1e293b/FFF?text=Image+Broken'" class="w-full h-full object-cover"></div>`; } 
+            else if (currentCategory === 'credentials') {
+                const urlHtml = item.url ? `<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 mb-2"><span class="text-[9px] text-slate-500 uppercase font-bold block">Site</span><span class="font-mono text-xs text-indigo-300 truncate block">${item.url}</span></div>` : '';
+                bodyHtml = `<div class="text-sm mb-2 pointer-events-none">${urlHtml}<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 flex items-center justify-between"><div><span class="text-[9px] text-slate-500 uppercase font-bold block">User</span><span class="font-mono text-xs text-slate-300">${item.username}</span></div></div></div>`;
+            }
+            div.innerHTML = header + bodyHtml + footer; return div;
+        }
+
+        window.setCustomColor = (type) => {
+            const val = prompt("Enter Color Code (Hex or RGBA):", "#000000"); if(!val) return;
+            if(type === 'accent') setAccent(val); else if(type === 'card') setCardBg(val);
+            else if(type === 'main') { let glassVal = val; if(val.startsWith('#') && val.length === 7) glassVal = val + 'E6'; setGlassBg(glassVal, val); }
+        }
+
+        window.toggleDropdown = (contentId, iconId) => {
+            const content = document.getElementById(contentId); const icon = document.getElementById(iconId);
+            if(content.classList.contains('open')) { content.classList.remove('open'); icon.classList.remove('open'); } 
+            else { content.classList.add('open'); icon.classList.add('open'); }
+        };
+
+        window.backupData = async () => { if(!currentUser) return; const snap = await get(ref(db, `users/${currentUser.uid}`)); const data = snap.val(); if(!data) return showToast("No data"); const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data)); a.download = "backup.json"; a.click(); };
+        
+        const draftIds = ['inp-title', 'inp-content', 'inp-api-url', 'inp-api-email', 'inp-api-key', 'inp-url', 'inp-img-url', 'inp-cred-url', 'inp-username', 'inp-password'];
+        draftIds.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) { el.addEventListener('input', (e) => { if(!editingId && !viewingId) localStorage.setItem('draft_' + id, e.target.value); }); }
+        });
+        function clearDrafts() { draftIds.forEach(id => localStorage.removeItem('draft_' + id)); }
+
+        document.getElementById('entry-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); if(viewingId) return;
+            let activeCat = currentCategory === 'dashboard' ? 'notes' : currentCategory;
+            if(!editingId) {
+                document.querySelectorAll('.modal-cat-btn').forEach(btn => { 
+                    if(btn.classList.contains('bg-[var(--accent-color)]')) { 
+                        const txt = btn.textContent.trim().toLowerCase(); 
+                        if(txt.includes('note')) activeCat = 'notes'; else if(txt.includes('link')) activeCat = 'links'; else if(txt.includes('img')) activeCat = 'photos'; else if(txt.includes('user')) activeCat = 'credentials'; else if(txt.includes('api')) activeCat = 'apis'; 
+                    } 
+                });
+            } else { activeCat = currentCategory; }
+            const payload = { title: document.getElementById('inp-title').value.trim(), createdAt: editingId ? (itemsData[editingId]?.createdAt || Date.now()) : Date.now() };
+            if(activeCat === 'notes') payload.content = document.getElementById('inp-content').value;
+            else if(activeCat === 'apis') { payload.apiUrl = document.getElementById('inp-api-url').value; payload.apiEmail = document.getElementById('inp-api-email').value; payload.apiKey = document.getElementById('inp-api-key').value; }
+            else if(activeCat === 'links') { payload.url = document.getElementById('inp-url').value; }
+            else if(activeCat === 'photos') { payload.imgUrl = document.getElementById('inp-img-url').value; }
+            else if(activeCat === 'credentials') { payload.username = document.getElementById('inp-username').value; payload.password = document.getElementById('inp-password').value; payload.url = document.getElementById('inp-cred-url').value; }
+
+            try {
+                if (editingId) await update(ref(db, `users/${currentUser.uid}/${activeCat}/${editingId}`), payload);
+                else await push(ref(db, `users/${currentUser.uid}/${activeCat}`), payload);
+                if(!editingId) clearDrafts();
+                closeModal(); showToast('Saved');
+                if(activeCat !== currentCategory && currentCategory !== 'dashboard') switchCategory(activeCat);
+                if(currentCategory === 'dashboard') loadDashboardStats();
+            } catch (err) { alert(err.message); }
+        });
+
+        window.setAccent = (c) => { document.documentElement.style.setProperty('--accent-color', c); localStorage.setItem('vault_accent', c); if(currentCategory !== 'dashboard') loadData(); };
+        const savedAccent = localStorage.getItem('vault_accent'); if(savedAccent) setAccent(savedAccent);
+        window.setGlassBg = (rgba, hex) => { document.documentElement.style.setProperty('--glass-bg', rgba); document.documentElement.style.setProperty('--main-bg', hex); localStorage.setItem('vault_glass_bg', rgba); localStorage.setItem('vault_main_bg', hex); };
+        const savedGlass = localStorage.getItem('vault_glass_bg'); const savedMain = localStorage.getItem('vault_main_bg'); if(savedGlass && savedMain) window.setGlassBg(savedGlass, savedMain);
+        window.setCardBg = (rgba) => { document.documentElement.style.setProperty('--card-bg', rgba); localStorage.setItem('vault_card_bg', rgba); };
+        const savedCardBg = localStorage.getItem('vault_card_bg'); if(savedCardBg) window.setCardBg(savedCardBg);
     </script>
 </body>
 </html>
