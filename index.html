@@ -8,22 +8,16 @@
     <!-- 1. TITLE TAG -->
     <title></title>
 
-    <!-- 2. INSTANT CONFIG LOADER (CRITICAL: Makes your saved settings the DEFAULT immediately) -->
+    <!-- 2. INSTANT CONFIG LOADER -->
     <script>
         (function() {
             // Load Title Immediately
             const savedTitle = localStorage.getItem('vault_site_title');
             if (savedTitle) {
                 document.title = savedTitle;
-            } else {
-                document.title = "Private Vault"; // System Default
             }
 
-            // Load Header Name Logic for Logo
-            const savedHeader = localStorage.getItem('vault_header_name');
-            // We can't set innerHTML her easily without DOM, but we set CSS variables below
-
-            // Load Colors Immediately from LocalStorage
+            // Load Colors Immediately (Local Cache)
             const root = document.documentElement;
             const savedAccent = localStorage.getItem('vault_accent');
             const savedGlass = localStorage.getItem('vault_glass_bg');
@@ -65,7 +59,6 @@
 
     <style>
         :root {
-            /* System Defaults (Used only if nothing is saved) */
             --accent-color: #6366f1;
             --glass-bg: rgba(15, 23, 42, 0.95);
             --main-bg: #0f172a;
@@ -84,7 +77,7 @@
             height: 100%;
             overflow: hidden;
             font-family: 'Inter', sans-serif;
-            background-color: var(--main-bg); /* Use var for immediate bg color */
+            background-color: #000;
             touch-action: pan-x pan-y;
             -webkit-user-select: none;
             user-select: none;
@@ -250,12 +243,12 @@
             border-radius: 10px;
         }
 
-        /* FIXED ICON LOADER - SOLID BACKGROUND */
+        /* FIXED ICON LOADER */
         #startup-loader {
             position: fixed;
             inset: 0;
             z-index: 9999;
-            background: #020617; /* Matches default dark theme */
+            background: #020617;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -586,7 +579,7 @@
                         </div>
                     </div>
 
-                    <!-- Config Input Groups (UPDATED LOGIC) -->
+                    <!-- Config Input Groups (UPDATED SAVE/DELETE LOGIC) -->
                     <div class="settings-item space-y-2">
                         <!-- Header Name -->
                         <div>
@@ -926,7 +919,7 @@
         let viewMode = 'grid';
         let editingId = null;
         let viewingId = null;
-        let isAppReady = false; 
+        let isAppReady = false; // Flag to hold loader until sync completes
 
         let activeColors = {
             accent: localStorage.getItem('vault_accent') || '#6366f1',
@@ -998,6 +991,7 @@
         }
 
         function initAppConfig() {
+            // Initial Local Load (Fast)
             const savedBg = localStorage.getItem('vault_custom_bg');
             if (savedBg) document.getElementById('global-background').style.backgroundImage = `url('${savedBg}')`;
 
@@ -1018,6 +1012,7 @@
             const savedHeaderName = localStorage.getItem('vault_header_name');
             updateHeaderName(savedHeaderName);
 
+            // Mark initial active colors
             markActiveDoll('accent-group', activeColors.accent);
             markActiveDoll('main-group', activeColors.main);
             markActiveDoll('card-group', activeColors.card);
@@ -1053,11 +1048,12 @@
             }
         });
 
-        // --- AUTH & SESSION ---
+        // --- AUTH & SESSION (UPDATED LOGIC FOR LOADER) ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const lastActive = localStorage.getItem('vault_last_active');
                 const now = Date.now();
+                // Check session (5 mins)
                 if (lastActive && (now - parseInt(lastActive)) < SESSION_DURATION) {
                     proceedToApp(user);
                 } else {
@@ -1075,9 +1071,10 @@
 
         function showLoginScreen() {
             currentUser = null;
-            // Hide Loader IMMEDIATELY if we are showing login screen
+            // Hide Loader IMMEDIATELY if showing login screen
             startupLoader.style.opacity = '0';
             setTimeout(() => startupLoader.style.display = 'none', 500);
+            
             authScreen.classList.remove('hidden');
             appScreen.classList.add('hidden');
         }
@@ -1114,7 +1111,13 @@
                 // Helper to set input and button state
                 const setInputState = (key, val) => {
                     const inp = document.getElementById(`${key}-input`);
-                    const btn = document.getElementById(`btn-${key.replace('-name','').replace('site-','').replace('content-bg','wallpaper').replace('favicon','favicon')}`); 
+                    let btnId = `btn-${key}`;
+                    // Fix mapping for button IDs
+                    if(key === 'header-name') btnId = 'btn-header';
+                    if(key === 'site-title') btnId = 'btn-title';
+                    if(key === 'content-bg') btnId = 'btn-wallpaper';
+                    
+                    const btn = document.getElementById(btnId); 
                     
                     if(val) {
                         inp.value = val;
@@ -1194,22 +1197,26 @@
                     setInputState('content-bg', null);
                 }
                 
-                // Hide Loader AFTER data is synced (First time only)
+                // --- KEY LOGIC: Hide Loader AFTER data is synced ---
                 if (!isAppReady) {
-                    startupLoader.style.opacity = '0';
-                    setTimeout(() => startupLoader.style.display = 'none', 500);
-                    isAppReady = true;
+                    setTimeout(() => {
+                        startupLoader.style.opacity = '0';
+                        setTimeout(() => {
+                            startupLoader.style.display = 'none';
+                            isAppReady = true;
+                        }, 500);
+                    }, 100); // Slight delay to ensure paint
                 }
             });
             
-            // Fallback: If no data exists or network fails, hide loader after 3s
+            // Fallback: If no data exists or network fails, hide loader after 5s
             setTimeout(() => {
                 if (!isAppReady) {
                     startupLoader.style.opacity = '0';
                     setTimeout(() => startupLoader.style.display = 'none', 500);
                     isAppReady = true;
                 }
-            }, 3000); 
+            }, 5000); 
         }
 
         function loadProfilePic(uid) {
@@ -1236,7 +1243,7 @@
             activeColors.accent = c;
             markActiveDoll('accent-group', c);
             
-            // 2. Save Local (Instant Default)
+            // 2. Save Local
             localStorage.setItem('vault_accent', c);
             
             // 3. Save to Cloud
@@ -1244,6 +1251,7 @@
                 update(ref(db, `users/${currentUser.uid}/settings`), { accent: c });
             }
             
+            // 4. Update Dependent Components
             if (currentCategory !== 'dashboard') loadData();
             const savedName = localStorage.getItem('vault_header_name');
             updateHeaderName(savedName);
@@ -1255,7 +1263,6 @@
             activeColors.main = hex; 
             markActiveDoll('main-group', hex);
             
-            // Save Local (Instant Default)
             localStorage.setItem('vault_glass_bg', rgba);
             localStorage.setItem('vault_main_bg', hex);
 
@@ -1269,7 +1276,6 @@
             activeColors.card = rgba;
             markActiveDoll('card-group', rgba);
             
-            // Save Local (Instant Default)
             localStorage.setItem('vault_card_bg', rgba);
 
             if (currentUser) {
@@ -1281,8 +1287,10 @@
 
         window.resetToSaveMode = (type) => {
             // When user types, revert icon to CHECK (Save)
-            const btn = document.getElementById(`btn-${type}`);
-            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            let btnId = `btn-${type}`;
+            if(type === 'header-name') btnId = 'btn-header'; // safety check
+            const btn = document.getElementById(btnId);
+            if(btn) btn.innerHTML = '<i class="fa-solid fa-check"></i>';
         };
 
         window.handleSetting = (type) => {
@@ -1292,32 +1300,28 @@
             const iconClass = btn.querySelector('i').className;
             
             // Determine Input ID and DB Key
-            let inputId, dbKey, storageKey;
-            if(type === 'header') { inputId = 'header-name-input'; dbKey = 'headerName'; storageKey = 'vault_header_name'; }
-            if(type === 'title') { inputId = 'site-title-input'; dbKey = 'siteTitle'; storageKey = 'vault_site_title'; }
-            if(type === 'favicon') { inputId = 'favicon-input'; dbKey = 'favicon'; storageKey = 'vault_custom_favicon'; }
-            if(type === 'wallpaper') { inputId = 'content-bg-input'; dbKey = 'wallpaper'; storageKey = 'vault_content_bg'; }
+            let inputId, dbKey;
+            if(type === 'header') { inputId = 'header-name-input'; dbKey = 'headerName'; }
+            if(type === 'title') { inputId = 'site-title-input'; dbKey = 'siteTitle'; }
+            if(type === 'favicon') { inputId = 'favicon-input'; dbKey = 'favicon'; }
+            if(type === 'wallpaper') { inputId = 'content-bg-input'; dbKey = 'wallpaper'; }
             
             const val = document.getElementById(inputId).value.trim();
 
             if (iconClass.includes('fa-check')) {
                 // SAVE ACTION
                 if(val) {
-                    // Update Local (Instant Default)
-                    localStorage.setItem(storageKey, val);
                     update(ref(db, `users/${currentUser.uid}/settings`), { [dbKey]: val });
                     showToast("Saved");
                     btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
                 } else {
                     // Trying to save empty? Just clear it.
-                    localStorage.removeItem(storageKey);
                     update(ref(db, `users/${currentUser.uid}/settings`), { [dbKey]: null });
                     showToast("Reset");
                 }
             } else {
                 // DELETE ACTION (Cross Clicked)
                 update(ref(db, `users/${currentUser.uid}/settings`), { [dbKey]: null });
-                localStorage.removeItem(storageKey);
                 document.getElementById(inputId).value = ""; // Clear Input
                 showToast("Removed");
                 btn.innerHTML = '<i class="fa-solid fa-check"></i>'; // Ready to save again
@@ -1926,4 +1930,5 @@
         };
     </script>
 </body>
+
 </html>
