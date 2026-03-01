@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Admin Panel</title>
+  
+  <link rel="icon" type="image/png" id="adminFavicon" href=""/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  
+  <!-- ALL FONTS -->
+  <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Bangers&family=Bebas+Neue&family=Cinzel:wght@400;700&family=Creepster&family=Dancing+Script:wght@400;700&family=Lobster&family=Monoton&family=Orbitron:wght@400;700;900&family=Oswald:wght@400;700&family=Poppins:wght@300;400;600&family=Rajdhani:wght@400;600;700&family=Rock+Salt&family=Satisfy&display=swap" rel="stylesheet"/>
+  
+  <style>
+    :root { --main: #00f2ff; --bg: #050505; --glass: rgba(20,20,20,0.8); --border: rgba(255,255,255,0.1); }
+    
+    * { margin:0; padding:0; box-sizing:border-box; outline:none; font-family: 'Rajdhani', sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
+    img { max-width: 100%; height: auto; display: block; }
+    input, textarea, select { -webkit-user-select: text !important; user-select: text !important; }
+    html, body { touch-action: pan-x pan-y; overflow-x: hidden; background-color: var(--bg); background-size: cover; background-position: center; background-attachment: fixed; color: #fff; padding-bottom: 80px; transition: background 0.3s; }
+
+    /* LOADER */
+    #loaderOverlay { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--main); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; box-shadow: 0 0 10px var(--main); }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* LOGIN */
+    #loginOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+    .login-box { width: 90%; max-width: 320px; padding: 40px 25px; background: rgba(10,10,10,0.9); border: 1px solid var(--border); border-radius: 15px; text-align: center; box-shadow: 0 0 30px rgba(0,242,255,0.15); }
+    .login-logo { width: 80px !important; height: 80px !important; border-radius: 50%; margin: 0 auto 20px auto; border: 2px solid var(--main); padding: 4px; object-fit: cover; }
+    .login-input { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid #333; color: var(--main); text-align: center; margin: 20px 0; border-radius: 8px; font-size: 1.1rem; letter-spacing: 3px; font-weight: bold; }
+
+    /* HEADER */
+    header { background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); padding: 12px 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .admin-logo { width: 40px !important; height: 40px !important; border-radius: 50%; object-fit: cover; border: 2px solid var(--main); }
+    .admin-title { font-size: 1.2rem; color: #fff; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+    .settings-btn { font-size: 1.4rem; color: var(--main); cursor: pointer; transition: 0.3s; }
+    
+    .container { padding: 15px; max-width: 100%; margin: 0 auto; }
+    
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    .stat-card { background: rgba(255,255,255,0.03); padding: 20px 10px; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3); overflow: hidden; }
+    .stat-icon { font-size: 1.8rem; color: rgba(255,255,255,0.2); margin-bottom: 5px; }
+    .stat-num { font-size: 2rem; font-weight: 700; color: #fff; line-height: 1.1; text-shadow: 0 0 10px rgba(0, 242, 255, 0.4); }
+    .stat-label { font-size: 0.65rem; color: var(--main); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; font-weight: bold; text-align: center; }
+
+    /* TABS & INPUTS */
+    .tab-section { display: none; animation: fadeIn 0.3s ease; }
+    .tab-section.active { display: block; }
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+    
+    .field-group { margin-bottom: 12px; }
+    .label { font-size: 0.7rem; color: var(--main); margin-bottom: 5px; display: block; font-weight: 700; text-transform: uppercase; }
+    .input-box { display: flex; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid #333; border-radius: 6px; overflow: hidden; }
+    .icon-box { width: 35px; height: 38px; display: flex; align-items: center; justify-content: center; color: #666; border-right: 1px solid #333; font-size: 0.9rem; }
+    
+    /* DROPDOWN FIX FOR VISIBILITY */
+    input, textarea, select { width: 100%; background: transparent; border: none; color: #fff; padding: 0 10px; font-size: 0.9rem; height: 38px; appearance: none; -webkit-appearance: none; }
+    select { background: rgba(0,0,0,0.3); color: #fff; cursor: pointer; }
+    select option { background: #000; color: #fff; padding: 10px; }
+
+    .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 15px; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .btn-save { background: var(--main); color: #000; }
+    .btn-add { background: linear-gradient(45deg, #00ff88, #00cc6a); color: #000; }
+    .btn-del { background: #ff3333; color: #fff; box-shadow: 0 0 10px rgba(255, 51, 51, 0.3); }
+    .btn-upd { background: #ff00e5; color: #fff; display: none; }
+    .btn-reset { background: #222; border: 1px solid #ff3333; color: #ff3333; margin-top:5px; }
+
+    .list-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 10px; margin-top: 8px; border-radius: 6px; border: 1px solid var(--border); }
+    .list-actions { display: flex; gap: 5px; }
+    .btn-icon { width: 32px; height: 32px; border: 1px solid #333; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition:0.2s; }
+    .btn-icon:hover { background: #333; }
+    .btn-icon.playing { background: var(--main); color: #000 !important; box-shadow: 0 0 10px var(--main); } 
+    
+    .compact-box { background: rgba(15,15,15,0.5); border-radius: 10px; padding: 15px; margin-bottom: 20px; border: 1px solid var(--border); }
+    .box-title { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #888; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; border-left: 3px solid var(--main); padding-left: 8px; }
+    
+    .source-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 0.8rem; }
+    .link-icon-mini { width: 16px; height: 16px; object-fit: contain; border-radius: 2px; margin-right:5px; }
+    .source-name { color: #ccc; width: 60%; display: flex; align-items: center; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .source-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 0 10px; overflow: hidden; }
+    .source-fill { height: 100%; background: var(--main); border-radius: 3px; }
+    .source-count { color: #fff; width: 15%; text-align: right; font-weight: bold; }
+
+    /* SIDE PANEL */
+    .side-panel { position: fixed; top: 0; right: -320px; width: 300px; height: 100vh; background: #0a0a0a; border-left: 2px solid var(--main); z-index: 200; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 25px; box-shadow: -10px 0 50px rgba(0,0,0,0.9); overflow-y: auto; }
+    .side-panel.open { right: 0; }
+    .side-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .side-title { font-size: 1.2rem; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
+    .close-btn { color: #f00; cursor: pointer; font-size: 1.5rem; }
+    .color-circles { display: flex; gap: 8px; margin-bottom: 10px; }
+    .color-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #333; transition: 0.2s; position: relative; }
+
+    .nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: rgba(10,10,10,0.95); border-top: 1px solid #333; display: flex; justify-content: space-around; align-items: center; z-index: 100; backdrop-filter: blur(10px); }
+    .nav-item { color: #666; font-size: 0.7rem; cursor: pointer; text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
+    .nav-item i { font-size: 1.3rem; margin-bottom: 4px; transition: 0.3s; }
+    .nav-item.active { color: var(--main); }
+    .nav-item.active i { transform: translateY(-5px); text-shadow: 0 0 10px var(--main); }
+
+    .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: var(--main); color: #000; padding: 10px 25px; border-radius: 30px; font-weight: bold; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 999; box-shadow: 0 0 20px var(--main); font-size: 0.8rem; }
+    .toast.show { opacity: 1; top: 90px; }
+
+    .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 5px; }
+    .color-swatch { width: 100%; aspect-ratio: 1; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: 0.2s; position: relative; }
+    .color-swatch.active { border-color: #fff; transform: scale(1.1); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+    
+    .custom-color-wrap { position:relative; overflow:hidden; border-radius:6px; height:100%; border:1px solid #333; background: #111; display: flex; align-items: center; justify-content: center; }
+    .custom-color-input { width: 150%; height: 150%; position: absolute; top: -25%; left: -25%; padding: 0; cursor: pointer; opacity: 0; }
+    
+    .btn-reset-ui { background: transparent; border: 1px solid #ff3333; color: #ff3333; padding: 3px 8px; font-size: 0.65rem; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+    .btn-reset-ui:hover { background: #ff3333; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <div id="loaderOverlay"><div class="spinner"></div><div style="color:var(--main); font-weight:bold; letter-spacing:2px; margin-top:10px;">LOADING ADMIN...</div></div>
+
+  <div id="loginOverlay">
+    <div class="login-box">
+      <img src="" class="login-logo" id="loginLogo">
+      <h3 style="color:#fff; margin-bottom:10px; font-weight:700;">SECURE ADMIN</h3>
+      <input type="password" id="adminPass" class="login-input" placeholder="PASSCODE">
+      <button class="btn btn-save" onclick="tryLogin()">UNLOCK</button>
+    </div>
+  </div>
+
+  <div id="appContainer" style="display:none;">
+    <header>
+      <div class="header-left">
+        <img src="" class="admin-logo" id="headerLogo">
+        <div class="admin-title" id="headerTitle">ADMIN</div>
+      </div>
+      <div class="settings-btn" onclick="toggleSettings()"><i class="fas fa-cog"></i></div>
+    </header>
+
+    <div class="container">
+      
+      <!-- TAB 0: HOME -->
+      <div id="tab0" class="tab-section active">
+        <div class="stats-grid">
+          <div class="stat-card"><i class="fas fa-user-shield stat-icon"></i><div class="stat-num" id="totalVisits">0</div><div class="stat-label">Unique Visitors</div></div>
+          <div class="stat-card"><i class="fas fa-mouse stat-icon"></i><div class="stat-num" id="totalClicks">0</div><div class="stat-label">Unique Clicks</div></div>
+        </div>
+        <div class="compact-box">
+            <div class="box-title"><span>Top Performing Links</span> <i class="fas fa-chart-bar"></i></div>
+            <div id="linkStatsList"><div style="text-align:center;color:#555;font-size:0.8rem;">No clicks yet.</div></div>
+        </div>
+        <div style="margin-top:30px;">
+           <button class="btn btn-reset" onclick="resetAnalytics()"><i class="fas fa-trash"></i> RESET COUNTERS</button>
+        </div>
+      </div>
+
+      <!-- TAB 1: IDENTITY & UI -->
+      <div id="tab1" class="tab-section">
+        
+        <div class="compact-box" style="border: 1px solid var(--main); background: rgba(0, 242, 255, 0.03);">
+            <div class="box-title" style="color: var(--main); border-color: var(--main);">
+                <span>🎨 UI Customization</span> <button class="btn-reset-ui" onclick="resetUiToDefault()">↺ Reset Original</button>
+            </div>
+            
+            <div class="field-group">
+                <label class="label">Font Style (Typography)</label>
+                <div class="input-box">
+                    <div class="icon-box"><i class="fas fa-font"></i></div>
+                    <select id="uiFont" onchange="saveUi('uiFont', this.value)">
+                        <option value="'Monoton', cursive">Monoton (Neon) - Default</option>
+                        <option value="'Rock Salt', cursive">Rock Salt (Rough)</option>
+                        <option value="'Lobster', cursive">Lobster (Fancy)</option>
+                        <option value="'Creepster', system-ui">Creepster (Scary)</option>
+                        <option value="'Cinzel', serif">Cinzel (Cinematic)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="label">Button Style (Design)</label>
+                <div class="input-box">
+                    <div class="icon-box"><i class="fas fa-magic"></i></div>
+                    <select id="uiBtnStyle" onchange="saveUi('uiBtnStyle', this.value)">
+                        <option value="neon">Neon Outline - Default</option>
+                        <option value="glass">Glassmorphism</option>
+                        <option value="flat">Minimal Flat</option>
+                        <option value="round">Rounded Pill</option>
+                        <option value="grad-border">Gradient Border (RGB)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="label">Button Color</label>
+                <div class="color-grid">
+                    <div class="color-swatch" style="background:#00f2ff" onclick="saveUi('uiBtnColor', '#00f2ff')"></div>
+                    <div class="color-swatch" style="background:#ff00e5" onclick="saveUi('uiBtnColor', '#ff00e5')"></div>
+                    <div class="color-swatch" style="background:#ffffff" onclick="saveUi('uiBtnColor', '#ffffff')"></div>
+                    <div class="color-swatch" style="background:#151515" onclick="saveUi('uiBtnColor', '#151515')"></div>
+                    <div class="custom-color-wrap">
+                        <i class="fas fa-eye-dropper" style="color:#888;"></i>
+                        <input type="color" class="custom-color-input" onchange="saveUi('uiBtnColor', this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-group" style="margin-top:10px; border-top:1px solid #333; padding-top:10px;">
+                <label class="label">Audio Player Color</label>
+                <div class="color-grid">
+                     <div class="color-swatch" style="background:#00f2ff" onclick="saveUi('uiAudioColor', '#00f2ff')"></div>
+                     <div class="color-swatch" style="background:#ff00e5" onclick="saveUi('uiAudioColor', '#ff00e5')"></div>
+                     <div class="color-swatch" style="background:#00ff88" onclick="saveUi('uiAudioColor', '#00ff88')"></div>
+                     <div class="color-swatch" style="background:#ffffff" onclick="saveUi('uiAudioColor', '#ffffff')"></div>
+                     <div class="custom-color-wrap">
+                        <i class="fas fa-eye-dropper" style="color:#888;"></i>
+                        <input type="color" class="custom-color-input" onchange="saveUi('uiAudioColor', this.value)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-group"><label class="label">Website Name</label><div class="input-box"><div class="icon-box"><i class="fas fa-globe"></i></div><input type="text" id="siteName"></div></div>
+        <div class="field-group"><label class="label">Website Logo URL</label><div class="input-box"><div class="icon-box"><i class="fas fa-image"></i></div><input type="text" id="siteLogo"></div></div>
+        <div class="field-group"><label class="label">User Panel Background</label><div class="input-box"><div class="icon-box"><i class="fas fa-mobile-alt"></i></div><input type="text" id="userBgUrl" placeholder="Image URL"></div></div>
+        <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
+        <div class="field-group"><label class="label">Username</label><div class="input-box"><div class="icon-box"><i class="fas fa-user"></i></div><input type="text" id="username"></div></div>
+        <div class="field-group"><label class="label">Avatar URL</label><div class="input-box"><div class="icon-box"><i class="fas fa-user-circle"></i></div><input type="text" id="avatar"></div></div>
+        <div class="field-group"><label class="label">Bio</label><div class="input-box"><div class="icon-box"><i class="fas fa-pen"></i></div><input type="text" id="bio"></div></div>
+        <div class="field-group"><label class="label">Footer Text</label><div class="input-box"><div class="icon-box"><i class="fas fa-copyright"></i></div><input type="text" id="footer"></div></div>
+        <button class="btn btn-save" onclick="saveProfile()">SAVE IDENTITY DETAILS</button>
+      </div>
+
+      <!-- TAB 2: MEDIA (With Size Hint) -->
+      <div id="tab2" class="tab-section">
+        <h3 style="color:var(--main); font-size:1rem; margin-bottom:10px;">Music Playlist</h3>
+        <div class="field-group"><label class="label">Track Name</label><div class="input-box"><div class="icon-box"><i class="fas fa-music"></i></div><input type="text" id="audioName"></div></div>
+        <div class="field-group"><label class="label">MP3 URL</label><div class="input-box"><div class="icon-box"><i class="fas fa-link"></i></div><input type="text" id="audioLink"></div></div>
+        <button class="btn btn-add" onclick="addAudio()">ADD TRACK</button>
+        <div id="audioList" style="margin-top:20px;"></div>
+        <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
+        <h3 style="color:var(--main); font-size:1rem; margin-bottom:10px;">Image Slider</h3>
+        <!-- ADDED SIZE HINT HERE -->
+        <div class="field-group">
+            <label class="label">Image URL <span style="font-size:0.6rem; color:#888; margin-left:5px; text-transform:none;">(Recommended: 1600x900px)</span></label>
+            <div class="input-box"><div class="icon-box"><i class="fas fa-image"></i></div><input type="text" id="slideUrl"></div>
+        </div>
+        <button class="btn btn-add" onclick="addSlide()">ADD IMAGE</button>
+        <div id="sliderList"></div>
+      </div>
+
+      <div id="tab3" class="tab-section">
+        <input type="hidden" id="webKey">
+        <div class="field-group"><label class="label">Button Title</label><div class="input-box"><div class="icon-box"><i class="fas fa-tag"></i></div><input type="text" id="webTitle"></div></div>
+        <div class="field-group"><label class="label">Logo / Icon URL</label><div class="input-box"><div class="icon-box"><i class="fas fa-icons"></i></div><input type="text" id="webIcon"></div></div>
+        <div class="field-group"><label class="label">Link URL</label><div class="input-box"><div class="icon-box"><i class="fas fa-link"></i></div><input type="text" id="webLink"></div></div>
+        <div class="field-group"><label class="label">Password (Optional)</label><div class="input-box"><div class="icon-box"><i class="fas fa-lock"></i></div><input type="text" id="webPass"></div></div>
+        <button class="btn btn-add" id="btnAddWeb" onclick="addWeb()">ADD LINK</button>
+        <button class="btn btn-upd" id="btnUpdWeb" onclick="updWeb()">UPDATE LINK</button>
+        <div id="webList"></div>
+      </div>
+
+      <div id="tab4" class="tab-section">
+        <input type="hidden" id="socKey">
+        <div class="field-group"><label class="label">Name</label><div class="input-box"><div class="icon-box"><i class="fas fa-tag"></i></div><input type="text" id="socTitle"></div></div>
+        <div class="field-group"><label class="label">Icon Class</label><div class="input-box"><div class="icon-box"><i class="fas fa-icons"></i></div><input type="text" id="socIcon"></div></div>
+        <div class="field-group"><label class="label">Link URL</label><div class="input-box"><div class="icon-box"><i class="fas fa-link"></i></div><input type="text" id="socLink"></div></div>
+        <div class="field-group"><label class="label">Password (Optional)</label><div class="input-box"><div class="icon-box"><i class="fas fa-lock"></i></div><input type="text" id="socPass"></div></div>
+        <button class="btn btn-add" id="btnAddSoc" onclick="addSoc()">ADD SOCIAL</button>
+        <button class="btn btn-upd" id="btnUpdSoc" onclick="updSoc()">UPDATE SOCIAL</button>
+        <div id="socList"></div>
+      </div>
+    </div>
+
+    <!-- SIDE PANEL (SETTINGS) -->
+    <div class="side-panel" id="settingsSidepanel">
+      <div class="side-header">
+          <h3 class="side-title">CONFIG</h3>
+          <i class="fas fa-times close-btn" onclick="toggleSettings()"></i>
+      </div>
+      
+      <div class="field-group">
+        <label class="label">Accent Color</label>
+        <div class="color-circles">
+           <div class="color-dot" style="background:#00f2ff;" onclick="setTheme('#00f2ff')"></div>
+           <div class="color-dot" style="background:#ff00e5;" onclick="setTheme('#ff00e5')"></div>
+           <div class="color-dot" style="background:#00ff88;" onclick="setTheme('#00ff88')"></div>
+           <div class="color-dot" style="background:#ff9900;" onclick="setTheme('#ff9900')"></div>
+        </div>
+        <div class="input-box"><div class="icon-box"><i class="fas fa-palette"></i></div><input type="text" id="themeColor" placeholder="HEX Code"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="label">Admin Background</label>
+        <div class="color-circles">
+            <div class="color-dot" style="background:#050505;" onclick="setAdminBg('#050505')"></div>
+            <div class="color-dot" style="background:#001e1d;" onclick="setAdminBg('#001e1d')"></div>
+            <div class="color-dot" style="background:#1a0b2e;" onclick="setAdminBg('#1a0b2e')"></div>
+            <div class="color-dot" style="background:#240b0b;" onclick="setAdminBg('#240b0b')"></div>
+        </div>
+        <input type="hidden" id="adminBgColor" value="#050505">
+        <div class="input-box"><div class="icon-box"><i class="fas fa-image"></i></div><input type="text" id="adminBgUrl" placeholder="Image URL" oninput="setAdminBg(document.getElementById('adminBgColor').value)"></div>
+      </div>
+      
+      <hr style="border-top:1px solid #222; margin:15px 0;">
+
+      <div class="field-group"><label class="label">Admin Panel Name</label><div class="input-box"><div class="icon-box"><i class="fas fa-heading"></i></div><input type="text" id="adminName"></div></div>
+      <div class="field-group"><label class="label">Admin Logo URL</label><div class="input-box"><div class="icon-box"><i class="fas fa-id-badge"></i></div><input type="text" id="adminLogo"></div></div>
+      <div class="field-group"><label class="label">Admin Favicon</label><div class="input-box"><div class="icon-box"><i class="fas fa-star"></i></div><input type="text" id="adminFav"></div></div>
+      <div class="field-group"><label class="label">New Admin Password</label><div class="input-box"><div class="icon-box"><i class="fas fa-key"></i></div><input type="text" id="newAdminPass"></div></div>
+      
+      <button class="btn btn-save" onclick="saveConfig()">SAVE CONFIG</button>
+    </div>
+
+    <div class="nav">
+      <div class="nav-item active" onclick="tab('tab0', this)"><i class="fas fa-chart-pie"></i>Home</div>
+      <div class="nav-item" onclick="tab('tab1', this)"><i class="fas fa-user"></i>Profile</div>
+      <div class="nav-item" onclick="tab('tab2', this)"><i class="fas fa-play"></i>Media</div>
+      <div class="nav-item" onclick="tab('tab3', this)"><i class="fas fa-link"></i>Links</div>
+      <div class="nav-item" onclick="tab('tab4', this)"><i class="fas fa-share-alt"></i>Social</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Changes Saved</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getDatabase, ref, set, push, remove, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBjoMwaLWplKS3GcdsF_2KgKXh1mVK9eyE",
+  authDomain: "my-bio-a25f3.firebaseapp.com",
+  databaseURL: "https://my-bio-a25f3-default-rtdb.firebaseio.com",
+  projectId: "my-bio-a25f3",
+  storageBucket: "my-bio-a25f3.firebasestorage.app",
+  messagingSenderId: "250076954421",
+  appId: "1:250076954421:web:f6e53accbda1034b5d567c"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let realAdminPass = "12233";
+    let dataLoaded = false;
+    window.websitesData = {};
+    window.socialsData = {};
+    window.adminAudio = new Audio();
+    window.currentPreviewUrl = "";
+
+    window.copyText = (text) => { if (text) navigator.clipboard.writeText(text).then(() => { toast("Copied!"); }); };
+    
+    window.toggleSettings = () => document.getElementById('settingsSidepanel').classList.toggle('open');
+    window.setTheme = (color) => { document.getElementById('themeColor').value = color; document.documentElement.style.setProperty('--main', color); };
+    window.setAdminBg = (color) => {
+        document.getElementById('adminBgColor').value = color;
+        const img = document.getElementById('adminBgUrl').value;
+        document.body.style.backgroundColor = color;
+        document.documentElement.style.setProperty('--bg', color);
+        if(img && img.trim() !== "") document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('${img}')`;
+        else document.body.style.backgroundImage = 'none';
+    };
+
+    window.tryLogin = () => { if(document.getElementById('adminPass').value === realAdminPass) { localStorage.setItem('adminLoginTime', Date.now()); showApp(); } else alert("Invalid Passcode"); };
+    function checkSession() { const t = localStorage.getItem('adminLoginTime'); return t && (Date.now() - parseInt(t) < 5 * 60 * 1000); }
+    function showApp() { document.getElementById('loaderOverlay').style.display='none'; document.getElementById('loginOverlay').style.display='none'; document.getElementById('appContainer').style.display='block'; }
+    function showLogin() { document.getElementById('loaderOverlay').style.display='none'; document.getElementById('appContainer').style.display='none'; document.getElementById('loginOverlay').style.display='flex'; }
+    window.tab = (id, el) => {
+      document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+      el.classList.add('active');
+    };
+    const toast = (m) => { const t=document.getElementById('toast'); t.innerText=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); };
+
+    window.saveUi = (key, value) => { update(ref(db, 'settings'), { [key]: value }).then(() => toast("Updated!")); };
+    
+    window.resetUiToDefault = () => { if(confirm("Restore Original Design?")) { update(ref(db, 'settings'), { uiFont: "'Monoton', cursive", uiBtnStyle: "neon", uiBtnColor: "#151515", uiAudioColor: "#00f2ff" }).then(() => toast("Restored!")); } };
+
+    onValue(ref(db, '/'), (snap) => {
+      const data = snap.val() || {};
+      const set = data.settings || {};
+      const adm = data.adminConfig || {};
+      
+      realAdminPass = adm.password || "12233";
+      document.getElementById('headerTitle').innerText = adm.name || "ADMIN";
+      document.getElementById('headerLogo').src = adm.logo || "https://via.placeholder.com/40";
+      document.getElementById('loginLogo').src = adm.logo || "https://cdn-icons-png.flaticon.com/512/295/295128.png";
+
+      document.getElementById('adminName').value = adm.name || "ADMIN";
+      document.getElementById('adminLogo').value = adm.logo || "";
+      if(adm.favicon) document.getElementById('adminFavicon').href = adm.favicon;
+      document.getElementById('adminFav').value = adm.favicon || "";
+      if(adm.themeColor) window.setTheme(adm.themeColor);
+      window.setAdminBg(adm.bgColor || "#050505");
+      document.getElementById('adminBgUrl').value = adm.bgImage || "";
+
+      document.getElementById('siteName').value = set.siteName || "";
+      document.getElementById('siteLogo').value = set.siteLogo || "";
+      document.getElementById('userBgUrl').value = set.bgImage || ""; 
+      document.getElementById('username').value = set.username || "";
+      document.getElementById('avatar').value = set.avatar || "";
+      document.getElementById('bio').value = set.bio || "";
+      document.getElementById('footer').value = set.footer || "";
+      
+      const defaultFont = "'Monoton', cursive";
+      const defaultBtn = "neon";
+      const savedFont = set.uiFont || defaultFont;
+      const savedBtn = set.uiBtnStyle || defaultBtn;
+
+      const fontSelect = document.getElementById('uiFont');
+      const btnSelect = document.getElementById('uiBtnStyle');
+      fontSelect.value = savedFont;
+      btnSelect.value = savedBtn;
+      if(!fontSelect.value) fontSelect.value = defaultFont;
+      if(!btnSelect.value) btnSelect.value = defaultBtn;
+
+      document.querySelectorAll('.color-swatch').forEach(el => {
+          el.classList.remove('active');
+          if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(set.uiBtnColor || '#151515')) { el.classList.add('active'); }
+      });
+
+      const aList = document.getElementById('audioList'); aList.innerHTML="";
+      if(data.audio_list) {
+          Object.entries(data.audio_list).forEach(([k,v]) => {
+              aList.innerHTML += `
+              <div class="list-item">
+                  <div class="info" style="display:flex;flex-direction:column;">
+                      <b style="color:#eee;font-size:0.9rem;">${v.name}</b>
+                      <span style="color:#666;font-size:0.7rem;">${v.link.substring(0,25)}...</span>
+                  </div>
+                  <div class="list-actions">
+                      <button class="btn-icon play-btn" id="btn-${k}" onclick="playPreview('${v.link}', 'btn-${k}')"><i class="fas fa-play"></i></button>
+                      <button class="btn-icon" style="background:#222;color:var(--main);" onclick="copyText('${v.link}')"><i class="fas fa-copy"></i></button>
+                      <button class="btn-icon" style="background:#333;color:#f00;" onclick="del('audio_list/${k}')"><i class="fas fa-trash"></i></button>
+                  </div>
+              </div>`;
+          });
+      } else { aList.innerHTML = `<div style="text-align:center;color:#555;font-size:0.8rem;">No music added yet.</div>`; }
+
+      const sList = document.getElementById('sliderList'); sList.innerHTML="";
+      if(data.slider) Object.entries(data.slider).forEach(([k,v])=>{ 
+          sList.innerHTML+=`
+          <div class="list-item">
+            <div class="info"><img src="${v}" style="width:30px;height:30px;object-fit:cover;margin-right:8px;border-radius:4px;"><span>Image</span></div>
+            <div class="list-actions">
+                <button class="btn-icon" style="background:#222;color:var(--main);" onclick="copyText('${v}')"><i class="fas fa-copy"></i></button>
+                <button class="btn-icon" style="background:#333;color:#f00;" onclick="del('slider/${k}')"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>`; 
+      });
+
+      const stats = data.analytics || {};
+      const visits = stats.visits ? Object.values(stats.visits) : [];
+      const clicks = stats.clicks ? Object.values(stats.clicks) : [];
+      document.getElementById('totalVisits').innerText = visits.length;
+      document.getElementById('totalClicks').innerText = clicks.length;
+
+      const linkStats = {};
+      clicks.forEach(c => {
+          const btnName = c.btnTitle || "Unknown Link";
+          if(!linkStats[btnName]) linkStats[btnName] = { count: 0, icon: c.icon || '' };
+          linkStats[btnName].count++;
+      });
+      const linkContainer = document.getElementById('linkStatsList'); 
+      linkContainer.innerHTML = "";
+      if(Object.keys(linkStats).length === 0) linkContainer.innerHTML = '<div style="text-align:center;color:#555;font-size:0.8rem;">No clicks recorded.</div>';
+      else {
+          Object.entries(linkStats).sort((a,b)=>b[1].count-a[1].count).forEach(([name, data]) => {
+              const percent = Math.round((data.count / clicks.length) * 100);
+              let iconHtml = '<i class="fas fa-link" style="font-size:0.9rem; margin-right:5px; color:var(--main);"></i>';
+              if(data.icon) {
+                  if(data.icon.includes('http')) iconHtml = `<img src="${data.icon}" class="link-icon-mini">`;
+                  else if (data.icon.includes('fa-') || data.icon.includes('fab')) iconHtml = `<i class="${data.icon}" style="font-size:0.9rem; margin-right:5px; color:var(--main);"></i>`;
+              }
+              linkContainer.innerHTML += `<div class="source-row"><span class="source-name">${iconHtml} ${name}</span><div class="source-bar"><div class="source-fill" style="width:${percent}%"></div></div><span class="source-count">${data.count}</span></div>`;
+          });
+      }
+
+      window.websitesData = data.websites || {};
+      window.socialsData = data.socials || {};
+      renderList('webList', window.websitesData, 'websites', 'editWeb');
+      renderList('socList', window.socialsData, 'socials', 'editSoc');
+
+      if(!dataLoaded) { dataLoaded = true; if(checkSession()) showApp(); else showLogin(); }
+    });
+
+    function renderList(elmId, data, path, editFn) {
+      const el = document.getElementById(elmId); el.innerHTML="";
+      if(data) Object.entries(data).forEach(([k,v])=>{
+        el.innerHTML+=`
+        <div class="list-item">
+            <div class="info" style="display:flex;flex-direction:column;"><b style="color:#eee;font-size:0.9rem;">${v.title}</b><span style="color:#666;font-size:0.7rem;">${v.link.substring(0,25)}...</span></div>
+            <div class="list-actions">
+                <button class="btn-icon" style="background:#222;color:var(--main);" onclick="copyText('${v.link}')"><i class="fas fa-copy"></i></button>
+                <button class="btn-icon" style="background:#222;color:#eee;" onclick="window.${editFn}('${k}')"><i class="fas fa-pen"></i></button>
+                <button class="btn-icon" style="background:#222;color:#f00;" onclick="del('${path}/${k}')"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>`;
+      });
+    }
+
+    window.playPreview = (url, btnId) => {
+        const btn = document.getElementById(btnId);
+        const icon = btn.querySelector('i');
+        document.querySelectorAll('.play-btn').forEach(b => { if(b.id !== btnId) { b.classList.remove('playing'); b.querySelector('i').className = 'fas fa-play'; } });
+        if(window.currentPreviewUrl === url && !window.adminAudio.paused) {
+            window.adminAudio.pause(); btn.classList.remove('playing'); icon.className = 'fas fa-play';
+        } else {
+            window.adminAudio.src = url; window.currentPreviewUrl = url; window.adminAudio.play(); btn.classList.add('playing'); icon.className = 'fas fa-pause';
+        }
+    };
+
+    window.resetAnalytics = () => { if(confirm("Confirm: Delete ALL Analytics Data?")) { remove(ref(db, 'analytics')).then(() => { alert("Data Cleared!"); window.location.reload(); }); } };
+    window.saveProfile = () => update(ref(db, 'settings'), {
+      siteName: document.getElementById('siteName').value, siteLogo: document.getElementById('siteLogo').value,
+      bgImage: document.getElementById('userBgUrl').value, username: document.getElementById('username').value,
+      avatar: document.getElementById('avatar').value, bio: document.getElementById('bio').value, 
+      footer: document.getElementById('footer').value
+    }).then(()=>toast("Identity Saved"));
+
+    window.saveConfig = () => {
+      const p = document.getElementById('newAdminPass').value;
+      update(ref(db, 'adminConfig'), {
+        name: document.getElementById('adminName').value, 
+        logo: document.getElementById('adminLogo').value,
+        favicon: document.getElementById('adminFav').value, 
+        themeColor: document.getElementById('themeColor').value,
+        bgColor: document.getElementById('adminBgColor').value,
+        bgImage: document.getElementById('adminBgUrl').value,
+        password: p.length>0 ? p : realAdminPass
+      }).then(()=>{ toast("Config Saved"); toggleSettings(); });
+    };
+
+    window.addAudio = () => {
+        const name = document.getElementById('audioName').value; const link = document.getElementById('audioLink').value;
+        if(name.trim() === "" || link.trim() === "") { alert("Enter Name and Link"); return; }
+        push(ref(db, 'audio_list'), { name: name, link: link }).then(()=>{ document.getElementById('audioName').value=""; document.getElementById('audioLink').value=""; toast("Track Added"); });
+    };
+    window.addSlide = () => push(ref(db, 'slider'), document.getElementById('slideUrl').value).then(()=>{ document.getElementById('slideUrl').value=""; toast("Added"); });
+    window.del = (p) => { if(confirm("Delete?")) remove(ref(db,p)); };
+    
+    window.editWeb = (k) => { const d=window.websitesData[k]; document.getElementById('webKey').value=k; document.getElementById('webTitle').value=d.title; document.getElementById('webIcon').value=d.icon; document.getElementById('webLink').value=d.link; document.getElementById('webPass').value=d.password||""; document.getElementById('btnAddWeb').style.display='none'; document.getElementById('btnUpdWeb').style.display='block'; };
+    window.addWeb = () => push(ref(db,'websites'), getWebVal()).then(()=>{ clrWeb(); toast("Added"); });
+    window.updWeb = () => { const k=document.getElementById('webKey').value; update(ref(db,`websites/${k}`), getWebVal()).then(()=>{ clrWeb(); toast("Updated"); }); };
+    function getWebVal(){ return {title:document.getElementById('webTitle').value, icon:document.getElementById('webIcon').value, link:document.getElementById('webLink').value, password:document.getElementById('webPass').value}; }
+    function clrWeb(){ document.getElementById('webTitle').value=""; document.getElementById('webIcon').value=""; document.getElementById('webLink').value=""; document.getElementById('webPass').value=""; document.getElementById('btnAddWeb').style.display='block'; document.getElementById('btnUpdWeb').style.display='none'; }
+
+    window.editSoc = (k) => { const d=window.socialsData[k]; document.getElementById('socKey').value=k; document.getElementById('socTitle').value=d.title; document.getElementById('socIcon').value=d.icon; document.getElementById('socLink').value=d.link; document.getElementById('socPass').value=d.password||""; document.getElementById('btnAddSoc').style.display='none'; document.getElementById('btnUpdSoc').style.display='block'; };
+    window.addSoc = () => push(ref(db,'socials'), getSocVal()).then(()=>{ clrSoc(); toast("Added"); });
+    window.updSoc = () => { const k=document.getElementById('socKey').value; update(ref(db,`socials/${k}`), getSocVal()).then(()=>{ clrSoc(); toast("Updated"); }); };
+    function getSocVal(){ return {title:document.getElementById('socTitle').value, icon:document.getElementById('socIcon').value, link:document.getElementById('socLink').value, password:document.getElementById('socPass').value}; }
+    function clrSoc(){ document.getElementById('socTitle').value=""; document.getElementById('socIcon').value=""; document.getElementById('socLink').value=""; document.getElementById('socPass').value=""; document.getElementById('btnAddSoc').style.display='block'; document.getElementById('btnUpdSoc').style.display='none'; }
+  </script>
+</body>
+</html>
