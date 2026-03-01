@@ -1,1 +1,1929 @@
-<script language=javascript>document.write(unescape('%3C%21DOCTYPE%20html%3E%0A%3Chtml%3E%0A%3Chead%3E%0A%20%20%20%20%3Cmeta%20charset%3D%22UTF-8%22%3E%0A%20%20%20%20%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1.0%2C%20maximum-scale%3D1.0%2C%20user-scalable%3Dno%22%3E%0A%20%20%20%20%0A%20%20%20%20%3C%21--%20%uD83D%uDD25%uD83D%uDD25%20INSTANT%20BRANDING%20SCRIPT%20%uD83D%uDD25%uD83D%uDD25%20--%3E%0A%20%20%20%20%3Cscript%3E%0A%20%20%20%20%20%20%20%20const%20savedTitle%20%3D%20localStorage.getItem%28%27user_site_title%27%29%3B%0A%20%20%20%20%20%20%20%20if%20%28savedTitle%29%20%7B%20document.title%20%3D%20savedTitle%3B%20%7D%20else%20%7B%20document.title%20%3D%20%22Loading...%22%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20const%20savedFavicon%20%3D%20localStorage.getItem%28%27user_site_favicon%27%29%3B%0A%20%20%20%20%20%20%20%20const%20link%20%3D%20document.createElement%28%27link%27%29%3B%20link.rel%20%3D%20%27icon%27%3B%20link.id%20%3D%20%27dynamicFavicon%27%3B%0A%20%20%20%20%20%20%20%20if%20%28savedFavicon%29%20%7B%20link.href%20%3D%20savedFavicon%3B%20%7D%20else%20%7B%20link.href%20%3D%20%22%22%3B%20%7D%0A%20%20%20%20%20%20%20%20document.head.appendChild%28link%29%3B%0A%20%20%20%20%3C/script%3E%0A%20%20%20%20%0A%20%20%20%20%3Clink%20rel%3D%22stylesheet%22%20href%3D%22https%3A//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css%22%3E%0A%20%20%20%20%0A%20%20%20%20%3C%21--%20Firebase%20SDK%20--%3E%0A%20%20%20%20%3Cscript%20src%3D%22https%3A//www.gstatic.com/firebasejs/8.10.1/firebase-app.js%22%3E%3C/script%3E%0A%20%20%20%20%3Cscript%20src%3D%22https%3A//www.gstatic.com/firebasejs/8.10.1/firebase-database.js%22%3E%3C/script%3E%0A%20%20%20%20%0A%20%20%20%20%3Cstyle%3E%0A%20%20%20%20%20%20%20%20/*%20%u2728%20COLOR%20PALETTE%20*/%0A%20%20%20%20%20%20%20%20%3Aroot%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20--primary-color%3A%20%234a90e2%3B%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--secondary-color%3A%20%239c27b0%3B%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--text-color%3A%20%23f0f0f0%3B%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--text-color-dark%3A%20%231a1a2e%3B%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--bg-dark%3A%20%2312121c%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--card-dark%3A%20%231d1d2b%3B%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--header-icon-color%3A%20%23ffd700%3B%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--header-border-color%3A%20rgba%28255%2C%20255%2C%20255%2C%200.1%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--footer-bg%3A%20%231d1d2b%3B%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--copy-btn-bg%3A%20var%28--primary-color%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--shadow-color%3A%20rgba%280%2C%200%2C%200%2C%200.4%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--result-box-bg%3A%20%232a2a3f%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--result-box-border%3A%20var%28--primary-color%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--gemini-color%3A%20%234285F4%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--chatgpt-color%3A%20%2310a37f%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--overlay-title-color%3A%20%23ffffff%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20.light-mode%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20--primary-color%3A%20%23ff6b6b%3B%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--secondary-color%3A%20%238e44ad%3B%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--text-color%3A%20%231a1a2e%3B%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--text-color-dark%3A%20%23FFFFFF%3B%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--bg-dark%3A%20%23f4f7f9%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--card-dark%3A%20%23ffffff%3B%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--header-icon-color%3A%20var%28--primary-color%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--header-border-color%3A%20%23e0e0e0%3B%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--footer-bg%3A%20%23ffffff%3B%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20--copy-btn-bg%3A%20var%28--secondary-color%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--shadow-color%3A%20rgba%2844%2C%2062%2C%2080%2C%200.15%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--result-box-bg%3A%20%23fff0f0%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--result-box-border%3A%20var%28--primary-color%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20--overlay-title-color%3A%20%231a1a2e%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20BASIC%20SETUP%20*/%0A%20%20%20%20%20%20%20%20*%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20box-sizing%3A%20border-box%3B%20margin%3A%200%3B%20padding%3A%200%3B%20transition%3A%200.3s%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20-webkit-tap-highlight-color%3A%20transparent%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20-webkit-user-select%3A%20none%3B%20user-select%3A%20none%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20touch-action%3A%20pan-x%20pan-y%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20input%2C%20textarea%20%7B%20-webkit-user-select%3A%20text%3B%20user-select%3A%20text%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20body%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20height%3A%20100vh%3B%20height%3A%20100dvh%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20font-family%3A%20%27Segoe%20UI%27%2C%20Tahoma%2C%20Geneva%2C%20Verdana%2C%20sans-serif%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20color%3A%20var%28--text-color%29%3B%20padding%3A%200%3B%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20linear-gradient%28135deg%2C%20%231f2833%200%25%2C%20%23171c26%20100%25%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20flex%3B%20justify-content%3A%20center%3B%20overflow%3A%20hidden%3B%20%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20.light-mode%20body%20%7B%20background%3A%20linear-gradient%28135deg%2C%20%23e0eafc%200%25%2C%20%23cfdef3%20100%25%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20.all-bar%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%3B%20max-width%3A%20400px%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20height%3A%20100%25%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20box-shadow%3A%200%2010px%2030px%20rgba%280%2C%200%2C%200%2C%200.5%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background-color%3A%20var%28--bg-dark%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20margin%3A%200%20auto%3B%20position%3A%20relative%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20overflow%3A%20hidden%3B%20%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20%uD83D%uDD25%uD83D%uDD25%20PRELOADER%20CSS%20%uD83D%uDD25%uD83D%uDD25%20*/%0A%20%20%20%20%20%20%20%20%23preloader%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20fixed%3B%20top%3A%200%3B%20left%3A%200%3B%20width%3A%20100%25%3B%20height%3A%20100%25%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background-color%3A%20%23000000%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20z-index%3A%20999999%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20transition%3A%20opacity%200.5s%20ease-out%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20perspective%3A%20800px%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20.loader-visual-wrapper%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20relative%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20140px%3B%20height%3A%20140px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20.drop-plate%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%3B%20height%3A%20100%25%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20transparent%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20relative%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20z-index%3A%2010%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20animation%3A%20dropBounce%200.8s%20cubic-bezier%280.25%2C%201%2C%200.5%2C%201%29%20forwards%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20opacity%3A%200%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20.drop-plate%20img%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%3B%20height%3A%20100%25%3B%20object-fit%3A%20contain%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20filter%3A%20drop-shadow%280%205px%2010px%20rgba%280%2C0%2C0%2C0.5%29%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20.shockwave%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20absolute%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20140px%3B%20height%3A%20140px%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20border-radius%3A%2050%25%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20transparent%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20border%3A%204px%20solid%20rgba%28168%2C%2085%2C%20247%2C%200.8%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20box-shadow%3A%200%200%2015px%20rgba%28168%2C%2085%2C%20247%2C%200.6%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20transform%3A%20translateY%2860px%29%20scale%280.1%29%20rotateX%2880deg%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20opacity%3A%200%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20z-index%3A%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20animation%3A%20rippleEffect%201.5s%20ease-out%20infinite%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20animation-delay%3A%200.4s%3B%20%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20.loading-text-wrapper%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20margin-top%3A%2040px%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20font-size%3A%201.2rem%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20font-weight%3A%20800%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20letter-spacing%3A%204px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20text-transform%3A%20uppercase%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20flex%3B%20align-items%3A%20center%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20opacity%3A%200%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20animation%3A%20fadeInText%200.4s%20ease-out%20forwards%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20animation-delay%3A%200.6s%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20.loading-word%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20linear-gradient%2890deg%2C%20%23f42f25%2C%20%23ffffff%2C%20%23255ff4%2C%20%23f42f25%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background-size%3A%20200%25%20auto%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20-webkit-background-clip%3A%20text%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20-webkit-text-fill-color%3A%20transparent%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20animation%3A%20textGradientMove%202s%20linear%20infinite%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20textGradientMove%20%7B%200%25%20%7B%20background-position%3A%200%25%20center%3B%20%7D%20100%25%20%7B%20background-position%3A%20200%25%20center%3B%20%7D%20%7D%0A%0A%20%20%20%20%20%20%20%20.dot%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20color%3A%20%23ffffff%3B%20animation%3A%20dotBounce%201.4s%20infinite%20ease-in-out%20both%3B%20margin-left%3A%202px%3B%20font-size%3A%201.5rem%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20dotBounce%20%7B%200%25%2C%2080%25%2C%20100%25%20%7B%20transform%3A%20scale%280.6%29%3B%20opacity%3A%200.5%3B%20%7D%2040%25%20%7B%20transform%3A%20scale%281.4%29%3B%20opacity%3A%201%3B%20%7D%20%7D%0A%0A%20%20%20%20%20%20%20%20@keyframes%20dropBounce%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%200%25%20%7B%20transform%3A%20translateY%28-350px%29%20scale%280.5%29%3B%20opacity%3A%200%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%2050%25%20%7B%20transform%3A%20translateY%280%29%20scale%281.05%29%3B%20opacity%3A%201%3B%20%7D%20%0A%20%20%20%20%20%20%20%20%20%20%20%2065%25%20%7B%20transform%3A%20translateY%28-15px%29%20scale%280.95%29%3B%20%7D%20%0A%20%20%20%20%20%20%20%20%20%20%20%20100%25%20%7B%20transform%3A%20translateY%280%29%20scale%281%29%3B%20opacity%3A%201%3B%20%7D%20%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20@keyframes%20rippleEffect%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%200%25%20%7B%20transform%3A%20translateY%2860px%29%20scale%280.2%29%20rotateX%2880deg%29%3B%20opacity%3A%201%3B%20border-width%3A%205px%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20100%25%20%7B%20transform%3A%20translateY%2860px%29%20scale%282.8%29%20rotateX%2880deg%29%3B%20opacity%3A%200%3B%20border-width%3A%200px%3B%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20@keyframes%20fadeInText%20%7B%20to%20%7B%20opacity%3A%201%3B%20transform%3A%20translateY%280%29%3B%20%7D%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20HEADER%20*/%0A%20%20%20%20%20%20%20%20.heading-bar%20%7B%20width%3A%20100%25%3B%20height%3A%2050px%3B%20background-color%3A%20var%28--card-dark%29%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20space-between%3B%20padding%3A%200%2015px%3B%20border-bottom%3A%201px%20solid%20var%28--header-border-color%29%3B%20flex-shrink%3A%200%3B%20z-index%3A%201000%3B%20%7D%0A%20%20%20%20%20%20%20%20.logo-container-left%20%7B%20width%3A%2035px%3B%20height%3A%2035px%3B%20flex-shrink%3A%200%3B%20%7D%0A%20%20%20%20%20%20%20%20.logo-container-left%20img%20%7B%20width%3A%20100%25%3B%20height%3A%20100%25%3B%20object-fit%3A%20contain%3B%20border-radius%3A%206px%3B%20pointer-events%3A%20none%3B%20%7D%0A%20%20%20%20%20%20%20%20.search-container%20%7B%20flex-grow%3A%201%3B%20max-width%3A%20200px%3B%20height%3A%2035px%3B%20margin%3A%200%2015px%3B%20%7D%0A%20%20%20%20%20%20%20%20.search-container%20input%20%7B%20width%3A%20100%25%3B%20height%3A%20100%25%3B%20border-radius%3A%2020px%3B%20border%3A%201px%20solid%20var%28--header-border-color%29%3B%20padding%3A%200%2015px%3B%20background-color%3A%20var%28--bg-dark%29%3B%20color%3A%20var%28--text-color%29%3B%20outline%3A%20none%3B%20font-size%3A%2013px%3B%20transition%3A%20all%200.3s%20ease%3B%20%7D%0A%20%20%20%20%20%20%20%20.search-container%20input%3Afocus%20%7B%20border-color%3A%20var%28--primary-color%29%3B%20box-shadow%3A%200%200%208px%20rgba%2874%2C%20144%2C%20226%2C%200.5%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.image-view-active%20.search-container%20%7B%20opacity%3A%200%3B%20pointer-events%3A%20none%3B%20%7D%0A%20%20%20%20%20%20%20%20.header-actions%20%7B%20width%3A%2035px%3B%20height%3A%2035px%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%20cursor%3A%20pointer%3B%20%7D%0A%20%20%20%20%20%20%20%20.action-icon%20%7B%20font-size%3A%201.2em%3B%20color%3A%20var%28--header-icon-color%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20/*%20SCROLL%20*/%0A%20%20%20%20%20%20%20%20.scroll-wrapper%20%7B%20flex-grow%3A%201%3B%20overflow-y%3A%20auto%3B%20overflow-x%3A%20hidden%3B%20-webkit-overflow-scrolling%3A%20touch%3B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20width%3A%20100%25%3B%20%7D%0A%20%20%20%20%20%20%20%20.image-view-active%20.scroll-wrapper%20%7B%20display%3A%20none%3B%20%7D%20%0A%20%20%20%20%20%20%20%20.content%20%7B%20padding%3A%2010px%3B%20display%3A%20grid%3B%20grid-template-columns%3A%20repeat%282%2C%201fr%29%3B%20gap%3A%2010px%3B%20width%3A%20100%25%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20CARDS%20*/%0A%20%20%20%20%20%20%20%20.image-card-wrapper%20%7B%20text-align%3A%20center%3B%20background-color%3A%20var%28--card-dark%29%3B%20border-radius%3A%208px%3B%20overflow%3A%20hidden%3B%20box-shadow%3A%200%204px%2015px%20var%28--shadow-color%29%3B%20align-self%3A%20start%3B%20display%3A%20none%3B%20cursor%3A%20pointer%3B%20position%3A%20relative%3B%20opacity%3A%200%3B%20transform%3A%20translateY%2840px%29%20scale%280.9%29%3B%20transition%3A%20opacity%200.5s%20ease-out%2C%20transform%200.5s%20cubic-bezier%280.175%2C%200.885%2C%200.32%2C%201.275%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.image-card-wrapper.visible%20%7B%20opacity%3A%201%3B%20transform%3A%20translateY%280%29%20scale%281%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.image-card%20%7B%20position%3A%20relative%3B%20width%3A%20100%25%3B%20height%3A%20170px%3B%20overflow%3A%20hidden%3B%20%7D%0A%20%20%20%20%20%20%20%20.image-card%20img%20%7B%20width%3A%20100%25%3B%20height%3A%20100%25%3B%20object-fit%3A%20cover%3B%20pointer-events%3A%20none%3B%20%7D%0A%20%20%20%20%20%20%20%20.view-count%2C%20.like-count%20%7B%20position%3A%20absolute%3B%20bottom%3A%208px%3B%20color%3A%20white%3B%20background-color%3A%20rgba%280%2C%200%2C%200%2C%200.5%29%3B%20padding%3A%204px%208px%3B%20border-radius%3A%2012px%3B%20font-size%3A%200.8rem%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20gap%3A%205px%3B%20z-index%3A%2010%3B%20%7D%0A%20%20%20%20%20%20%20%20.view-count%20%7B%20left%3A%208px%3B%20%7D%0A%20%20%20%20%20%20%20%20.like-count%20%7B%20right%3A%208px%3B%20cursor%3A%20pointer%3B%20%7D%0A%20%20%20%20%20%20%20%20.like-count%20.fas.fa-heart%20%7B%20color%3A%20red%20%21important%3B%20%7D%0A%20%20%20%20%20%20%20%20.image-card-wrapper%20.image-title%20%7B%20color%3A%20var%28--text-color%29%3B%20padding%3A%2010px%206px%3B%20font-weight%3A%20500%3B%20font-size%3A%200.9rem%3B%20width%3A%20100%25%3B%20text-align%3A%20center%3B%20white-space%3A%20nowrap%3B%20overflow%3A%20hidden%3B%20text-overflow%3A%20ellipsis%3B%20%7D%0A%20%20%20%20%20%20%20%20.more-container%20%7B%20padding%3A%2015px%200%2020px%200%3B%20display%3A%20flex%3B%20justify-content%3A%20center%3B%20width%3A%20100%25%3B%20background-color%3A%20transparent%3B%20%7D%0A%20%20%20%20%20%20%20%20.more-btn%20%7B%20padding%3A%2010px%2022px%3B%20border%3A%20none%3B%20border-radius%3A%2025px%3B%20background-image%3A%20linear-gradient%2890deg%2C%20var%28--secondary-color%29%200%25%2C%20var%28--primary-color%29%20100%25%29%3B%20color%3A%20white%3B%20font-size%3A%200.9rem%3B%20font-weight%3A%20bold%3B%20cursor%3A%20pointer%3B%20box-shadow%3A%200%204px%2010px%20rgba%280%2C%200%2C%200%2C%200.3%29%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20FOOTER%20*/%0A%20%20%20%20%20%20%20%20.footer-main%20%7B%20width%3A%20100%25%3B%20padding%3A%2015px%205px%3B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%20background-color%3A%20var%28--footer-bg%29%3B%20border-top%3A%201px%20solid%20var%28--header-border-color%29%3B%20flex-shrink%3A%200%3B%20border-radius%3A%2016px%2016px%200%200%3B%20z-index%3A%201001%3B%20gap%3A%2012px%3B%20%7D%0A%20%20%20%20%20%20%20%20.image-view-active%20.footer-main%20%7B%20display%3A%20none%3B%20%7D%0A%20%20%20%20%20%20%20%20.social-icons%20%7B%20display%3A%20flex%3B%20gap%3A%2020px%3B%20margin%3A%202px%200%3B%20justify-content%3A%20center%3B%20%7D%0A%20%20%20%20%20%20%20%20.social-icon%20%7B%20width%3A%2028px%3B%20height%3A%2028px%3B%20display%3A%20block%3B%20transition%3A%20transform%200.2s%3B%20%7D%0A%20%20%20%20%20%20%20%20.social-icon%3Ahover%20%7B%20transform%3A%20scale%281.1%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.social-image%20%7B%20width%3A%20100%25%3B%20height%3A%20100%25%3B%20object-fit%3A%20contain%3B%20pointer-events%3A%20none%3B%20%7D%0A%20%20%20%20%20%20%20%20.tiktok-filter%20%7B%20filter%3A%20invert%281%29%3B%20%7D%20.light-mode%20.tiktok-filter%20%7B%20filter%3A%20invert%280%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.policy-terms-line%20%7B%20font-size%3A%200.75rem%3B%20color%3A%20var%28--text-color%29%3B%20opacity%3A%200.7%3B%20margin%3A%200%3B%20%7D%0A%20%20%20%20%20%20%20%20.copyright-text%20%7B%20font-size%3A%200.7rem%3B%20color%3A%20var%28--text-color%29%3B%20opacity%3A%200.5%3B%20margin%3A%200%3B%20%7D%0A%20%20%20%20%20%20%20%20.separator%20%7B%20margin%3A%200%204px%3B%20opacity%3A%200.4%3B%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20/*%20FULL%20VIEW%20*/%0A%20%20%20%20%20%20%20%20.full-image-view%20%7B%20display%3A%20none%3B%20width%3A%20100%25%3B%20flex-grow%3A%201%3B%20flex-direction%3A%20column%3B%20background-color%3A%20var%28--bg-dark%29%3B%20height%3A%20calc%28100vh%20-%2050px%29%3B%20overflow%3A%20hidden%3B%20%7D%0A%20%20%20%20%20%20%20%20.image-view-active%20.full-image-view%20%7B%20display%3A%20flex%3B%20%7D%0A%20%20%20%20%20%20%20%20.image-display-container%20%7B%20flex-grow%3A%201%3B%20width%3A%20100%25%3B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20align-items%3A%20center%3B%20padding-top%3A%2010px%3B%20background-color%3A%20var%28--bg-dark%29%3B%20overflow%3A%20hidden%3B%20z-index%3A%20999%3B%20position%3A%20relative%3B%20justify-content%3A%20flex-start%3B%20%7D%0A%20%20%20%20%20%20%20%20.image-view-action-bar%20%7B%20position%3A%20absolute%3B%20top%3A%2010px%3B%20width%3A%20calc%28100%25%20-%2030px%29%3B%20max-width%3A%20370px%3B%20display%3A%20flex%3B%20justify-content%3A%20flex-start%3B%20align-items%3A%20center%3B%20padding%3A%200%2010px%3B%20z-index%3A%201005%3B%20%7D%0A%20%20%20%20%20%20%20%20.action-btn-full%20%7B%20width%3A%2035px%3B%20height%3A%2035px%3B%20background-color%3A%20rgba%280%2C%200%2C%200%2C%200.4%29%3B%20border-radius%3A%208px%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%20cursor%3A%20pointer%3B%20color%3A%20white%3B%20%7D%0A%20%20%20%20%20%20%20%20%23closeImageViewBtn%20%7B%20border-bottom%3A%202px%20solid%20%23B468C4%3B%20%7D%0A%20%20%20%20%20%20%20%20%23imageWrapper%20%7B%20position%3A%20relative%3B%20max-width%3A%20100%25%3B%20max-height%3A%2035vh%3B%20height%3A%20auto%3B%20margin-bottom%3A%205px%3B%20margin-top%3A%200%3B%20display%3A%20flex%3B%20justify-content%3A%20center%3B%20flex-shrink%3A%201%3B%20min-height%3A%200%3B%20%7D%0A%20%20%20%20%20%20%20%20.image-display-container%20img%20%7B%20max-width%3A%20100%25%3B%20max-height%3A%20100%25%3B%20height%3A%20auto%3B%20object-fit%3A%20contain%3B%20pointer-events%3A%20none%3B%20%7D%0A%20%20%20%20%20%20%20%20.like-in-image-corner%20%7B%20position%3A%20absolute%3B%20bottom%3A%2010px%3B%20right%3A%2010px%3B%20width%3A%2035px%3B%20height%3A%2035px%3B%20background-color%3A%20rgba%280%2C%200%2C%200%2C%200.6%29%3B%20border-radius%3A%2030%25%3B%20z-index%3A%201001%3B%20box-shadow%3A%200%204px%2010px%20rgba%280%2C%200%2C%200%2C%200.4%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.like-icon-full.fas%20%7B%20color%3A%20red%20%21important%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20OVERLAY%20*/%0A%20%20%20%20%20%20%20%20.image-details-overlay%20%7B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%3B%20flex-grow%3A%201%3B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20align-items%3A%20center%3B%20padding%3A%2010px%2015px%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20var%28--card-dark%29%3B%20border-radius%3A%2020px%2020px%200%200%3B%20text-align%3A%20center%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20z-index%3A%201000%3B%20margin-top%3A%200%3B%20border-top%3A%202px%20solid%20%23B468C4%3B%20overflow%3A%20hidden%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20relative%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20.image-title-view%20%7B%20font-size%3A%201.1rem%3B%20font-weight%3A%20700%3B%20color%3A%20var%28--overlay-title-color%29%3B%20text-shadow%3A%200%202px%205px%20rgba%280%2C%200%2C%200%2C%200.1%29%3B%20margin-bottom%3A%208px%3B%20width%3A%20100%25%3B%20border-bottom%3A%202px%20solid%20transparent%3B%20border-image%3A%20linear-gradient%28to%20right%2C%20transparent%2C%20%23B468C4%2C%20transparent%29%201%3B%20padding-bottom%3A%208px%3B%20white-space%3A%20normal%3B%20line-height%3A%201.3%3B%20overflow%3A%20visible%3B%20text-overflow%3A%20clip%3B%20flex-shrink%3A%200%3B%20%7D%0A%20%20%20%20%20%20%20%20.generate-btn%20%7B%20width%3A%20100%25%3B%20max-width%3A%20250px%3B%20padding%3A%2012px%3B%20border%3A%20none%3B%20border-radius%3A%2012px%3B%20background-image%3A%20linear-gradient%2890deg%2C%20var%28--secondary-color%29%200%25%2C%20var%28--primary-color%29%20100%25%29%3B%20color%3A%20white%3B%20font-size%3A%201rem%3B%20font-weight%3A%20bold%3B%20cursor%3A%20pointer%3B%20box-shadow%3A%200%204px%2015px%20rgba%280%2C%200%2C%200%2C%200.3%29%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%20gap%3A%208px%3B%20margin-bottom%3A%208px%3B%20flex-shrink%3A%200%3B%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20/*%20%uD83D%uDD25%uD83D%uDD25%20UPDATED%20LOADING%20CSS%20%28FADE%20EFFECT%29%20%uD83D%uDD25%uD83D%uDD25%20*/%0A%20%20%20%20%20%20%20%20.loading-container%20%7B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20none%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20height%3A%20100%25%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20absolute%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20top%3A%200%3B%20left%3A%200%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20rgba%2820%2C%2020%2C%2030%2C%200.75%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20backdrop-filter%3A%20blur%288px%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20-webkit-backdrop-filter%3A%20blur%288px%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20z-index%3A%202000%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20flex-direction%3A%20column%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20align-items%3A%20center%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20justify-content%3A%20center%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20border-radius%3A%2020px%2020px%200%200%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20%u09AA%u09C7%u099B%u09A8%u09C7%u09B0%20%u09B9%u09BE%u09B2%u0995%u09BE%20%u09A6%u09BE%u0997%20*/%0A%20%20%20%20%20%20%20%20.loading-circle%20%7B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%2070px%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20height%3A%2070px%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20border-radius%3A%2050%25%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20/*%20%u09AA%u09C7%u099B%u09A8%u09C7%u09B0%20%u09AC%u09C3%u09A4%u09CD%u09A4%u099F%u09BF%20%u098F%u0995%u09A6%u09AE%u0987%20%u09B9%u09BE%u09B2%u0995%u09BE%20*/%0A%20%20%20%20%20%20%20%20%20%20%20%20border%3A%204px%20solid%20rgba%28255%2C%20255%2C%20255%2C%200.03%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20relative%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20display%3A%20flex%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20align-items%3A%20center%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20justify-content%3A%20center%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20margin-bottom%3A%2010px%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20/*%20%uD83D%uDD25%20%u09A8%u09A4%u09C1%u09A8%3A%20%u0995%u09CB%u09A8%u09BF%u0995%20%u0997%u09CD%u09B0%u09C7%u09A1%u09BF%u09DF%u09C7%u09A8%u09CD%u099F%20%u09AC%u09CD%u09AF%u09AC%u09B9%u09BE%u09B0%20%u0995%u09B0%u09C7%20%u09AB%u09C7%u09A1%20%u0987%u09AB%u09C7%u0995%u09CD%u099F%20*/%0A%20%20%20%20%20%20%20%20.loading-arc%20%7B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20absolute%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20top%3A%200%3B%20left%3A%200%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%3B%20height%3A%20100%25%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20border-radius%3A%2050%25%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20/*%20%u0995%u09CB%u09A8%u09CB%20%u09AC%u09B0%u09CD%u09A1%u09BE%u09B0%20%u09A8%u09DF%2C%20%u09AC%u09CD%u09AF%u09BE%u0995%u0997%u09CD%u09B0%u09BE%u0989%u09A8%u09CD%u09A1%20%u0997%u09CD%u09B0%u09C7%u09A1%u09BF%u09DF%u09C7%u09A8%u09CD%u099F%20*/%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20conic-gradient%28from%200deg%2C%20transparent%200%25%2C%20var%28--primary-color%29%20100%25%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20/*%20%u09AE%u09BE%u099D%u0996%u09BE%u09A8%u09C7%u09B0%20%u0985%u0982%u09B6%20%u0995%u09C7%u099F%u09C7%20%u09AB%u09C7%u09B2%u09BE%20%28Masking%29%20*/%0A%20%20%20%20%20%20%20%20%20%20%20%20-webkit-mask%3A%20radial-gradient%28farthest-side%2C%20transparent%20calc%28100%25%20-%205px%29%2C%20%23fff%20calc%28100%25%20-%205px%20+%201px%29%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20mask%3A%20radial-gradient%28farthest-side%2C%20transparent%20calc%28100%25%20-%205px%29%2C%20%23fff%20calc%28100%25%20-%205px%20+%201px%29%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20animation%3A%20spin%200.8s%20linear%20infinite%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20/*%20%u0997%u09CD%u09B2%u09CB%u09DF%u09BF%u0982%20%u09B9%u09C7%u09A1%20%28%u0985%u09AA%u09B6%u09A8%u09BE%u09B2%2C%20%u0986%u09B0%u09CB%20%u09B8%u09C1%u09A8%u09CD%u09A6%u09B0%20%u0995%u09B0%u09BE%u09B0%20%u099C%u09A8%u09CD%u09AF%29%20*/%0A%20%20%20%20%20%20%20%20.loading-arc%3A%3Aafter%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20content%3A%20%27%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20position%3A%20absolute%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20top%3A%200%3B%20left%3A%2050%25%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20transform%3A%20translateX%28-50%25%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20width%3A%205px%3B%20height%3A%205px%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20background%3A%20var%28--primary-color%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20border-radius%3A%2050%25%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20box-shadow%3A%200%200%2010px%20var%28--primary-color%29%2C%200%200%2020px%20var%28--primary-color%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%23loadingPercentage%20%7B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20font-size%3A%201rem%3B%20font-weight%3A%20bold%3B%20color%3A%20white%3B%20z-index%3A%2010%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20text-shadow%3A%200%200%2010px%20rgba%280%2C0%2C0%2C0.8%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20spin%20%7B%200%25%20%7B%20transform%3A%20rotate%280deg%29%3B%20%7D%20100%25%20%7B%20transform%3A%20rotate%28360deg%29%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20/*%20%uD83D%uDD25%uD83D%uDD25%20END%20UPDATED%20CSS%20%uD83D%uDD25%uD83D%uDD25%20*/%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20.result-container%20%7B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20align-items%3A%20center%3B%20margin-top%3A%205px%3B%20width%3A%20100%25%3B%20flex-shrink%3A%201%3B%20min-height%3A%200%3B%20%7D%0A%20%20%20%20%20%20%20%20.result-box%20%7B%20padding%3A%208px%3B%20margin%3A%200%20auto%208px%20auto%3B%20background-color%3A%20var%28--result-box-bg%29%3B%20color%3A%20var%28--text-color%29%3B%20border-radius%3A%208px%3B%20font-size%3A%200.9rem%3B%20line-height%3A%201.5%3B%20border%3A%201px%20solid%20var%28--result-box-border%29%3B%20width%3A%20100%25%3B%20height%3A%20110px%3B%20overflow-y%3A%20auto%3B%20text-align%3A%20left%3B%20white-space%3A%20pre-wrap%3B%20flex-shrink%3A%200%3B%20cursor%3A%20default%3B%20%7D%0A%20%20%20%20%20%20%20%20%23promptActionButtons%20%7B%20display%3A%20flex%3B%20justify-content%3A%20space-between%3B%20gap%3A%205px%3B%20width%3A%20100%25%3B%20margin-bottom%3A%205px%3B%20flex-shrink%3A%200%3B%20%7D%0A%20%20%20%20%20%20%20%20.copy-button%2C%20.gemini-button%2C%20.chatgpt-button%20%7B%20flex%3A%201%3B%20height%3A%2035px%3B%20padding%3A%200%205px%3B%20border%3A%20none%3B%20border-radius%3A%208px%3B%20color%3A%20white%3B%20font-size%3A%200.8rem%3B%20font-weight%3A%20600%3B%20cursor%3A%20pointer%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20center%3B%20gap%3A%204px%3B%20white-space%3A%20nowrap%3B%20%7D%0A%20%20%20%20%20%20%20%20.copy-button%20%7B%20background-color%3A%20var%28--copy-btn-bg%29%3B%20%7D%20.gemini-button%20%7B%20background-color%3A%20var%28--gemini-color%29%3B%20%7D%20.chatgpt-button%20%7B%20background-color%3A%20var%28--chatgpt-color%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.btn-logo-img%20%7B%20height%3A%2016px%3B%20width%3A%2016px%3B%20object-fit%3A%20contain%3B%20pointer-events%3A%20none%3B%20display%3A%20block%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20.banner-ad-container%20%7B%20width%3A%20100%25%3B%20height%3A%20110px%3B%20margin-top%3A%2015px%3B%20border-radius%3A%2016px%3B%20overflow%3A%20hidden%3B%20box-shadow%3A%200%2010px%2030px%20rgba%280%2C%200%2C%200%2C%200.5%29%2C%200%200%200%201px%20rgba%28255%2C%20255%2C%20255%2C%200.1%29%20inset%3B%20display%3A%20none%3B%20cursor%3A%20pointer%3B%20position%3A%20relative%3B%20background%3A%20%23101018%3B%20text-decoration%3A%20none%3B%20%7D%0A%20%20%20%20%20%20%20%20.banner-ad-container%3A%3Abefore%20%7B%20content%3A%20%27%27%3B%20position%3A%20absolute%3B%20top%3A%200%3B%20left%3A%20-100%25%3B%20width%3A%2080%25%3B%20height%3A%20100%25%3B%20background%3A%20linear-gradient%2890deg%2C%20transparent%2C%20rgba%28255%2C%20255%2C%20255%2C%200.1%29%2020%25%2C%20rgba%28255%2C%20255%2C%20255%2C%200.6%29%2050%25%2C%20rgba%28255%2C%20255%2C%20255%2C%200.1%29%2080%25%2C%20transparent%29%3B%20transform%3A%20skewX%28-25deg%29%3B%20z-index%3A%2010%3B%20pointer-events%3A%20none%3B%20animation%3A%20crystalShine%203s%20infinite%3B%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20crystalShine%20%7B%200%25%20%7B%20left%3A%20-100%25%3B%20opacity%3A%200%3B%20%7D%2040%25%20%7B%20opacity%3A%201%3B%20%7D%20100%25%20%7B%20left%3A%20200%25%3B%20opacity%3A%200%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20.ad-media-wrapper%20%7B%20position%3A%20absolute%3B%20top%3A%200%3B%20left%3A%200%3B%20width%3A%20100%25%3B%20height%3A%20100%25%3B%20z-index%3A%201%3B%20%7D%0A%20%20%20%20%20%20%20%20.banner-ad-media%20%7B%20width%3A%20100%25%3B%20height%3A%20100%25%3B%20object-fit%3A%20cover%3B%20border%3A%20none%3B%20pointer-events%3A%20none%3B%20%7D%0A%20%20%20%20%20%20%20%20.ad-overlay%20%7B%20position%3A%20absolute%3B%20bottom%3A%200%3B%20left%3A%200%3B%20width%3A%20100%25%3B%20background%3A%20rgba%2820%2C%2020%2C%2030%2C%200.6%29%3B%20backdrop-filter%3A%20blur%2812px%29%20saturate%28180%25%29%3B%20-webkit-backdrop-filter%3A%20blur%2812px%29%20saturate%28180%25%29%3B%20padding%3A%208px%2012px%3B%20z-index%3A%205%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20justify-content%3A%20space-between%3B%20border-top%3A%201px%20solid%20rgba%28255%2C255%2C255%2C0.15%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.ad-badge%20%7B%20position%3A%20absolute%3B%20top%3A%2010px%3B%20left%3A%2010px%3B%20background%3A%20linear-gradient%28135deg%2C%20%23FFD700%200%25%2C%20%23FF8C00%20100%25%29%3B%20color%3A%20%23222%3B%20font-size%3A%209px%3B%20padding%3A%203px%208px%3B%20border-radius%3A%2020px%3B%20z-index%3A%2010%3B%20font-weight%3A%20900%3B%20box-shadow%3A%200%202px%2010px%20rgba%28255%2C%20215%2C%200%2C%200.4%29%3B%20text-transform%3A%20uppercase%3B%20border%3A%201px%20solid%20rgba%28255%2C255%2C255%2C0.4%29%3B%20%7D%0A%20%20%20%20%20%20%20%20.ad-text-info%20%7B%20display%3A%20flex%3B%20flex-direction%3A%20column%3B%20align-items%3A%20flex-start%3B%20flex%3A%201%3B%20margin-right%3A%2010px%3B%20%7D%0A%20%20%20%20%20%20%20%20.ad-title-text%20%7B%20color%3A%20%23fff%3B%20font-size%3A%200.95rem%3B%20font-weight%3A%20700%3B%20line-height%3A%201.1%3B%20margin-bottom%3A%202px%3B%20%7D%0A%20%20%20%20%20%20%20%20.ad-desc-text%20%7B%20color%3A%20rgba%28255%2C%20255%2C%20255%2C%200.7%29%3B%20font-size%3A%200.75rem%3B%20white-space%3A%20nowrap%3B%20overflow%3A%20hidden%3B%20text-overflow%3A%20ellipsis%3B%20width%3A%20100%25%3B%20%7D%0A%20%20%20%20%20%20%20%20.ad-cta-btn%20%7B%20background%3A%20linear-gradient%2890deg%2C%20%236a11cb%200%25%2C%20%232575fc%20100%25%29%3B%20color%3A%20white%3B%20border%3A%20none%3B%20padding%3A%208px%2016px%3B%20border-radius%3A%208px%3B%20font-size%3A%200.8rem%3B%20font-weight%3A%20600%3B%20white-space%3A%20nowrap%3B%20display%3A%20flex%3B%20align-items%3A%20center%3B%20gap%3A%206px%3B%20box-shadow%3A%200%204px%2015px%20rgba%2837%2C%20117%2C%20252%2C%200.4%29%3B%20position%3A%20relative%3B%20overflow%3A%20hidden%3B%20animation%3A%20pulseBtn%202s%20infinite%20ease-in-out%3B%20%7D%0A%20%20%20%20%20%20%20%20@keyframes%20pulseBtn%20%7B%200%25%20%7B%20transform%3A%20scale%281%29%3B%20%7D%2050%25%20%7B%20transform%3A%20scale%281.05%29%3B%20%7D%20100%25%20%7B%20transform%3A%20scale%281%29%3B%20%7D%20%7D%0A%20%20%20%20%3C/style%3E%0A%3C/head%3E%0A%3Cbody%20class%3D%22gallery-active%22%3E%20%0A%20%20%20%20%0A%20%20%20%20%3C%21--%20%uD83D%uDD25%uD83D%uDD25%20PLATE%20DROP%20PRELOADER%20%uD83D%uDD25%uD83D%uDD25%20--%3E%0A%20%20%20%20%3Cdiv%20id%3D%22preloader%22%3E%0A%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22loader-visual-wrapper%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22drop-plate%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cimg%20id%3D%22preloaderLogo%22%20src%3D%22%22%20alt%3D%22Loading...%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cscript%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28function%28%29%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20var%20c%20%3D%20localStorage.getItem%28%27site_logo_cache%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20var%20i%20%3D%20document.getElementById%28%27preloaderLogo%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28c%29%7B%20i.src%20%3D%20c%3B%20i.style.display%3D%27block%27%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/script%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22shockwave%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22loading-text-wrapper%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cspan%20class%3D%22loading-word%22%3ELOADING%3C/span%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cspan%20class%3D%22dot%22%3E.%3C/span%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cspan%20class%3D%22dot%22%3E.%3C/span%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cspan%20class%3D%22dot%22%3E.%3C/span%3E%0A%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%3Cdiv%20class%3D%22all-bar%22%3E%20%20%0A%20%20%20%20%20%20%20%20%3C%21--%20HEADER%20--%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22heading-bar%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22logo-container-left%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cimg%20id%3D%22siteLogo%22%20src%3D%22%22%20alt%3D%22Logo%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22search-container%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22text%22%20placeholder%3D%22Search%20prompts..%21%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22header-actions%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ci%20class%3D%22fas%20fa-moon%20action-icon%22%20id%3D%22themeToggleIcon%22%3E%3C/i%3E%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%3C%21--%20FULL%20IMAGE%20VIEW%20--%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22full-image-view%22%20id%3D%22fullImageView%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22image-display-container%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22image-view-action-bar%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22closeImageViewBtn%22%20class%3D%22action-btn-full%22%20title%3D%22Back%20to%20Gallery%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ci%20class%3D%22fas%20fa-arrow-left%22%3E%3C/i%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22imageWrapper%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cimg%20id%3D%22enlargedImage%22%20src%3D%22%22%20alt%3D%221%22%3E%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22likeImageViewBtn%22%20class%3D%22action-btn-full%20like-in-image-corner%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ci%20class%3D%22far%20fa-heart%20like-icon-full%22%3E%3C/i%3E%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22image-details-overlay%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cp%20class%3D%22image-title-view%22%20id%3D%22enlargedImageTitle%22%3ETitle%3C/p%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22generate-btn%22%20id%3D%22generatePromptButton%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ci%20class%3D%22fas%20fa-magic%22%3E%3C/i%3E%20GENERATE%20PROMPT%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%21--%20%uD83D%uDD25%20LOADING%20CONTAINER%20%uD83D%uDD25%20--%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22loading-container%22%20id%3D%22loadingContainer%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22loading-circle%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22loading-arc%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cspan%20id%3D%22loadingPercentage%22%3E0%25%3C/span%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22result-container%22%20id%3D%22resultContainer%22%20style%3D%22display%3A%20none%3B%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22result-box%22%20id%3D%22resultBox%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20id%3D%22promptActionButtons%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22copy-button%22%20id%3D%22copyButton%22%3E%3Ci%20class%3D%22fas%20fa-copy%22%3E%3C/i%3E%20Copy%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22gemini-button%22%20id%3D%22geminiButton%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cimg%20src%3D%22https%3A//i.ibb.co.com/PvqbtD1z/2026022219393034.png%22%20alt%3D%22G%22%20class%3D%22btn-logo-img%22%3E%20Gemini%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22chatgpt-button%22%20id%3D%22chatGPTButton%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cimg%20src%3D%22https%3A//i.ibb.co.com/GfGtxCF2/2026022219385290.png%22%20alt%3D%22C%22%20class%3D%22btn-logo-img%22%3E%20ChatGPT%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/button%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ca%20id%3D%22bannerAdLink%22%20href%3D%22%23%22%20target%3D%22_blank%22%20class%3D%22banner-ad-container%22%3E%3C/a%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20SCROLL%20WRAPPER%20--%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22scroll-wrapper%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22content%22%20id%3D%22imageGallery%22%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22more-container%22%3E%3Cbutton%20class%3D%22more-btn%22%20id%3D%22loadMoreButton%22%3ELoad%20More%3C/button%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20FOOTER%20--%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22footer-main%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22social-icons%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ca%20href%3D%22%23%22%20id%3D%22footerTelegramLink%22%20target%3D%22_blank%22%20class%3D%22social-icon%22%3E%3Cimg%20src%3D%22https%3A//upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg%22%20alt%3D%22Telegram%22%20class%3D%22social-image%22%3E%3C/a%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ca%20href%3D%22%23%22%20id%3D%22footerTiktokLink%22%20target%3D%22_blank%22%20class%3D%22social-icon%22%3E%3Cimg%20src%3D%22https%3A//upload.wikimedia.org/wikipedia/commons/a/a6/Tiktok_icon.svg%22%20alt%3D%22TikTok%22%20class%3D%22social-image%20tiktok-filter%22%3E%3C/a%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ca%20href%3D%22%23%22%20id%3D%22footerFbLink%22%20target%3D%22_blank%22%20class%3D%22social-icon%22%3E%3Cimg%20src%3D%22https%3A//upload.wikimedia.org/wikipedia/commons/1/1b/Facebook_icon.svg%22%20alt%3D%22Facebook%22%20class%3D%22social-image%22%3E%3C/a%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ca%20href%3D%22%23%22%20id%3D%22footerYoutubeLink%22%20target%3D%22_blank%22%20class%3D%22social-icon%22%3E%3Cimg%20src%3D%22https%3A//upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%25282017%2529.svg%22%20alt%3D%22YouTube%22%20class%3D%22social-image%22%3E%3C/a%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cp%20class%3D%22policy-terms-line%22%3EPrivacy%20Policy%20%3Cspan%20class%3D%22separator%22%3E%7C%3C/span%3E%20Terms%20of%20Service%3C/p%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cp%20class%3D%22copyright-text%22%20id%3D%22footerCopyright%22%3E%A9%202025%20Ads%20to%20Earning.%20All%20Rights%20Reserved%3C/p%3E%0A%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%3C/div%3E%0A%0A%20%20%20%20%3Cscript%3E%0A%20%20%20%20%20%20%20%20//%20%uD83D%uDD25%20Firebase%20Config%0A%20%20%20%20%20%20%20%20const%20firebaseConfig%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20apiKey%3A%20%22AIzaSyDtHMaaR7d4ACgOrdHfimjzx-xyuS0_CkI%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20authDomain%3A%20%22image-font-manager-fc822.firebaseapp.com%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20databaseURL%3A%20%22https%3A//image-font-manager-fc822-default-rtdb.firebaseio.com%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20projectId%3A%20%22image-font-manager-fc822%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20storageBucket%3A%20%22image-font-manager-fc822.firebasestorage.app%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20messagingSenderId%3A%20%22788118912273%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20appId%3A%20%221%3A788118912273%3Aweb%3A4f07cebc5803f733dfe0b0%22%0A%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20if%20%28%21firebase.apps.length%29%20firebase.initializeApp%28firebaseConfig%29%3B%0A%20%20%20%20%20%20%20%20const%20db%20%3D%20firebase.database%28%29%3B%0A%20%20%20%20%20%20%20%20const%20viewsRef%20%3D%20db.ref%28%27image_views%27%29%3B%0A%20%20%20%20%20%20%20%20const%20likesRef%20%3D%20db.ref%28%27image_likes%27%29%3B%20%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20let%20USER_ID%20%3D%20localStorage.getItem%28%27unique_uid%27%29%3B%0A%20%20%20%20%20%20%20%20if%20%28%21USER_ID%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20USER_ID%20%3D%20%27user_%27%20+%20Math.random%28%29.toString%2836%29.substr%282%2C%209%29%20+%20Date.now%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20localStorage.setItem%28%27unique_uid%27%2C%20USER_ID%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20//%20%uD83D%uDD25%uD83D%uDD25%20ADS%20CYCLE%20LOGIC%20%uD83D%uDD25%uD83D%uDD25%0A%20%20%20%20%20%20%20%20let%20allBannerAds%20%3D%20%5B%5D%3B%0A%20%20%20%20%20%20%20%20let%20availableAds%20%3D%20%5B%5D%3B%20%0A%0A%20%20%20%20%20%20%20%20function%20fetchBannerAds%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20db.ref%28%27banner_ads%27%29.on%28%27value%27%2C%20snap%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20allBannerAds%20%3D%20%5B%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20snap.forEach%28child%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20ad%20%3D%20child.val%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28ad.url%20%26%26%20ad.targetUrl%29%20allBannerAds.push%28ad%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20availableAds%20%3D%20%5B...allBannerAds%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20fetchBannerAds%28%29%3B%0A%0A%20%20%20%20%20%20%20%20function%20showRandomAd%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20containerLink%20%3D%20document.getElementById%28%27bannerAdLink%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28allBannerAds.length%20%3D%3D%3D%200%29%20%7B%20containerLink.style.display%20%3D%20%27none%27%3B%20return%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28availableAds.length%20%3D%3D%3D%200%29%20%7B%20availableAds%20%3D%20%5B...allBannerAds%5D%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20randomIndex%20%3D%20Math.floor%28Math.random%28%29%20*%20availableAds.length%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20selectedAd%20%3D%20availableAds%5BrandomIndex%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20availableAds.splice%28randomIndex%2C%201%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20ctaText%20%3D%20%22Visit%20Site%22%2C%20ctaIcon%20%3D%20%22fa-external-link-alt%22%2C%20adTitleText%20%3D%20%22Sponsored%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20target%20%3D%20selectedAd.targetUrl.toLowerCase%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20type%20%3D%20selectedAd.type%20%7C%7C%20%27image%27%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28type%20%3D%3D%3D%20%27video%27%20%7C%7C%20target.includes%28%27youtube.com%27%29%20%7C%7C%20target.includes%28%27youtu.be%27%29%29%20%7B%20ctaText%20%3D%20%22Watch%20Now%22%3B%20ctaIcon%20%3D%20%22fa-play%22%3B%20adTitleText%20%3D%20%22Must%20Watch%21%22%3B%20%7D%20%0A%20%20%20%20%20%20%20%20%20%20%20%20else%20if%20%28target.includes%28%27play.google.com%27%29%20%7C%7C%20target.includes%28%27apps.apple.com%27%29%29%20%7B%20ctaText%20%3D%20%22Install%22%3B%20ctaIcon%20%3D%20%22fa-download%22%3B%20adTitleText%20%3D%20%22App%20Suggestion%22%3B%20%7D%20%0A%20%20%20%20%20%20%20%20%20%20%20%20else%20if%20%28target.includes%28%27t.me%27%29%29%20%7B%20ctaText%20%3D%20%22Join%20Channel%22%3B%20ctaIcon%20%3D%20%22fa-paper-plane%22%3B%20adTitleText%20%3D%20%22Telegram%22%3B%20%7D%20%0A%20%20%20%20%20%20%20%20%20%20%20%20else%20if%20%28target.includes%28%27facebook.com%27%29%29%20%7B%20ctaText%20%3D%20%22Follow%22%3B%20ctaIcon%20%3D%20%22fa-thumbs-up%22%3B%20adTitleText%20%3D%20%22Facebook%22%3B%20%7D%20%0A%20%20%20%20%20%20%20%20%20%20%20%20else%20if%20%28target.includes%28%27daraz%27%29%20%7C%7C%20target.includes%28%27amazon%27%29%20%7C%7C%20target.includes%28%27shop%27%29%29%20%7B%20ctaText%20%3D%20%22Shop%20Now%22%3B%20ctaIcon%20%3D%20%22fa-shopping-cart%22%3B%20adTitleText%20%3D%20%22Best%20Deals%22%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20mediaHtml%20%3D%20type%20%3D%3D%3D%20%27video%27%20%3F%20%60%3Cvideo%20class%3D%22banner-ad-media%22%20autoplay%20loop%20muted%20playsinline%3E%3Csource%20src%3D%22%24%7BselectedAd.url%7D%22%20type%3D%22video/mp4%22%3E%3C/video%3E%60%20%3A%20%60%3Cimg%20src%3D%22%24%7BselectedAd.url%7D%22%20class%3D%22banner-ad-media%22%20alt%3D%22Ad%22%3E%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20containerLink.href%20%3D%20selectedAd.targetUrl%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20containerLink.innerHTML%20%3D%20%60%3Cdiv%20class%3D%22ad-media-wrapper%22%3E%24%7BmediaHtml%7D%3C/div%3E%3Cspan%20class%3D%22ad-badge%22%3EAd%3C/span%3E%3Cdiv%20class%3D%22ad-overlay%22%3E%3Cdiv%20class%3D%22ad-text-info%22%3E%3Cspan%20class%3D%22ad-title-text%22%3E%24%7BadTitleText%7D%3C/span%3E%3Cspan%20class%3D%22ad-desc-text%22%3ETap%20here%20to%20view%20more%20details%3C/span%3E%3C/div%3E%3Cbutton%20class%3D%22ad-cta-btn%22%3E%24%7BctaText%7D%20%3Ci%20class%3D%22fas%20%24%7BctaIcon%7D%22%3E%3C/i%3E%3C/button%3E%3C/div%3E%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20containerLink.style.display%20%3D%20%27block%27%3B%20%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20const%20scrollObserver%20%3D%20new%20IntersectionObserver%28%28entries%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20entries.forEach%28entry%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28entry.isIntersecting%29%20entry.target.classList.add%28%27visible%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20else%20if%20%28entry.boundingClientRect.top%20%3E%200%29%20entry.target.classList.remove%28%27visible%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%7D%2C%20%7B%20threshold%3A%200.15%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20//%20%u2705%u2705%20SITE%20SETTINGS%3A%20Firebase%20+%20LocalStorage%20Sync%20%u2705%u2705%0A%20%20%20%20%20%20%20%20function%20fetchSiteSettings%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20db.ref%28%27site_settings%27%29.on%28%27value%27%2C%20snapshot%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20data%20%3D%20snapshot.val%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28data%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20logo%20%3D%20data.logoUrl%20%7C%7C%20data.logo%20%7C%7C%20data.siteLogo%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28logo%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20logoEl%20%3D%20document.getElementById%28%27siteLogo%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20preloaderLogoEl%20%3D%20document.getElementById%28%27preloaderLogo%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28logoEl%20%26%26%20logoEl.src%20%21%3D%3D%20logo%29%20logoEl.src%20%3D%20logo%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28preloaderLogoEl%20%26%26%20preloaderLogoEl.src%20%21%3D%3D%20logo%29%20preloaderLogoEl.src%20%3D%20logo%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20localStorage.setItem%28%27site_logo_cache%27%2C%20logo%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28data.userSiteTitle%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.title%20%3D%20data.userSiteTitle%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20localStorage.setItem%28%27user_site_title%27%2C%20data.userSiteTitle%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28data.userFavicon%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20faviconEl%20%3D%20document.getElementById%28%27dynamicFavicon%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28faviconEl%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20faviconEl.href%20%3D%20data.userFavicon%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20localStorage.setItem%28%27user_site_favicon%27%2C%20data.userFavicon%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28document.getElementById%28%27footerTiktokLink%27%29%29%20document.getElementById%28%27footerTiktokLink%27%29.href%20%3D%20data.tiktokLink%20%7C%7C%20%22%23%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28document.getElementById%28%27footerFbLink%27%29%29%20document.getElementById%28%27footerFbLink%27%29.href%20%3D%20data.fbLink%20%7C%7C%20%22%23%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28document.getElementById%28%27footerTelegramLink%27%29%29%20document.getElementById%28%27footerTelegramLink%27%29.href%20%3D%20data.tgLink%20%7C%7C%20%22%23%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28document.getElementById%28%27footerYoutubeLink%27%29%29%20document.getElementById%28%27footerYoutubeLink%27%29.href%20%3D%20data.youtubeLink%20%7C%7C%20%22%23%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28document.getElementById%28%27footerCopyright%27%29%29%20document.getElementById%28%27footerCopyright%27%29.textContent%20%3D%20data.footerText%20%7C%7C%20%22%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20let%20allFetchedImages%20%3D%20%5B%5D%3B%0A%20%20%20%20%20%20%20%20let%20currentIndex%20%3D%200%3B%0A%20%20%20%20%20%20%20%20const%20cardsPerLoad%20%3D%208%3B%0A%0A%20%20%20%20%20%20%20%20function%20fetchImages%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20db.ref%28%27gallery_images%27%29.on%28%27value%27%2C%20snap%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20rawImages%20%3D%20%5B%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20snap.forEach%28child%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20item%20%3D%20child.val%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28item.url%20%26%26%20item.fullTitle%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20safeId%20%3D%20%28item.shortTitle%20%7C%7C%20child.key%29.toString%28%29.replace%28/%5B.%23%24%5C%5B%5C%5D%5C/%5D/g%2C%20%27_%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20rawImages.push%28%7B%20...item%2C%20key%3A%20child.key%2C%20safeId%3A%20safeId%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20likesRef.once%28%27value%27%2C%20likeSnap%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20rawImages.forEach%28img%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20count%20%3D%20likeSnap.child%28img.safeId%29.child%28%27count%27%29.val%28%29%20%7C%7C%200%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20img.likeCount%20%3D%20count%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20rawImages.sort%28%28a%2C%20b%29%20%3D%3E%20b.likeCount%20-%20a.likeCount%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20allFetchedImages%20%3D%20rawImages%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20gallery%20%3D%20document.getElementById%28%27imageGallery%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20gallery.innerHTML%20%3D%20%22%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20currentIndex%20%3D%200%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28allFetchedImages.length%20%3D%3D%3D%200%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27preloader%27%29.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27loadMoreButton%27%29.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20loadMoreImages%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20preloader%20%3D%20document.getElementById%28%27preloader%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20preloader.style.opacity%20%3D%20%270%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20%7B%20preloader.style.display%20%3D%20%27none%27%3B%20%7D%2C%20500%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%201200%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20checkUrlAndRestoreState%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20checkUrlAndRestoreState%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20hash%20%3D%20window.location.hash.substring%281%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28hash%20%26%26%20allFetchedImages.length%20%3E%200%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20imgData%20%3D%20allFetchedImages.find%28img%20%3D%3E%20img.safeId%20%3D%3D%3D%20hash%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28imgData%29%20%7B%20populateAndOpenOverlay%28imgData%2C%20false%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20window.addEventListener%28%27popstate%27%2C%20function%28event%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28%21window.location.hash%29%20%7B%20closeOverlayLogic%28%29%3B%20%7D%20else%20%7B%20checkUrlAndRestoreState%28%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20function%20createCard%28img%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20div%20%3D%20document.createElement%28%27div%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20div.className%20%3D%20%27image-card-wrapper%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20div.setAttribute%28%27data-title%27%2C%20img.shortTitle%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20div.setAttribute%28%27data-full-title%27%2C%20img.fullTitle%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20div.setAttribute%28%27data-prompt%27%2C%20img.prompt%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20div.innerHTML%20%3D%20%60%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22image-card%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cimg%20src%3D%22%24%7Bimg.url%7D%22%20alt%3D%22Img%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22view-count%22%3E%3Ci%20class%3D%22fas%20fa-eye%22%3E%3C/i%3E%20%3Cspan%20class%3D%22view-count-number%22%3E0%3C/span%3E%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22like-count%22%20data-image-id%3D%22%24%7Bimg.safeId%7D%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ci%20class%3D%22far%20fa-heart%20like-icon%22%3E%3C/i%3E%20%3Cspan%20class%3D%22like-count-number%22%3E%24%7Bimg.likeCount%7D%3C/span%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C/div%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cp%20class%3D%22image-title%22%3E%24%7Bimg.fullTitle%7D%3C/p%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20viewsRef.child%28img.safeId%29.child%28%27count%27%29.on%28%27value%27%2C%20s%20%3D%3E%20%7B%20div.querySelector%28%27.view-count-number%27%29.innerText%20%3D%20%28s.val%28%29%20%7C%7C%200%29.toLocaleString%28%29%3B%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20likesRef.child%28img.safeId%29.child%28%27count%27%29.on%28%27value%27%2C%20s%20%3D%3E%20%7B%20div.querySelector%28%27.like-count-number%27%29.innerText%20%3D%20%28s.val%28%29%20%7C%7C%200%29.toLocaleString%28%29%3B%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20likesRef.child%28img.safeId%29.child%28%27users%27%29.child%28USER_ID%29.once%28%27value%27%2C%20s%20%3D%3E%20%7B%20if%28s.val%28%29%29%20%7B%20const%20icon%20%3D%20div.querySelector%28%27.like-icon%27%29%3B%20icon.classList.remove%28%27far%27%29%3B%20icon.classList.add%28%27fas%27%29%3B%20%7D%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20div.addEventListener%28%27click%27%2C%20%28e%29%20%3D%3E%20%7B%20if%28%21e.target.closest%28%27.like-count%27%29%29%20openImageView%28div%29%3B%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20div.querySelector%28%27.like-count%27%29.addEventListener%28%27click%27%2C%20%28e%29%20%3D%3E%20%7B%20e.stopPropagation%28%29%3B%20toggleLike%28div.querySelector%28%27.like-count%27%29%29%3B%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20div.style.display%20%3D%20%27block%27%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20scrollObserver.observe%28div%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20div%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20loadMoreImages%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20gallery%20%3D%20document.getElementById%28%27imageGallery%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btn%20%3D%20document.getElementById%28%27loadMoreButton%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20true%3B%20btn.textContent%20%3D%20%22Loading...%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20end%20%3D%20Math.min%28currentIndex%20+%20cardsPerLoad%2C%20allFetchedImages.length%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%28let%20i%20%3D%20currentIndex%3B%20i%20%3C%20end%3B%20i++%29%20%7B%20gallery.appendChild%28createCard%28allFetchedImages%5Bi%5D%29%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20currentIndex%20%3D%20end%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28currentIndex%20%3E%3D%20allFetchedImages.length%29%20btn.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20else%20%7B%20btn.disabled%20%3D%20false%3B%20btn.textContent%20%3D%20%22Load%20More%22%3B%20btn.style.display%20%3D%20%27block%27%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%20300%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20document.getElementById%28%27loadMoreButton%27%29.addEventListener%28%27click%27%2C%20loadMoreImages%29%3B%0A%0A%20%20%20%20%20%20%20%20let%20currentPromptText%20%3D%20%27%27%3B%0A%20%20%20%20%20%20%20%20let%20charIndex%20%3D%200%3B%0A%0A%20%20%20%20%20%20%20%20function%20openImageView%28cardWrapper%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20safeId%20%3D%20cardWrapper.querySelector%28%27.like-count%27%29.getAttribute%28%27data-image-id%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20imgUrl%20%3D%20cardWrapper.querySelector%28%27img%27%29.src%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20fullTitle%20%3D%20cardWrapper.getAttribute%28%27data-full-title%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20prompt%20%3D%20cardWrapper.getAttribute%28%27data-prompt%27%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20imgData%20%3D%20%7B%20safeId%3A%20safeId%2C%20url%3A%20imgUrl%2C%20fullTitle%3A%20fullTitle%2C%20prompt%3A%20prompt%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20populateAndOpenOverlay%28imgData%2C%20true%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20populateAndOpenOverlay%28data%2C%20shouldPushState%20%3D%20true%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28shouldPushState%20%26%26%20window.location.hash.substring%281%29%20%21%3D%3D%20data.safeId%29%20%7B%20history.pushState%28%7B%20modalOpen%3A%20true%2C%20id%3A%20data.safeId%20%7D%2C%20%22%22%2C%20%22%23%22%20+%20data.safeId%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20viewsRef.child%28data.safeId%29.child%28%27users%27%29.child%28USER_ID%29.once%28%27value%27%2C%20snapshot%20%3D%3E%20%7B%20if%20%28%21snapshot.exists%28%29%29%20%7B%20viewsRef.child%28data.safeId%29.child%28%27users%27%29.child%28USER_ID%29.set%28true%29%3B%20viewsRef.child%28data.safeId%29.child%28%27count%27%29.transaction%28c%20%3D%3E%20%28c%20%7C%7C%200%29%20+%201%29%3B%20%7D%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27enlargedImage%27%29.src%20%3D%20data.url%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27enlargedImage%27%29.alt%20%3D%20data.safeId%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27enlargedImageTitle%27%29.textContent%20%3D%20data.fullTitle%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20fullIcon%20%3D%20document.querySelector%28%27.like-icon-full%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20likesRef.child%28data.safeId%29.child%28%27users%27%29.child%28USER_ID%29.once%28%27value%27%2C%20s%20%3D%3E%20%7B%20if%28s.val%28%29%29%20%7B%20fullIcon.classList.remove%28%27far%27%29%3B%20fullIcon.classList.add%28%27fas%27%29%3B%20%7D%20else%20%7B%20fullIcon.classList.remove%28%27fas%27%29%3B%20fullIcon.classList.add%28%27far%27%29%3B%20%7D%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27resultContainer%27%29.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27promptActionButtons%27%29.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27bannerAdLink%27%29.style.display%20%3D%20%27none%27%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27generatePromptButton%27%29.style.display%20%3D%20%27flex%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27loadingContainer%27%29.style.display%20%3D%20%27none%27%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20currentPromptText%20%3D%20data.prompt%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20document.body.classList.remove%28%27gallery-active%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.body.classList.add%28%27image-view-active%27%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20closeOverlayLogic%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.body.classList.remove%28%27image-view-active%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.body.classList.add%28%27gallery-active%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28window.location.hash%29%20%7B%20history.pushState%28%22%22%2C%20document.title%2C%20window.location.pathname%20+%20window.location.search%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20toggleLike%28btnElement%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20safeId%20%3D%20btnElement.getAttribute%28%27data-image-id%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28%21safeId%20%26%26%20document.body.classList.contains%28%27image-view-active%27%29%29%20%7B%20safeId%20%3D%20document.getElementById%28%27enlargedImage%27%29.alt%3B%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20userLikeRef%20%3D%20likesRef.child%28safeId%29.child%28%27users%27%29.child%28USER_ID%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20countRef%20%3D%20likesRef.child%28safeId%29.child%28%27count%27%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20userLikeRef.once%28%27value%27%2C%20snapshot%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28snapshot.exists%28%29%29%20%7B%20userLikeRef.remove%28%29%3B%20countRef.transaction%28c%20%3D%3E%20%28c%20%7C%7C%200%29%20-%201%29%3B%20updateLikeUI%28safeId%2C%20false%29%3B%20%7D%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20else%20%7B%20userLikeRef.set%28true%29%3B%20countRef.transaction%28c%20%3D%3E%20%28c%20%7C%7C%200%29%20+%201%29%3B%20updateLikeUI%28safeId%2C%20true%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20updateLikeUI%28safeId%2C%20isLiked%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20cardIcon%20%3D%20document.querySelector%28%60.like-count%5Bdata-image-id%3D%22%24%7BsafeId%7D%22%5D%20.like-icon%60%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28cardIcon%29%20%7B%20if%28isLiked%29%20%7B%20cardIcon.classList.remove%28%27far%27%29%3B%20cardIcon.classList.add%28%27fas%27%29%3B%20%7D%20else%20%7B%20cardIcon.classList.remove%28%27fas%27%29%3B%20cardIcon.classList.add%28%27far%27%29%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28document.getElementById%28%27enlargedImage%27%29.alt%20%3D%3D%3D%20safeId%29%20%7B%20const%20fullIcon%20%3D%20document.querySelector%28%27.like-icon-full%27%29%3B%20if%28isLiked%29%20%7B%20fullIcon.classList.remove%28%27far%27%29%3B%20fullIcon.classList.add%28%27fas%27%29%3B%20%7D%20else%20%7B%20fullIcon.classList.remove%28%27fas%27%29%3B%20fullIcon.classList.add%28%27far%27%29%3B%20%7D%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20document.getElementById%28%27likeImageViewBtn%27%29.addEventListener%28%27click%27%2C%20function%28%29%20%7B%20toggleLike%28this%29%3B%20%7D%29%3B%0A%20%20%20%20%20%20%20%20document.getElementById%28%27closeImageViewBtn%27%29.addEventListener%28%27click%27%2C%20%28%29%20%3D%3E%20%7B%20if%28window.location.hash%29%20%7B%20window.history.back%28%29%3B%20%7D%20else%20%7B%20closeOverlayLogic%28%29%3B%20%7D%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20//%20%uD83D%uDD25%uD83D%uDD25%20UPDATED%20GENERATE%20BUTTON%20LOGIC%20%28WITH%20DELAY%29%20%uD83D%uDD25%uD83D%uDD25%0A%20%20%20%20%20%20%20%20document.getElementById%28%27generatePromptButton%27%29.addEventListener%28%27click%27%2C%20function%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btn%20%3D%20this%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20loader%20%3D%20document.getElementById%28%27loadingContainer%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20percentageText%20%3D%20document.getElementById%28%27loadingPercentage%27%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20//%201.%20Show%20processing%20state%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20originalText%20%3D%20btn.innerHTML%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.innerHTML%20%3D%20%27%3Ci%20class%3D%22fas%20fa-circle-notch%20fa-spin%22%3E%3C/i%3E%20Processing...%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.style.opacity%20%3D%20%270.7%27%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20//%202.%20Add%20Delay%20%28800ms%29%0A%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btn.style.display%20%3D%20%27none%27%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btn.innerHTML%20%3D%20originalText%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btn.style.opacity%20%3D%20%271%27%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20loader.style.display%20%3D%20%27flex%27%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showRandomAd%28%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20count%20%3D%200%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20percentageText.innerText%20%3D%20%220%25%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20interval%20%3D%20setInterval%28%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count%20+%3D%20Math.floor%28Math.random%28%29%20*%203%29%20+%201%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28count%20%3E%20100%29%20count%20%3D%20100%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20percentageText.innerText%20%3D%20count%20+%20%22%25%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28count%20%3E%3D%20100%29%20%7B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20clearInterval%28interval%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20%7B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20loader.style.display%20%3D%20%27none%27%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27resultContainer%27%29.style.display%20%3D%20%27flex%27%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20startTyping%28%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%20500%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%2030%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%20800%29%3B%20%0A%20%20%20%20%20%20%20%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20function%20startTyping%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20box%20%3D%20document.getElementById%28%27resultBox%27%29%3B%20box.innerText%20%3D%20%22%22%3B%20charIndex%20%3D%2010%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20function%20type%28%29%20%7B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20speed%20%3D%205%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%20%28let%20i%20%3D%200%3B%20i%20%3C%20speed%3B%20i++%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28charIndex%20%3C%20currentPromptText.length%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20box.innerText%20+%3D%20currentPromptText.charAt%28charIndex%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20charIndex++%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20box.scrollTop%20%3D%20box.scrollHeight%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28charIndex%20%3C%20currentPromptText.length%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28type%2C%201%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27promptActionButtons%27%29.style.display%20%3D%20%27flex%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20type%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20document.getElementById%28%27copyButton%27%29.addEventListener%28%27click%27%2C%20%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btn%20%3D%20document.getElementById%28%27copyButton%27%29%3B%20const%20originalText%20%3D%20%27%3Ci%20class%3D%22fas%20fa-copy%22%3E%3C/i%3E%20Copy%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20navigator.clipboard.writeText%28document.getElementById%28%27resultBox%27%29.innerText%29.then%28%28%29%20%3D%3E%20%7B%20btn.innerHTML%20%3D%20%27%3Ci%20class%3D%22fas%20fa-check%22%3E%3C/i%3E%20Copied%21%27%3B%20setTimeout%28%28%29%20%3D%3E%20btn.innerHTML%20%3D%20originalText%2C%202000%29%3B%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20document.getElementById%28%27geminiButton%27%29.addEventListener%28%27click%27%2C%20%28%29%20%3D%3E%20%7B%20window.open%28%27https%3A//gemini.google.com/%3Fprompt%3D%27%20+%20encodeURIComponent%28document.getElementById%28%27resultBox%27%29.innerText%29%29%3B%20%7D%29%3B%0A%20%20%20%20%20%20%20%20document.getElementById%28%27chatGPTButton%27%29.addEventListener%28%27click%27%2C%20%28%29%20%3D%3E%20%7B%20window.open%28%27https%3A//chat.openai.com/%27%29%3B%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20document.getElementById%28%27themeToggleIcon%27%29.addEventListener%28%27click%27%2C%20function%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.body.classList.toggle%28%27light-mode%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28document.body.classList.contains%28%27light-mode%27%29%29%20%7B%20this.classList.remove%28%27fa-moon%27%29%3B%20this.classList.add%28%27fa-sun%27%29%3B%20%7D%20%0A%20%20%20%20%20%20%20%20%20%20%20%20else%20%7B%20this.classList.remove%28%27fa-sun%27%29%3B%20this.classList.add%28%27fa-moon%27%29%3B%20%7D%0A%20%20%20%20%20%20%20%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20document.querySelector%28%27.search-container%20input%27%29.addEventListener%28%27input%27%2C%20function%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20term%20%3D%20this.value.toLowerCase%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.querySelectorAll%28%27.image-card-wrapper%27%29.forEach%28card%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20title%20%3D%20card.getAttribute%28%27data-full-title%27%29.toLowerCase%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20prompt%20%3D%20card.getAttribute%28%27data-prompt%27%29.toLowerCase%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20card.style.display%20%3D%20%28title.includes%28term%29%20%7C%7C%20prompt.includes%28term%29%29%20%3F%20%27block%27%20%3A%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27loadMoreButton%27%29.style.display%20%3D%20term%20%3F%20%27none%27%20%3A%20%27block%27%3B%0A%20%20%20%20%20%20%20%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20fetchSiteSettings%28%29%3B%0A%20%20%20%20%20%20%20%20fetchImages%28%29%3B%0A%20%20%20%20%3C/script%3E%0A%3C/body%3E%0A%3C/html%3E'))</script>
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- 1. TITLE TAG -->
+    <title></title>
+
+    <!-- 2. INSTANT CONFIG LOADER (CRITICAL: Makes your saved settings the DEFAULT immediately) -->
+    <script>
+        (function() {
+            // Load Title Immediately
+            const savedTitle = localStorage.getItem('vault_site_title');
+            if (savedTitle) {
+                document.title = savedTitle;
+            } else {
+                document.title = "Private Vault"; // System Default
+            }
+
+            // Load Header Name Logic for Logo
+            const savedHeader = localStorage.getItem('vault_header_name');
+            // We can't set innerHTML her easily without DOM, but we set CSS variables below
+
+            // Load Colors Immediately from LocalStorage
+            const root = document.documentElement;
+            const savedAccent = localStorage.getItem('vault_accent');
+            const savedGlass = localStorage.getItem('vault_glass_bg');
+            const savedMain = localStorage.getItem('vault_main_bg');
+            const savedCard = localStorage.getItem('vault_card_bg');
+
+            if (savedAccent) root.style.setProperty('--accent-color', savedAccent);
+            if (savedGlass) root.style.setProperty('--glass-bg', savedGlass);
+            if (savedMain) root.style.setProperty('--main-bg', savedMain);
+            if (savedCard) root.style.setProperty('--card-bg', savedCard);
+        })();
+    </script>
+
+    <link rel="shortcut icon" id="dynamic-favicon" href="">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: "#020617",
+                        card: "#0f172a",
+                        glass: "rgba(15, 23, 42, 0.7)",
+                        accent: "var(--accent-color)"
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            /* System Defaults (Used only if nothing is saved) */
+            --accent-color: #6366f1;
+            --glass-bg: rgba(15, 23, 42, 0.95);
+            --main-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--main-bg); /* Use var for immediate bg color */
+            touch-action: pan-x pan-y;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        input,
+        textarea,
+        .select-text {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            cursor: text;
+        }
+
+        /* --- FIXED INPUT ICONS --- */
+        .input-wrapper-relative {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .input-icon.textarea-icon {
+            top: 14px;
+            transform: none;
+        }
+
+        .password-eye-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #64748b;
+            z-index: 20;
+            font-size: 13px;
+        }
+        
+        .password-eye-icon:hover {
+            color: white;
+        }
+
+        #global-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            background-color: var(--main-bg);
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            transition: background-color 0.5s ease, background-image 0.5s ease;
+        }
+
+        #mobile-wrapper {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            height: 100vh;
+            height: 100dvh;
+            position: relative;
+            background: transparent;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        #app-screen {
+            background: rgba(15, 23, 42, 0.85);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 0.5s ease;
+        }
+
+        /* SETTINGS PANEL COMPACT DESIGN */
+        #settings-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 60;
+            backdrop-filter: blur(2px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        #settings-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #settings-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 260px;
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            z-index: 70;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #settings-panel.open {
+            transform: translateX(0);
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(3px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        /* FIXED ICON LOADER - SOLID BACKGROUND */
+        #startup-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #020617; /* Matches default dark theme */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-container {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: var(--accent-color);
+            border-right-color: var(--accent-color);
+            animation: spin 1s linear infinite;
+        }
+
+        .loader-icon {
+            font-size: 28px;
+            color: white;
+            z-index: 10;
+            filter: drop-shadow(0 0 10px var(--accent-color));
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ACTIVE COLOR SELECTION STYLE */
+        .color-doll {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .color-doll:active {
+            transform: scale(0.9);
+        }
+
+        .color-doll.active {
+            border: 2px solid white;
+            box-shadow: 0 0 8px var(--accent-color);
+            transform: scale(1.1);
+            z-index: 5;
+        }
+
+        /* COMPACT SETTINGS UI */
+        .settings-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+        }
+
+        .setting-label {
+            font-size: 9px;
+            color: #94a3b8;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* --- CUSTOM RGB PICKER --- */
+        #mini-picker-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 240px;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        #mini-picker-popup.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Custom Sliders */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 12px;
+            border-radius: 6px;
+            outline: none;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        #picker-hue {
+            background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+        }
+
+        #picker-alpha {
+            background: linear-gradient(45deg, #ccc 25%, transparent 25%),
+                linear-gradient(-45deg, #ccc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #ccc 75%),
+                linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 8px 8px;
+            background-color: #fff;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            border: 2px solid #0f172a;
+        }
+
+        #picker-preview-box {
+            width: 100%;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
+                linear-gradient(-45deg, #ccc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #ccc 75%),
+                linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 10px 10px;
+            background-color: #333;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #picker-preview-color {
+            position: absolute;
+            inset: 0;
+        }
+    </style>
+</head>
+
+<body class="text-slate-200 h-screen overflow-hidden flex justify-center selection:bg-indigo-500 selection:text-white">
+
+    <!-- GLOBAL WALLPAPER LAYER -->
+    <div id="global-background"></div>
+
+    <!-- IMPROVED LOADER (Fixed Icon) -->
+    <div id="startup-loader">
+        <div class="loader-container">
+            <div class="loader-ring"></div>
+            <i class="fa-solid fa-shield-cat loader-icon"></i>
+        </div>
+        <p class="text-[15px] text-slate-500 font-mono mt-4 uppercase tracking-[0.2em] animate-pulse">Loading...</p>
+    </div>
+
+    <!-- CUSTOM GRADIENT COLOR PICKER -->
+    <div id="mini-picker-backdrop" class="fixed inset-0 bg-black/60 z-[95] hidden" onclick="closeColorPicker()"></div>
+    <div id="mini-picker-popup">
+        <div class="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
+            <span class="text-[10px] font-bold text-white uppercase tracking-wider">Color Editor</span>
+            <button onclick="closeColorPicker()" class="text-slate-500 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="mb-4">
+            <div id="picker-preview-box">
+                <div id="picker-preview-color" style="background-color: #6366f1;"></div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="flex justify-between text-[9px] text-slate-400 font-bold mb-1">
+                <span>COLOR (HUE)</span>
+            </div>
+            <input type="range" id="picker-hue" min="0" max="360" value="240">
+        </div>
+
+        <div class="mb-4">
+            <div class="flex justify-between text-[9px] text-slate-400 font-bold mb-1">
+                <span>TRANSPARENCY</span>
+                <span id="opacity-val">100%</span>
+            </div>
+            <input type="range" id="picker-alpha" min="0" max="100" value="100">
+        </div>
+
+        <button onclick="applyCustomColor()" class="w-full py-2 rounded-lg bg-[var(--accent-color)] text-white text-[10px] font-bold shadow-lg hover:brightness-110 tracking-wide uppercase transition-colors">Apply Color</button>
+    </div>
+
+    <!-- Mobile Wrapper -->
+    <div id="mobile-wrapper">
+
+        <!-- LOGIN SCREEN -->
+        <div id="auth-screen" class="hidden absolute inset-0 z-[100] flex items-center justify-center bg-dark/95 backdrop-blur-xl">
+            <div class="glass-panel p-8 rounded-2xl w-full max-w-sm mx-4 shadow-2xl relative overflow-hidden border border-white/10">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--accent-color)] to-transparent"></div>
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 mx-auto bg-slate-800/50 rounded-full flex items-center justify-center mb-4 shadow-inner border border-white/5">
+                        <i class="fa-solid fa-vault text-3xl text-[var(--accent-color)]"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold tracking-tight text-white">Private Vault</h1>
+                    <p class="text-slate-400 text-sm mt-2">Secure Personal Cloud</p>
+                </div>
+                <form id="login-form" class="space-y-4">
+                    <div class="relative">
+                        <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 z-10"></i>
+                        <input type="email" id="email" placeholder="Email Address" class="w-full bg-slate-900/60 border border-slate-700 rounded-xl pl-10 px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-color)] transition" required>
+                    </div>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 z-10"></i>
+                        <input type="password" id="password" placeholder="Password" class="w-full bg-slate-900/60 border border-slate-700 rounded-xl pl-10 px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-color)] transition" required>
+                    </div>
+                    <button type="submit" class="w-full bg-[var(--accent-color)] hover:opacity-90 text-white font-semibold py-3 rounded-xl shadow-lg shadow-indigo-500/20 transition-all mt-2 flex justify-center items-center gap-2">
+                        Unlock Vault
+                    </button>
+                </form>
+                <div id="auth-msg" class="text-rose-400 text-xs text-center mt-4 h-4 font-medium"></div>
+            </div>
+        </div>
+
+        <!-- MAIN APP -->
+        <div id="app-screen" class="hidden">
+
+            <!-- Navbar -->
+            <nav class="glass-panel h-[70px] flex items-center justify-between px-4 z-20 sticky top-0 shrink-0 shadow-sm transition-all w-full">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--accent-color)] to-purple-800 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 border border-white/10 shrink-0">
+                        <i class="fa-solid fa-shield-cat text-xs"></i>
+                    </div>
+                    <!-- HEADER LOGO -->
+                    <div class="flex flex-col justify-center whitespace-nowrap">
+                        <span id="app-logo-text" class="font-bold text-base tracking-wide text-white font-mono leading-none">MY<span class="text-[var(--accent-color)]">.DATA</span></span>
+                        <span class="text-[8px] text-slate-400 tracking-wider font-medium block mt-0.5">Data Manager</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="relative flex items-center justify-end">
+                        <input type="text" id="search-input" class="bg-slate-800/50 border border-white/10 rounded-full w-9 h-9 text-transparent placeholder-transparent 
+                                   focus:w-32 focus:h-9 focus:bg-slate-900 focus:text-slate-200 focus:placeholder-slate-500 
+                                   focus:pl-4 focus:pr-8 focus:border-[var(--accent-color)] 
+                                   transition-all duration-500 ease-out outline-none cursor-pointer focus:cursor-text z-10 peer shadow-inner text-[11px]" placeholder="Search...">
+                        <i class="fa-solid fa-search absolute right-3 text-slate-400 text-xs z-0 pointer-events-none peer-focus:text-[var(--accent-color)] transition-colors duration-300"></i>
+                    </div>
+                    <button onclick="toggleSettings()" class="w-9 h-9 rounded-full bg-slate-800/50 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition-all border border-white/10 active:scale-90 shrink-0">
+                        <i class="fa-solid fa-bars-staggered text-xs"></i>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Settings Panel -->
+            <div id="settings-backdrop" onclick="toggleSettings()"></div>
+            <div id="settings-panel">
+                <div class="p-4 border-b border-white/5 flex justify-between items-center bg-slate-900/50 shrink-0 h-[60px]">
+                    <h2 class="text-sm font-bold text-white uppercase tracking-wide">Settings</h2>
+                    <button onclick="toggleSettings()" class="text-slate-400 hover:text-white w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-800 transition"><i class="fa-solid fa-xmark text-sm"></i></button>
+                </div>
+                <div class="p-4 flex-1 overflow-y-auto space-y-3">
+                    <!-- Profile Info -->
+                    <div class="text-center p-3 rounded-lg border border-white/5 bg-slate-800/30">
+                        <div onclick="updateProfilePic()" class="w-14 h-14 mx-auto rounded-full bg-gradient-to-tr from-[var(--accent-color)] to-purple-600 p-[1.5px] mb-2 cursor-pointer group relative">
+                            <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center overflow-hidden relative">
+                                <i id="settings-icon" class="fa-solid fa-user text-lg text-slate-200"></i>
+                                <img id="settings-avatar" src="" class="w-full h-full object-cover absolute inset-0 hidden">
+                                <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                    <i class="fa-solid fa-camera text-white text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p id="user-email" class="text-[10px] font-medium text-slate-300 truncate select-text">user@email.com</p>
+                    </div>
+
+                    <!-- Appearance Section -->
+                    <div class="settings-item">
+                        <span class="setting-label text-[var(--accent-color)] border-b border-white/5 pb-1 mb-2">Appearance</span>
+                        <!-- Accent -->
+                        <div id="accent-group" class="mb-3">
+                            <span class="text-[8px] text-slate-500 font-bold uppercase mb-1.5 block">Accent Color</span>
+                            <div class="flex gap-2.5 justify-start items-center">
+                                <div onclick="setAccent('#6366f1')" data-val="#6366f1" class="color-doll bg-[#6366f1]"></div>
+                                <div onclick="setAccent('#10b981')" data-val="#10b981" class="color-doll bg-[#10b981]"></div>
+                                <div onclick="setAccent('#f43f5e')" data-val="#f43f5e" class="color-doll bg-[#f43f5e]"></div>
+                                <div onclick="setAccent('#f59e0b')" data-val="#f59e0b" class="color-doll bg-[#f59e0b]"></div>
+                                <button onclick="openColorPicker('accent')" class="w-5 h-5 rounded-full border border-dashed border-slate-500 flex items-center justify-center text-[8px] text-slate-400 hover:text-white hover:border-white transition"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                        <!-- Main BG -->
+                        <div id="main-group" class="mb-3">
+                            <span class="text-[8px] text-slate-500 font-bold uppercase mb-1.5 block">Background</span>
+                            <div class="flex gap-2.5 justify-start items-center">
+                                <div onclick="setGlassBg('rgba(15, 23, 42, 0.95)', '#0f172a')" data-val="#0f172a" class="color-doll bg-[#0f172a]"></div>
+                                <div onclick="setGlassBg('rgba(0, 0, 0, 0.95)', '#000000')" data-val="#000000" class="color-doll bg-black"></div>
+                                <div onclick="setGlassBg('rgba(23, 37, 84, 0.95)', '#172554')" data-val="#172554" class="color-doll bg-[#172554]"></div>
+                                <div onclick="setGlassBg('rgba(38, 30, 25, 0.95)', '#261e19')" data-val="#261e19" class="color-doll bg-[#261e19]"></div>
+                                <button onclick="openColorPicker('main')" class="w-5 h-5 rounded-full border border-dashed border-slate-500 flex items-center justify-center text-[8px] text-slate-400 hover:text-white hover:border-white transition"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                        <!-- Card BG -->
+                        <div id="card-group">
+                            <span class="text-[8px] text-slate-500 font-bold uppercase mb-1.5 block">Card Style</span>
+                            <div class="flex gap-2.5 justify-start items-center">
+                                <div onclick="setCardBg('rgba(30, 41, 59, 0.4)')" data-val="rgba(30, 41, 59, 0.4)" class="color-doll bg-slate-700"></div>
+                                <div onclick="setCardBg('rgba(0, 0, 0, 0.6)')" data-val="rgba(0, 0, 0, 0.6)" class="color-doll bg-black"></div>
+                                <div onclick="setCardBg('rgba(255, 255, 255, 0.1)')" data-val="rgba(255, 255, 255, 0.1)" class="color-doll bg-white/20"></div>
+                                <div onclick="setCardBg('rgba(30, 58, 138, 0.4)')" data-val="rgba(30, 58, 138, 0.4)" class="color-doll bg-blue-900"></div>
+                                <button onclick="openColorPicker('card')" class="w-5 h-5 rounded-full border border-dashed border-slate-500 flex items-center justify-center text-[8px] text-slate-400 hover:text-white hover:border-white transition"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Config Input Groups (UPDATED LOGIC) -->
+                    <div class="settings-item space-y-2">
+                        <!-- Header Name -->
+                        <div>
+                            <span class="text-[8px] text-slate-500 font-bold uppercase mb-1 block">Header Name</span>
+                            <div class="flex gap-1">
+                                <input type="text" id="header-name-input" oninput="resetToSaveMode('header')" placeholder="Name..." class="w-full bg-slate-900/50 border border-slate-700 rounded p-1 text-[10px] text-white focus:border-[var(--accent-color)]">
+                                <button id="btn-header" onclick="handleSetting('header')" class="bg-slate-700 text-white px-2 rounded text-[10px] transition-colors"><i class="fa-solid fa-check"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Browser Tab Title -->
+                        <div>
+                            <span class="text-[8px] text-slate-500 font-bold uppercase mb-1 block">Tab Title</span>
+                            <div class="flex gap-1">
+                                <input type="text" id="site-title-input" oninput="resetToSaveMode('title')" placeholder="Title..." class="w-full bg-slate-900/50 border border-slate-700 rounded p-1 text-[10px] text-white focus:border-[var(--accent-color)]">
+                                <button id="btn-title" onclick="handleSetting('title')" class="bg-slate-700 text-white px-2 rounded text-[10px] transition-colors"><i class="fa-solid fa-check"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Favicon -->
+                        <div>
+                            <span class="text-[8px] text-slate-500 font-bold uppercase mb-1 block">Favicon / Logo</span>
+                            <div class="flex gap-1">
+                                <input type="text" id="favicon-input" oninput="resetToSaveMode('favicon')" placeholder="https://" class="w-full bg-slate-900/50 border border-slate-700 rounded p-1 text-[10px] text-white focus:border-[var(--accent-color)]">
+                                <button id="btn-favicon" onclick="handleSetting('favicon')" class="bg-slate-700 text-white px-2 rounded text-[10px] transition-colors"><i class="fa-solid fa-check"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Background Wallpaper -->
+                        <div>
+                            <span class="text-[8px] text-slate-500 font-bold uppercase mb-1 block">Wallpaper</span>
+                            <div class="flex gap-1">
+                                <input type="text" id="content-bg-input" oninput="resetToSaveMode('wallpaper')" placeholder="https://" class="w-full bg-slate-900/50 border border-slate-700 rounded p-1 text-[10px] text-white focus:border-[var(--accent-color)]">
+                                <button id="btn-wallpaper" onclick="handleSetting('wallpaper')" class="bg-slate-700 text-white px-2 rounded text-[10px] transition-colors"><i class="fa-solid fa-check"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security -->
+                    <div class="settings-item">
+                        <span class="text-[8px] text-slate-500 font-bold uppercase mb-1 block">Change Password</span>
+                        <div class="flex gap-1">
+                            <input type="password" id="new-password-input" placeholder="New Password..." class="w-full bg-slate-900/50 border border-slate-700 rounded p-1 text-[10px] text-white focus:border-[var(--accent-color)]">
+                            <button onclick="updateUserPassword()" class="bg-slate-700 text-white px-2 rounded text-[10px]"><i class="fa-solid fa-check"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="p-4 border-t border-white/5 bg-slate-900/30">
+                    <button onclick="backupData()" class="w-full mb-2 py-2 rounded border border-slate-700 hover:bg-slate-800 text-[10px] text-slate-300 font-bold">BACKUP DATA</button>
+                    <button onclick="logout()" class="w-full py-2 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-[10px] font-bold border border-rose-500/20">LOGOUT</button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-5 relative scroll-smooth z-10 w-full">
+                <!-- Dashboard View -->
+                <div id="dashboard-view" class="hidden fade-enter-active pb-20">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-white">Dashboard</h2>
+                            <p class="text-[10px] text-slate-400 font-mono flex items-center gap-2">Overview
+                                <span id="total-storage" class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/20 text-[9px]">0 KB</span>
+                            </p>
+                        </div>
+                        <button onclick="openModal()" class="w-9 h-9 rounded-full bg-[var(--accent-color)] hover:brightness-110 text-white shadow-lg shadow-indigo-500/20 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 group z-[50] relative">
+                            <i class="fa-solid fa-plus text-xs group-hover:rotate-90 transition-transform duration-300"></i>
+                        </button>
+                    </div>
+
+                    <!-- Stat Cards Grid -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div onclick="switchCategory('notes')" class="glass-card p-4 rounded-xl cursor-pointer group border-l-4 border-l-indigo-500/50">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition"><i class="fa-solid fa-note-sticky text-base"></i></div>
+                                <div class="text-right">
+                                    <span class="text-lg font-bold text-white block leading-none" id="count-notes">0</span>
+                                    <span id="size-notes" class="text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/10">0 KB</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-400 font-medium">Notes</p>
+                        </div>
+                        <div onclick="switchCategory('links')" class="glass-card p-4 rounded-xl cursor-pointer group border-l-4 border-l-emerald-500/50">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition"><i class="fa-solid fa-link text-base"></i></div>
+                                <div class="text-right">
+                                    <span class="text-lg font-bold text-white block leading-none" id="count-links">0</span>
+                                    <span id="size-links" class="text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/10">0 KB</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-400 font-medium">Links</p>
+                        </div>
+                        <div onclick="switchCategory('credentials')" class="glass-card p-4 rounded-xl cursor-pointer group col-span-2 border-l-4 border-l-amber-500/50">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition"><i class="fa-solid fa-user-shield text-base"></i></div>
+                                    <div>
+                                        <p class="text-xs text-slate-400 font-medium">User</p>
+                                        <p class="text-[10px] text-slate-500">Logins & Info</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span id="size-credentials" class="text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/10">0 KB</span>
+                                    <span class="text-xl font-bold text-white pr-2" id="count-credentials">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div onclick="switchCategory('photos')" class="glass-card p-4 rounded-xl cursor-pointer group col-span-2 border-l-4 border-l-pink-500/50">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-lg bg-pink-500/10 text-pink-400 group-hover:bg-pink-500 group-hover:text-white transition"><i class="fa-solid fa-image text-base"></i></div>
+                                    <div>
+                                        <p class="text-xs text-slate-400 font-medium">Saved Images</p>
+                                        <p class="text-[10px] text-slate-500">Gallery Links</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span id="size-photos" class="text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/10">0 KB</span>
+                                    <span class="text-xl font-bold text-white pr-2" id="count-photos">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div onclick="switchCategory('apis')" class="glass-card p-4 rounded-xl cursor-pointer group col-span-2 border-l-4 border-l-cyan-500/50">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500 group-hover:text-white transition"><i class="fa-solid fa-network-wired text-base"></i></div>
+                                    <div>
+                                        <p class="text-xs text-slate-400 font-medium">API Manager</p>
+                                        <p class="text-[10px] text-slate-500">Endpoints & Keys</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span id="size-apis" class="text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/10">0 KB</span>
+                                    <span class="text-xl font-bold text-white pr-2" id="count-apis">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <div class="glass-card p-5 rounded-xl text-center text-slate-400 border border-dashed border-slate-700 bg-slate-900/20">
+                            <i class="fa-solid fa-shield-halved text-2xl mb-2 opacity-30 text-[var(--accent-color)]"></i>
+                            <p class="text-[10px] font-mono opacity-50 uppercase tracking-widest">End-to-End Encrypted</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- List View Header -->
+                <div id="list-header" class="flex justify-between items-end mb-4 fade-enter-active hidden">
+                    <div>
+                        <h2 class="text-xl font-bold text-white capitalize tracking-tight" id="page-title">Notes</h2>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-color)]"></span>
+                            <p class="text-[10px] text-slate-400 font-mono uppercase" id="item-count">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="flex bg-slate-800/50 p-1 rounded-lg border border-white/5">
+                        <button onclick="toggleView('grid')" class="text-slate-400 hover:text-white p-1.5 rounded hover:bg-slate-700/50 transition"><i class="fa-solid fa-grid-2 text-xs"></i></button>
+                        <button onclick="toggleView('list')" class="text-slate-400 hover:text-white p-1.5 rounded hover:bg-slate-700/50 transition"><i class="fa-solid fa-list text-xs"></i></button>
+                    </div>
+                </div>
+
+                <!-- Loader -->
+                <div id="loader-state" class="hidden flex justify-center py-20">
+                    <div class="spinner"></div>
+                </div>
+
+                <!-- Content Grid -->
+                <div id="content-grid" class="grid grid-cols-1 gap-3 pb-20 hidden"></div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="hidden flex flex-col items-center justify-center py-16 opacity-50">
+                    <div class="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mb-3 border border-slate-700 border-dashed">
+                        <i class="fa-solid fa-box-open text-2xl text-slate-500"></i>
+                    </div>
+                    <p class="text-sm text-slate-500">No items found</p>
+                    <button onclick="openModal()" class="mt-4 text-xs text-[var(--accent-color)] hover:underline font-bold">CREATE NEW</button>
+                </div>
+            </main>
+
+            <!-- Bottom Nav -->
+            <div id="bottom-navbar" class="shrink-0 px-2 py-2 border-t border-white/5 grid grid-cols-5 gap-1 backdrop-blur-md z-50 transition-all duration-300 w-full" style="background: var(--glass-bg)">
+                <button onclick="switchCategory('dashboard')" class="mobile-nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-[10px] font-medium bg-[var(--accent-color)] text-white shadow-lg transition-all duration-300">
+                    <i class="fa-solid fa-house mb-0.5 text-sm"></i>Home
+                </button>
+                <button onclick="switchCategory('notes')" class="mobile-nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-[10px] font-medium text-slate-400 border border-slate-700/50 transition-all duration-300 dynamic-bg">
+                    <i class="fa-solid fa-note-sticky mb-0.5 text-sm"></i>Note
+                </button>
+                <button onclick="switchCategory('photos')" class="mobile-nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-[10px] font-medium text-slate-400 border border-slate-700/50 transition-all duration-300 dynamic-bg">
+                    <i class="fa-solid fa-image mb-0.5 text-sm"></i>Img
+                </button>
+                <button onclick="switchCategory('links')" class="mobile-nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-[10px] font-medium text-slate-400 border border-slate-700/50 transition-all duration-300 dynamic-bg">
+                    <i class="fa-solid fa-link mb-0.5 text-sm"></i>Link
+                </button>
+                <button onclick="switchCategory('credentials')" class="mobile-nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-[10px] font-medium text-slate-400 border border-slate-700/50 transition-all duration-300 dynamic-bg">
+                    <i class="fa-solid fa-user-shield mb-0.5 text-sm"></i>User
+                </button>
+            </div>
+
+            <!-- Toast Notification -->
+            <div id="toast" class="absolute top-[80px] left-1/2 -translate-x-1/2 z-[90] glass-panel px-4 py-3 rounded-full shadow-2xl transition-all duration-300 flex items-center gap-3 border border-[var(--accent-color)] w-max max-w-[90%] opacity-0 -translate-y-4 pointer-events-none">
+                <div class="w-5 h-5 rounded-full bg-[var(--accent-color)] flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check"></i></div>
+                <p id="toast-msg" class="text-xs text-white font-medium">Success</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL (FIXED ICONS & INPUTS) -->
+    <div id="main-modal" class="absolute inset-0 z-[80] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel p-5 rounded-2xl w-full max-w-[340px] transform scale-95 opacity-0 transition-all duration-300 border border-white/10 shadow-2xl flex flex-col" id="modal-content">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-3 shrink-0">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2"><span id="modal-title">New Entry</span></h3>
+                <button type="button" onclick="closeModal()" class="w-8 h-8 rounded-full bg-rose-500 hover:bg-rose-600 flex items-center justify-center text-white shadow-lg transition transform hover:rotate-90"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <!-- Category Selector -->
+            <div id="modal-cat-select" class="grid grid-cols-5 gap-1.5 mb-4 shrink-0">
+                <button onclick="setModalType('notes')" class="modal-cat-btn flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--accent-color)] text-white text-[9px] border border-transparent shadow-lg transition"><i class="fa-solid fa-note-sticky mb-1 text-sm"></i> Note</button>
+                <button onclick="setModalType('links')" class="modal-cat-btn flex flex-col items-center justify-center p-2 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 text-[9px] border border-slate-700 transition"><i class="fa-solid fa-link mb-1 text-sm"></i> Link</button>
+                <button onclick="setModalType('photos')" class="modal-cat-btn flex flex-col items-center justify-center p-2 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 text-[9px] border border-slate-700 transition"><i class="fa-solid fa-image mb-1 text-sm"></i> Img</button>
+                <button onclick="setModalType('credentials')" class="modal-cat-btn flex flex-col items-center justify-center p-2 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 text-[9px] border border-slate-700 transition"><i class="fa-solid fa-user-shield mb-1 text-sm"></i> User</button>
+                <button onclick="setModalType('apis')" class="modal-cat-btn flex flex-col items-center justify-center p-2 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 text-[9px] border border-slate-700 transition"><i class="fa-solid fa-network-wired mb-1 text-sm"></i> API</button>
+            </div>
+            <!-- Form -->
+            <form id="entry-form" class="space-y-3 flex-1 flex flex-col overflow-hidden">
+                <input type="hidden" id="entry-id">
+                <div class="shrink-0 input-wrapper">
+                    <div class="flex justify-between items-end mb-1">
+                        <label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Title (Optional)</label>
+                        <button type="button" onclick="copyFromId('inp-title')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <div class="input-wrapper-relative">
+                        <i class="fa-solid fa-heading input-icon"></i>
+                        <input type="text" id="inp-title" placeholder="Entry Title" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none transition text-white select-text">
+                    </div>
+                </div>
+                <!-- Content Fields -->
+                <div class="field-group hidden flex-1 flex flex-col h-full" data-for="notes">
+                    <div class="flex justify-between items-end mb-1">
+                        <label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Content <span class="req-dot">*</span></label>
+                        <button type="button" onclick="copyFromId('inp-content')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <div class="input-wrapper-relative flex-1">
+                        <i class="fa-solid fa-align-left input-icon textarea-icon"></i>
+                        <textarea id="inp-content" class="w-full h-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none font-mono text-slate-300 resize-none select-text"></textarea>
+                    </div>
+                </div>
+                <!-- API Fields -->
+                <div class="field-group hidden shrink-0" data-for="apis">
+                    <div class="mb-2">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Endpoint URL (Optional)</label><button type="button" onclick="copyFromId('inp-api-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="input-wrapper-relative"><i class="fa-solid fa-globe input-icon"></i><input type="url" id="inp-api-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white font-mono select-text"></div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Gmail (Optional)</label><button type="button" onclick="copyFromId('inp-api-email')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="input-wrapper-relative"><i class="fa-solid fa-envelope input-icon"></i><input type="email" id="inp-api-email" placeholder="dev@example.com" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text"></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">API Key / Token <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-api-key')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="input-wrapper-relative"><i class="fa-solid fa-key input-icon textarea-icon"></i><textarea id="inp-api-key" rows="3" placeholder="Bearer..." class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-xs focus:border-[var(--accent-color)] focus:outline-none font-mono text-emerald-400 select-text"></textarea></div>
+                    </div>
+                </div>
+                <!-- Link Fields -->
+                <div class="field-group hidden shrink-0" data-for="links">
+                    <div class="mb-2">
+                        <div class="flex justify-between items-end mb-1">
+                            <label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Tag / Subtitle (Optional)</label>
+                        </div>
+                        <div class="input-wrapper-relative">
+                            <i class="fa-solid fa-tag input-icon"></i>
+                            <input type="text" id="inp-link-subtitle" placeholder="e.g. Work, News, Important" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text">
+                        </div>
+                    </div>
+                    <div class="mb-1">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">URL <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="input-wrapper-relative"><i class="fa-solid fa-link input-icon"></i><input type="url" id="inp-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text"></div>
+                    </div>
+                </div>
+                <!-- Photo Fields -->
+                <div class="field-group hidden shrink-0" data-for="photos">
+                    <div class="mb-1">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Image URL <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-img-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="input-wrapper-relative"><i class="fa-regular fa-image input-icon"></i><input type="url" id="inp-img-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text"></div>
+                    </div>
+                </div>
+                <!-- Credential Fields -->
+                <div class="field-group hidden shrink-0" data-for="credentials">
+                    <div class="mb-3">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Website/Link (Optional)</label><button type="button" onclick="copyFromId('inp-cred-url')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="input-wrapper-relative"><i class="fa-solid fa-link input-icon"></i><input type="url" id="inp-cred-url" placeholder="https://" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text"></div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Username <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-username')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="input-wrapper-relative"><i class="fa-solid fa-user input-icon"></i><input type="text" id="inp-username" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none text-white select-text"></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-end mb-1"><label class="block text-[10px] text-[var(--accent-color)] uppercase font-bold tracking-wider ml-1">Password <span class="req-dot">*</span></label><button type="button" onclick="copyFromId('inp-password')" class="modal-copy-btn text-xs text-slate-500 hover:text-white transition flex items-center gap-1 hidden"><i class="fa-regular fa-copy"></i></button></div>
+                        <div class="input-wrapper-relative">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" id="inp-password" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 px-3 py-2 text-sm focus:border-[var(--accent-color)] focus:outline-none font-mono text-white select-text">
+                            <i id="toggle-pass-btn" onclick="togglePassVisibility(this)" class="fa-solid fa-eye password-eye-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-4 border-t border-white/5 mt-auto shrink-0">
+                    <button type="submit" id="btn-save" class="bg-[var(--accent-color)] hover:brightness-110 text-white px-6 py-2 rounded-lg text-xs font-bold shadow-lg shadow-indigo-500/20">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { getDatabase, ref, push, set, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzlvAxm4nAOsLQykYVbTnJBeFdfaaHxkU",
+            authDomain: "data-manager-af3dc.firebaseapp.com",
+            databaseURL: "https://data-manager-af3dc-default-rtdb.firebaseio.com",
+            projectId: "data-manager-af3dc",
+            storageBucket: "data-manager-af3dc.firebasestorage.app",
+            messagingSenderId: "140237513200",
+            appId: "1:140237513200:web:2dd854ee93827d36d1fd35"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        const SESSION_DURATION = 5 * 60 * 1000;
+
+        let currentUser = null;
+        let currentCategory = localStorage.getItem('vault_active_category') || 'dashboard';
+        let itemsData = {};
+        let viewMode = 'grid';
+        let editingId = null;
+        let viewingId = null;
+        let isAppReady = false; 
+
+        let activeColors = {
+            accent: localStorage.getItem('vault_accent') || '#6366f1',
+            main: localStorage.getItem('vault_main_bg') || '#0f172a',
+            card: localStorage.getItem('vault_card_bg') || 'rgba(30, 41, 59, 0.4)'
+        };
+
+        const authScreen = document.getElementById('auth-screen');
+        const appScreen = document.getElementById('app-screen');
+        const loginForm = document.getElementById('login-form');
+        const bottomNavbar = document.getElementById('bottom-navbar');
+        const startupLoader = document.getElementById('startup-loader');
+
+        // --- CUSTOM COLOR PICKER LOGIC ---
+        let currentPickerType = null;
+
+        window.openColorPicker = (type) => {
+            currentPickerType = type;
+            document.getElementById('mini-picker-backdrop').classList.remove('hidden');
+            setTimeout(() => document.getElementById('mini-picker-popup').classList.add('active'), 10);
+            updatePreview();
+        };
+
+        window.closeColorPicker = () => {
+            document.getElementById('mini-picker-popup').classList.remove('active');
+            setTimeout(() => document.getElementById('mini-picker-backdrop').classList.add('hidden'), 200);
+            currentPickerType = null;
+        };
+
+        const hueSlider = document.getElementById('picker-hue');
+        const alphaSlider = document.getElementById('picker-alpha');
+
+        hueSlider.addEventListener('input', updatePreview);
+        alphaSlider.addEventListener('input', updatePreview);
+
+        function updatePreview() {
+            const h = hueSlider.value;
+            const a = alphaSlider.value / 100;
+            const color = `hsla(${h}, 100%, 50%, ${a})`;
+            document.getElementById('picker-preview-color').style.backgroundColor = color;
+            document.getElementById('opacity-val').textContent = Math.round(a * 100) + '%';
+        }
+
+        window.applyCustomColor = () => {
+            if (!currentPickerType) return;
+            const h = hueSlider.value;
+            const a = alphaSlider.value / 100;
+            const color = `hsla(${h}, 100%, 50%, ${a})`;
+            const solidColor = `hsl(${h}, 100%, 50%)`;
+
+            if (currentPickerType === 'accent') setAccent(solidColor);
+            else if (currentPickerType === 'card') setCardBg(color);
+            else if (currentPickerType === 'main') setGlassBg(color, solidColor);
+
+            closeColorPicker();
+        };
+
+        // --- ACTIVE COLOR MARKER ---
+        function markActiveDoll(group, value) {
+            if(!value) return;
+            document.querySelectorAll(`#${group} .color-doll`).forEach(doll => {
+                const dollVal = doll.getAttribute('data-val');
+                if (dollVal && value.replace(/\s/g, '') === dollVal.replace(/\s/g, '')) {
+                    doll.classList.add('active');
+                } else {
+                    doll.classList.remove('active');
+                }
+            });
+        }
+
+        function initAppConfig() {
+            const savedBg = localStorage.getItem('vault_custom_bg');
+            if (savedBg) document.getElementById('global-background').style.backgroundImage = `url('${savedBg}')`;
+
+            const savedContentBg = localStorage.getItem('vault_content_bg');
+            if (savedContentBg) {
+                const appScreen = document.getElementById('app-screen');
+                appScreen.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.8)), url('${savedContentBg}')`;
+                appScreen.style.backgroundSize = "cover";
+                appScreen.style.backgroundPosition = "center";
+            }
+
+            const savedFavicon = localStorage.getItem('vault_custom_favicon');
+            if (savedFavicon) document.getElementById('dynamic-favicon').href = savedFavicon;
+
+            const savedSiteTitle = localStorage.getItem('vault_site_title');
+            if (savedSiteTitle) document.title = savedSiteTitle;
+
+            const savedHeaderName = localStorage.getItem('vault_header_name');
+            updateHeaderName(savedHeaderName);
+
+            markActiveDoll('accent-group', activeColors.accent);
+            markActiveDoll('main-group', activeColors.main);
+            markActiveDoll('card-group', activeColors.card);
+        }
+        initAppConfig();
+
+        function updateHeaderName(name) {
+            const logoText = document.getElementById('app-logo-text');
+            if (!name) {
+                logoText.innerHTML = `MY<span class="text-[var(--accent-color)]">.DATA</span>`;
+            } else if (name.includes('.')) {
+                const lastDotIndex = name.lastIndexOf('.');
+                const firstPart = name.substring(0, lastDotIndex);
+                const lastPart = name.substring(lastDotIndex);
+                logoText.innerHTML = `${firstPart}<span class="text-[var(--accent-color)]">${lastPart}</span>`;
+            } else if (name.includes(' ')) {
+                const lastSpaceIndex = name.lastIndexOf(' ');
+                const firstPart = name.substring(0, lastSpaceIndex);
+                const lastPart = "." + name.substring(lastSpaceIndex + 1);
+                logoText.innerHTML = `${firstPart}<span class="text-[var(--accent-color)]">${lastPart}</span>`;
+            } else {
+                logoText.innerText = name;
+            }
+        }
+
+        const initialHeight = window.innerHeight;
+        window.addEventListener('resize', () => {
+            const currentHeight = window.innerHeight;
+            if (currentHeight < initialHeight * 0.8) {
+                bottomNavbar.style.display = 'none';
+            } else {
+                bottomNavbar.style.display = 'grid';
+            }
+        });
+
+        // --- AUTH & SESSION ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const lastActive = localStorage.getItem('vault_last_active');
+                const now = Date.now();
+                if (lastActive && (now - parseInt(lastActive)) < SESSION_DURATION) {
+                    proceedToApp(user);
+                } else {
+                    if (!lastActive) {
+                        signOut(auth).then(() => showLoginScreen());
+                    } else {
+                        localStorage.removeItem('vault_last_active');
+                        signOut(auth).then(() => showLoginScreen());
+                    }
+                }
+            } else {
+                showLoginScreen();
+            }
+        });
+
+        function showLoginScreen() {
+            currentUser = null;
+            // Hide Loader IMMEDIATELY if we are showing login screen
+            startupLoader.style.opacity = '0';
+            setTimeout(() => startupLoader.style.display = 'none', 500);
+            authScreen.classList.remove('hidden');
+            appScreen.classList.add('hidden');
+        }
+
+        function proceedToApp(user) {
+            currentUser = user;
+            localStorage.setItem('vault_last_active', Date.now());
+            
+            // NOTE: We do NOT hide the loader here yet.
+            // We wait for syncSettingsFromCloud to complete first.
+            
+            authScreen.classList.add('hidden');
+            appScreen.classList.remove('hidden');
+            document.getElementById('user-email').textContent = user.email;
+            
+            // Sync settings and ONLY THEN remove loader
+            syncSettingsFromCloud(user.uid);
+            
+            loadProfilePic(user.uid);
+            const savedCat = localStorage.getItem('vault_active_category') || 'dashboard';
+            switchCategory(savedCat);
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') localStorage.setItem('vault_last_active', Date.now());
+            });
+            setInterval(() => localStorage.setItem('vault_last_active', Date.now()), 60000);
+        }
+
+        // --- SYNC FUNCTION (Updated with Loader Logic & Button Icons) ---
+        function syncSettingsFromCloud(uid) {
+            const settingsRef = ref(db, `users/${uid}/settings`);
+            onValue(settingsRef, (snap) => {
+                const settings = snap.val();
+                
+                // Helper to set input and button state
+                const setInputState = (key, val) => {
+                    const inp = document.getElementById(`${key}-input`);
+                    const btn = document.getElementById(`btn-${key.replace('-name','').replace('site-','').replace('content-bg','wallpaper').replace('favicon','favicon')}`); 
+                    
+                    if(val) {
+                        inp.value = val;
+                        // If value exists, show Cross (to delete)
+                        if(btn) btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                    } else {
+                        inp.value = "";
+                        // If no value, show Check (to save)
+                        if(btn) btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                    }
+                };
+
+                if (settings) {
+                    // Accent
+                    if (settings.accent) {
+                        document.documentElement.style.setProperty('--accent-color', settings.accent);
+                        localStorage.setItem('vault_accent', settings.accent);
+                        markActiveDoll('accent-group', settings.accent);
+                        activeColors.accent = settings.accent;
+                    }
+                    // Backgrounds
+                    if (settings.glassBg && settings.mainBg) {
+                        document.documentElement.style.setProperty('--glass-bg', settings.glassBg);
+                        document.documentElement.style.setProperty('--main-bg', settings.mainBg);
+                        localStorage.setItem('vault_glass_bg', settings.glassBg);
+                        localStorage.setItem('vault_main_bg', settings.mainBg);
+                        markActiveDoll('main-group', settings.mainBg);
+                        activeColors.main = settings.mainBg;
+                    }
+                    // Card
+                    if (settings.cardBg) {
+                        document.documentElement.style.setProperty('--card-bg', settings.cardBg);
+                        localStorage.setItem('vault_card_bg', settings.cardBg);
+                        markActiveDoll('card-group', settings.cardBg);
+                        activeColors.card = settings.cardBg;
+                    }
+                    
+                    // TEXT INPUTS (SYNC STATE)
+                    localStorage.setItem('vault_header_name', settings.headerName || "");
+                    updateHeaderName(settings.headerName);
+                    setInputState('header-name', settings.headerName);
+
+                    if (settings.siteTitle) {
+                        document.title = settings.siteTitle;
+                        localStorage.setItem('vault_site_title', settings.siteTitle);
+                    } else {
+                        document.title = "Private Vault"; // System Default
+                        localStorage.removeItem('vault_site_title');
+                    }
+                    setInputState('site-title', settings.siteTitle);
+
+                    if (settings.favicon) {
+                        document.getElementById('dynamic-favicon').href = settings.favicon;
+                        localStorage.setItem('vault_custom_favicon', settings.favicon);
+                    } else {
+                        document.getElementById('dynamic-favicon').href = "";
+                        localStorage.removeItem('vault_custom_favicon');
+                    }
+                    setInputState('favicon', settings.favicon);
+
+                    if (settings.wallpaper) {
+                        const appScreen = document.getElementById('app-screen');
+                        appScreen.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.8)), url('${settings.wallpaper}')`;
+                        appScreen.style.backgroundSize = "cover";
+                        appScreen.style.backgroundPosition = "center";
+                        localStorage.setItem('vault_content_bg', settings.wallpaper);
+                    } else {
+                        document.getElementById('app-screen').style.backgroundImage = 'none';
+                        localStorage.removeItem('vault_content_bg');
+                    }
+                    setInputState('content-bg', settings.wallpaper);
+                } else {
+                    // Reset all if no settings found
+                    setInputState('header-name', null);
+                    setInputState('site-title', null);
+                    setInputState('favicon', null);
+                    setInputState('content-bg', null);
+                }
+                
+                // Hide Loader AFTER data is synced (First time only)
+                if (!isAppReady) {
+                    startupLoader.style.opacity = '0';
+                    setTimeout(() => startupLoader.style.display = 'none', 500);
+                    isAppReady = true;
+                }
+            });
+            
+            // Fallback: If no data exists or network fails, hide loader after 3s
+            setTimeout(() => {
+                if (!isAppReady) {
+                    startupLoader.style.opacity = '0';
+                    setTimeout(() => startupLoader.style.display = 'none', 500);
+                    isAppReady = true;
+                }
+            }, 3000); 
+        }
+
+        function loadProfilePic(uid) {
+            onValue(ref(db, `users/${uid}/profilePic`), (snap) => {
+                const url = snap.val();
+                const settingsAvatar = document.getElementById('settings-avatar');
+                const settingsIcon = document.getElementById('settings-icon');
+                if (url) {
+                    settingsAvatar.src = url;
+                    settingsAvatar.classList.remove('hidden');
+                    settingsIcon.classList.add('hidden');
+                } else {
+                    settingsAvatar.classList.add('hidden');
+                    settingsIcon.classList.remove('hidden');
+                }
+            });
+        }
+
+        // --- VISUAL ASSETS SETTINGS ---
+
+        window.setAccent = (c) => {
+            // 1. Update UI
+            document.documentElement.style.setProperty('--accent-color', c);
+            activeColors.accent = c;
+            markActiveDoll('accent-group', c);
+            
+            // 2. Save Local (Instant Default)
+            localStorage.setItem('vault_accent', c);
+            
+            // 3. Save to Cloud
+            if (currentUser) {
+                update(ref(db, `users/${currentUser.uid}/settings`), { accent: c });
+            }
+            
+            if (currentCategory !== 'dashboard') loadData();
+            const savedName = localStorage.getItem('vault_header_name');
+            updateHeaderName(savedName);
+        };
+
+        window.setGlassBg = (rgba, hex) => {
+            document.documentElement.style.setProperty('--glass-bg', rgba);
+            document.documentElement.style.setProperty('--main-bg', hex);
+            activeColors.main = hex; 
+            markActiveDoll('main-group', hex);
+            
+            // Save Local (Instant Default)
+            localStorage.setItem('vault_glass_bg', rgba);
+            localStorage.setItem('vault_main_bg', hex);
+
+            if (currentUser) {
+                update(ref(db, `users/${currentUser.uid}/settings`), { glassBg: rgba, mainBg: hex });
+            }
+        };
+
+        window.setCardBg = (rgba) => {
+            document.documentElement.style.setProperty('--card-bg', rgba);
+            activeColors.card = rgba;
+            markActiveDoll('card-group', rgba);
+            
+            // Save Local (Instant Default)
+            localStorage.setItem('vault_card_bg', rgba);
+
+            if (currentUser) {
+                update(ref(db, `users/${currentUser.uid}/settings`), { cardBg: rgba });
+            }
+        };
+
+        // --- NEW SETTING HANDLER (SAVE/DELETE TOGGLE) ---
+
+        window.resetToSaveMode = (type) => {
+            // When user types, revert icon to CHECK (Save)
+            const btn = document.getElementById(`btn-${type}`);
+            btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+        };
+
+        window.handleSetting = (type) => {
+            if (!currentUser) return;
+            
+            const btn = document.getElementById(`btn-${type}`);
+            const iconClass = btn.querySelector('i').className;
+            
+            // Determine Input ID and DB Key
+            let inputId, dbKey, storageKey;
+            if(type === 'header') { inputId = 'header-name-input'; dbKey = 'headerName'; storageKey = 'vault_header_name'; }
+            if(type === 'title') { inputId = 'site-title-input'; dbKey = 'siteTitle'; storageKey = 'vault_site_title'; }
+            if(type === 'favicon') { inputId = 'favicon-input'; dbKey = 'favicon'; storageKey = 'vault_custom_favicon'; }
+            if(type === 'wallpaper') { inputId = 'content-bg-input'; dbKey = 'wallpaper'; storageKey = 'vault_content_bg'; }
+            
+            const val = document.getElementById(inputId).value.trim();
+
+            if (iconClass.includes('fa-check')) {
+                // SAVE ACTION
+                if(val) {
+                    // Update Local (Instant Default)
+                    localStorage.setItem(storageKey, val);
+                    update(ref(db, `users/${currentUser.uid}/settings`), { [dbKey]: val });
+                    showToast("Saved");
+                    btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                } else {
+                    // Trying to save empty? Just clear it.
+                    localStorage.removeItem(storageKey);
+                    update(ref(db, `users/${currentUser.uid}/settings`), { [dbKey]: null });
+                    showToast("Reset");
+                }
+            } else {
+                // DELETE ACTION (Cross Clicked)
+                update(ref(db, `users/${currentUser.uid}/settings`), { [dbKey]: null });
+                localStorage.removeItem(storageKey);
+                document.getElementById(inputId).value = ""; // Clear Input
+                showToast("Removed");
+                btn.innerHTML = '<i class="fa-solid fa-check"></i>'; // Ready to save again
+            }
+        };
+
+        // --- LOGIN & GENERAL LOGIC ---
+
+        document.getElementById('password').addEventListener('focus', () => {
+            const emailField = document.getElementById('email');
+            const val = emailField.value.trim();
+            if (val.length > 0 && !val.includes('@')) {
+                emailField.value = val + "@gmail.com";
+            }
+        });
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const btn = loginForm.querySelector('button');
+            const originalText = btn.innerHTML;
+
+            btn.innerHTML = 'Verifying...';
+            btn.disabled = true;
+
+            localStorage.setItem('vault_last_active', Date.now());
+
+            signInWithEmailAndPassword(auth, email, pass)
+                .then(() => {
+                    // Success handled by onAuthStateChanged
+                })
+                .catch(err => {
+                    document.getElementById('auth-msg').textContent = "Incorrect email or password.";
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        });
+
+        window.logout = () => {
+            localStorage.removeItem('vault_last_active');
+            signOut(auth);
+        };
+
+        window.backupData = () => {
+            if (!currentUser) return showToast("Please login first");
+            showToast("Preparing backup...");
+            const dbRef = ref(db, `users/${currentUser.uid}`);
+            get(dbRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const jsonStr = JSON.stringify(data, null, 2);
+                    const blob = new Blob([jsonStr], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    const dateStr = new Date().toISOString().slice(0, 10);
+                    a.download = `Vault_Backup_${dateStr}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showToast("Backup Downloaded!");
+                } else {
+                    showToast("No data found!");
+                }
+            }).catch((error) => {
+                console.error(error);
+                showToast("Backup Failed!");
+            });
+        };
+
+        window.togglePassVisibility = (el) => {
+            const input = document.getElementById('inp-password');
+            if (input.type === "password") {
+                input.type = "text";
+                el.classList.remove('fa-eye');
+                el.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                el.classList.remove('fa-eye-slash');
+                el.classList.add('fa-eye');
+            }
+        };
+
+        // --- MODAL & DATA HANDLING ---
+
+        function resetModalState() {
+            document.querySelectorAll('#entry-form input, #entry-form textarea').forEach(el => el.readOnly = false);
+            document.getElementById('btn-save').classList.remove('hidden');
+            document.getElementById('toggle-pass-btn').classList.remove('hidden');
+            document.querySelectorAll('.modal-copy-btn').forEach(btn => btn.classList.add('hidden'));
+            document.getElementById('inp-password').type = "password";
+            const eyeIcon = document.getElementById('toggle-pass-btn');
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+
+        window.openModal = () => {
+            editingId = null;
+            viewingId = null;
+            resetModalState();
+            document.getElementById('entry-form').reset();
+            document.getElementById('modal-title').textContent = "New Entry";
+            const modal = document.getElementById('main-modal');
+            const content = document.getElementById('modal-content');
+            document.getElementById('modal-cat-select').classList.remove('hidden');
+            content.classList.remove('max-w-[340px]', 'p-5');
+            content.classList.add('w-full', 'h-full', 'max-w-none', 'rounded-2xl', 'p-6');
+            modal.classList.remove('hidden');
+            const typeToSet = currentCategory === 'dashboard' ? 'notes' : currentCategory;
+            window.setModalType(typeToSet);
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        };
+
+        window.closeModal = () => {
+            const modal = document.getElementById('main-modal');
+            const content = document.getElementById('modal-content');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                editingId = null;
+                viewingId = null;
+            }, 300);
+        };
+
+        window.setModalType = (type) => {
+            document.querySelectorAll('.modal-cat-btn').forEach(btn => {
+                const txt = btn.textContent.toLowerCase().trim();
+                let match = type;
+                if (type === 'photos') match = 'img';
+                if (type === 'credentials') match = 'user';
+                if (type === 'apis') match = 'api';
+                if (txt.includes(match.slice(0, 3))) {
+                    btn.classList.remove('bg-slate-800', 'text-slate-400', 'hover:bg-slate-700', 'border-slate-700');
+                    btn.classList.add('bg-[var(--accent-color)]', 'text-white', 'border-transparent', 'shadow-lg');
+                } else {
+                    btn.classList.add('bg-slate-800', 'text-slate-400', 'hover:bg-slate-700', 'border-slate-700');
+                    btn.classList.remove('bg-[var(--accent-color)]', 'text-white', 'border-transparent', 'shadow-lg');
+                }
+            });
+            document.querySelectorAll('.field-group').forEach(grp => {
+                if (grp.dataset.for === type) grp.classList.remove('hidden');
+                else grp.classList.add('hidden');
+            });
+        };
+
+        window.viewItem = (id) => {
+            const item = itemsData[id];
+            if (!item) return;
+            viewingId = id;
+            editingId = null;
+            const modal = document.getElementById('main-modal');
+            const content = document.getElementById('modal-content');
+            document.getElementById('modal-cat-select').classList.add('hidden');
+            content.classList.remove('max-w-[340px]', 'p-5');
+            content.classList.add('w-full', 'h-full', 'max-w-none', 'rounded-2xl', 'p-6');
+            document.querySelectorAll('#entry-form input, #entry-form textarea').forEach(el => el.readOnly = true);
+            document.getElementById('btn-save').classList.add('hidden');
+            document.getElementById('toggle-pass-btn').classList.add('hidden');
+            document.getElementById('inp-password').type = "text";
+            document.querySelectorAll('.modal-copy-btn').forEach(btn => btn.classList.remove('hidden'));
+            document.getElementById('modal-title').textContent = "View Entry";
+            document.getElementById('entry-id').value = id;
+            document.getElementById('inp-title').value = item.title || "";
+            window.setModalType(currentCategory);
+
+            if (currentCategory === 'notes') document.getElementById('inp-content').value = item.content || "";
+            else if (currentCategory === 'apis') {
+                document.getElementById('inp-api-url').value = item.apiUrl || "";
+                document.getElementById('inp-api-email').value = item.apiEmail || "";
+                document.getElementById('inp-api-key').value = item.apiKey || "";
+            } else if (currentCategory === 'links') {
+                document.getElementById('inp-url').value = item.url || "";
+                document.getElementById('inp-link-subtitle').value = item.subtitle || "";
+            } else if (currentCategory === 'photos') document.getElementById('inp-img-url').value = item.imgUrl || "";
+            else if (currentCategory === 'credentials') {
+                document.getElementById('inp-username').value = item.username || "";
+                document.getElementById('inp-password').value = item.password || "";
+                document.getElementById('inp-cred-url').value = item.url || "";
+            }
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        };
+
+        window.editItem = (id) => {
+            const item = itemsData[id];
+            if (!item) return;
+            resetModalState();
+            const modal = document.getElementById('main-modal');
+            const content = document.getElementById('modal-content');
+            document.getElementById('modal-cat-select').classList.add('hidden');
+            content.classList.remove('max-w-[340px]', 'p-5');
+            content.classList.add('w-full', 'h-full', 'max-w-none', 'rounded-2xl', 'p-6');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            editingId = id;
+            viewingId = null;
+            document.getElementById('modal-title').textContent = "Edit Entry";
+            document.getElementById('entry-id').value = id;
+            document.getElementById('inp-title').value = item.title || "";
+            window.setModalType(currentCategory);
+
+            if (currentCategory === 'notes') document.getElementById('inp-content').value = item.content || "";
+            else if (currentCategory === 'apis') {
+                document.getElementById('inp-api-url').value = item.apiUrl || "";
+                document.getElementById('inp-api-email').value = item.apiEmail || "";
+                document.getElementById('inp-api-key').value = item.apiKey || "";
+            } else if (currentCategory === 'links') {
+                document.getElementById('inp-url').value = item.url || "";
+                document.getElementById('inp-link-subtitle').value = item.subtitle || "";
+            } else if (currentCategory === 'photos') document.getElementById('inp-img-url').value = item.imgUrl || "";
+            else if (currentCategory === 'credentials') {
+                document.getElementById('inp-username').value = item.username || "";
+                document.getElementById('inp-password').value = item.password || "";
+                document.getElementById('inp-cred-url').value = item.url || "";
+            }
+        };
+
+        document.getElementById('entry-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+            let type = null;
+            document.querySelectorAll('.field-group').forEach(grp => {
+                if (!grp.classList.contains('hidden')) type = grp.dataset.for;
+            });
+            const title = document.getElementById('inp-title').value.trim();
+            const now = Date.now();
+            let data = {
+                title,
+                createdAt: now
+            };
+            if (type === 'notes') {
+                data.content = document.getElementById('inp-content').value;
+            } else if (type === 'apis') {
+                data.apiUrl = document.getElementById('inp-api-url').value;
+                data.apiEmail = document.getElementById('inp-api-email').value;
+                data.apiKey = document.getElementById('inp-api-key').value;
+            } else if (type === 'links') {
+                data.url = document.getElementById('inp-url').value;
+                data.subtitle = document.getElementById('inp-link-subtitle').value;
+            } else if (type === 'photos') {
+                data.imgUrl = document.getElementById('inp-img-url').value;
+            } else if (type === 'credentials') {
+                data.url = document.getElementById('inp-cred-url').value;
+                data.username = document.getElementById('inp-username').value;
+                data.password = document.getElementById('inp-password').value;
+            }
+            try {
+                if (editingId) {
+                    await update(ref(db, `users/${currentUser.uid}/${type}/${editingId}`), data);
+                    showToast("Entry Updated");
+                } else {
+                    await push(ref(db, `users/${currentUser.uid}/${type}`), data);
+                    showToast("Entry Saved");
+                }
+                closeModal();
+            } catch (e) {
+                alert(e.message);
+            }
+        });
+
+        window.deleteItem = async (id) => {
+            if (confirm('Are you sure you want to delete this item?')) {
+                try {
+                    await remove(ref(db, `users/${currentUser.uid}/${currentCategory}/${id}`));
+                    showToast('Item deleted');
+                } catch (e) {
+                    alert(e.message);
+                }
+            }
+        };
+
+        window.copyFromId = (id) => {
+            const el = document.getElementById(id);
+            if (el) copyToClip(el.value);
+        };
+
+        window.shareLink = async (url, title) => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: title || 'Shared Link',
+                        url: url
+                    });
+                } catch (err) {
+                    console.log('Share canceled');
+                }
+            } else {
+                copyToClip(url);
+                showToast('Link Copied');
+            }
+        };
+
+        window.switchCategory = (cat) => {
+            currentCategory = cat;
+            localStorage.setItem('vault_active_category', cat);
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = '';
+
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                const txt = btn.textContent.toLowerCase().trim();
+                let match = cat;
+                if (cat === 'dashboard') match = 'home';
+                if (cat === 'photos') match = 'img';
+                if (cat === 'credentials') match = 'user';
+                if (cat === 'apis') match = 'api';
+                if (cat === 'links') match = 'link';
+                if (cat === 'notes') match = 'note';
+
+                btn.classList.remove('bg-[var(--accent-color)]', 'text-white', 'shadow-lg');
+                btn.classList.add('text-slate-400');
+                btn.style.backgroundColor = '';
+
+                if (txt.includes(match)) {
+                    btn.classList.remove('dynamic-bg');
+                    btn.classList.add('bg-[var(--accent-color)]', 'text-white', 'shadow-lg');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    btn.classList.add('dynamic-bg');
+                }
+            });
+
+            const dashboard = document.getElementById('dashboard-view');
+            const listHeader = document.getElementById('list-header');
+            const contentGrid = document.getElementById('content-grid');
+            const emptyState = document.getElementById('empty-state');
+
+            if (cat === 'dashboard') {
+                dashboard.classList.remove('hidden');
+                listHeader.classList.add('hidden');
+                contentGrid.classList.add('hidden');
+                emptyState.classList.add('hidden');
+                searchInput.disabled = false;
+                searchInput.style.opacity = "1";
+                loadDashboardStats();
+            } else {
+                dashboard.classList.add('hidden');
+                listHeader.classList.remove('hidden');
+                searchInput.disabled = false;
+                searchInput.style.opacity = "1";
+                document.getElementById('page-title').textContent = cat === 'apis' ? 'API Store' : cat;
+                loadData();
+            }
+        };
+
+        function formatBytes(bytes, decimals = 2) {
+            if (!+bytes) return '0 KB';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['KB', 'MB', 'GB', 'TB'];
+            if (bytes < 1024) return (bytes / 1024).toFixed(3) + " KB";
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            const sizesFull = ['Bytes', 'KB', 'MB', 'GB'];
+            const iFull = Math.floor(Math.log(bytes) / Math.log(k));
+            return `${parseFloat((bytes / Math.pow(k, iFull)).toFixed(dm))} ${sizesFull[iFull]}`;
+        }
+
+        function calculateObjectSize(obj, type) {
+            let str = "";
+            if (!obj) return 0;
+            if (type === 'notes') str = (obj.title || "") + (obj.content || "");
+            else if (type === 'links') str = (obj.title || "") + (obj.url || "");
+            else if (type === 'photos') str = (obj.title || "") + (obj.imgUrl || "");
+            else if (type === 'credentials') str = (obj.title || "") + (obj.username || "") + (obj.password || "") + (obj.url || "");
+            else if (type === 'apis') str = (obj.title || "") + (obj.apiUrl || "") + (obj.apiKey || "") + (obj.apiEmail || "");
+            return new Blob([str]).size;
+        }
+
+        function loadDashboardStats() {
+            if (!currentUser) return;
+            const refAll = ref(db, `users/${currentUser.uid}`);
+            onValue(refAll, (snap) => {
+                const data = snap.val() || {};
+                if (document.getElementById('count-notes')) {
+                    document.getElementById('count-notes').textContent = data.notes ? Object.keys(data.notes).length : 0;
+                    document.getElementById('count-links').textContent = data.links ? Object.keys(data.links).length : 0;
+                    document.getElementById('count-photos').textContent = data.photos ? Object.keys(data.photos).length : 0;
+                    document.getElementById('count-credentials').textContent = data.credentials ? Object.keys(data.credentials).length : 0;
+                    document.getElementById('count-apis').textContent = data.apis ? Object.keys(data.apis).length : 0;
+
+                    let totalBytes = 0;
+                    let notesBytes = 0;
+                    Object.values(data.notes || {}).forEach(i => notesBytes += calculateObjectSize(i, 'notes'));
+                    document.getElementById('size-notes').textContent = formatBytes(notesBytes);
+                    totalBytes += notesBytes;
+                    let linksBytes = 0;
+                    Object.values(data.links || {}).forEach(i => linksBytes += calculateObjectSize(i, 'links'));
+                    document.getElementById('size-links').textContent = formatBytes(linksBytes);
+                    totalBytes += linksBytes;
+                    let photosBytes = 0;
+                    Object.values(data.photos || {}).forEach(i => photosBytes += calculateObjectSize(i, 'photos'));
+                    document.getElementById('size-photos').textContent = formatBytes(photosBytes);
+                    totalBytes += photosBytes;
+                    let credsBytes = 0;
+                    Object.values(data.credentials || {}).forEach(i => credsBytes += calculateObjectSize(i, 'credentials'));
+                    document.getElementById('size-credentials').textContent = formatBytes(credsBytes);
+                    totalBytes += credsBytes;
+                    let apisBytes = 0;
+                    Object.values(data.apis || {}).forEach(i => apisBytes += calculateObjectSize(i, 'apis'));
+                    document.getElementById('size-apis').textContent = formatBytes(apisBytes);
+                    totalBytes += apisBytes;
+
+                    document.getElementById('total-storage').textContent = formatBytes(totalBytes);
+                }
+            });
+        }
+
+        window.toggleSettings = () => {
+            const panel = document.getElementById('settings-panel');
+            const backdrop = document.getElementById('settings-backdrop');
+            if (!panel.classList.contains('open')) {
+                document.getElementById('header-name-input').value = localStorage.getItem('vault_header_name') || '';
+                document.getElementById('site-title-input').value = localStorage.getItem('vault_site_title') || '';
+                document.getElementById('favicon-input').value = localStorage.getItem('vault_custom_favicon') || '';
+                document.getElementById('content-bg-input').value = localStorage.getItem('vault_content_bg') || '';
+            }
+            if (panel.classList.contains('open')) {
+                panel.classList.remove('open');
+                backdrop.classList.remove('active');
+                setTimeout(() => backdrop.classList.add('hidden'), 300);
+            } else {
+                backdrop.classList.remove('hidden');
+                setTimeout(() => {
+                    panel.classList.add('open');
+                    backdrop.classList.add('active');
+                }, 10);
+            }
+        };
+
+        window.toggleView = (mode) => {
+            const grid = document.getElementById('content-grid');
+            if (mode === 'list') {
+                grid.classList.remove('grid-cols-2');
+                grid.classList.add('grid-cols-1');
+            } else {
+                grid.classList.add('grid-cols-2');
+                grid.classList.remove('grid-cols-1');
+            }
+        };
+
+        function loadData() {
+            if (!currentUser || currentCategory === 'dashboard') return;
+            document.getElementById('loader-state').classList.remove('hidden');
+            document.getElementById('content-grid').classList.add('hidden');
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('item-count').textContent = 'Syncing...';
+            const dataRef = ref(db, `users/${currentUser.uid}/${currentCategory}`);
+            onValue(dataRef, (snapshot) => {
+                const grid = document.getElementById('content-grid');
+                grid.innerHTML = '';
+                itemsData = snapshot.val() || {};
+                const itemsArray = Object.entries(itemsData).map(([key, val]) => ({
+                    id: key,
+                    ...val
+                }));
+                itemsArray.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                let catTotalBytes = 0;
+                itemsArray.forEach(i => catTotalBytes += calculateObjectSize(i, currentCategory));
+
+                const query = document.getElementById('search-input').value.toLowerCase();
+                const filtered = itemsArray.filter(i => (i.title || "Untitled").toLowerCase().includes(query));
+
+                document.getElementById('loader-state').classList.add('hidden');
+                document.getElementById('item-count').innerHTML = `${filtered.length} entries <span class="ml-2 px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/20 text-[9px]">${formatBytes(catTotalBytes)}</span>`;
+
+                if (filtered.length === 0) {
+                    document.getElementById('content-grid').classList.add('hidden');
+                    document.getElementById('empty-state').classList.remove('hidden');
+                } else {
+                    document.getElementById('empty-state').classList.add('hidden');
+                    document.getElementById('content-grid').classList.remove('hidden');
+                    filtered.forEach(item => grid.appendChild(createCard(item)));
+                }
+            });
+        }
+
+        function createCard(item) {
+            const div = document.createElement('div');
+            const safe = (txt) => (txt || "").replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+            const titleSafe = safe(item.title);
+            const urlSafe = item.url ? safe(item.url) : "";
+            let catName = currentCategory;
+            if (catName === 'credentials') catName = 'User';
+            if (catName === 'photos') catName = 'Image';
+            if (catName === 'links') catName = 'Link';
+            if (catName === 'notes') catName = 'Note';
+            if (catName === 'apis') catName = 'API';
+            const displayTitle = item.title ? item.title : `Untitled ${catName}`;
+            div.className = "glass-card p-4 rounded-xl flex flex-col h-full relative group cursor-pointer active:scale-[0.98]";
+            div.onclick = (e) => {
+                if (e.target.closest('button') || e.target.closest('a')) return;
+                viewItem(item.id);
+            };
+            const bytes = calculateObjectSize(item, currentCategory);
+            const sizeStr = formatBytes(bytes);
+            const sizeInfo = `<span class="ml-2 px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/20 text-[8px] text-emerald-400 font-mono tracking-tight shrink-0 select-text">${sizeStr}</span>`;
+            let iconHtml = `<i class="fa-solid fa-folder-open text-[var(--accent-color)] opacity-70 text-xs shrink-0"></i>`;
+            if (currentCategory === 'links' && item.url) {
+                try {
+                    const domain = new URL(item.url).hostname;
+                    iconHtml = `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" class="w-5 h-5 rounded-full bg-white/10 shrink-0" onerror="this.src='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/link.svg'">`;
+                } catch (e) {
+                    iconHtml = `<i class="fa-solid fa-link text-[var(--accent-color)] text-xs shrink-0"></i>`;
+                }
+            } else if (currentCategory === 'credentials') {
+                if (item.url) {
+                    try {
+                        const domain = new URL(item.url).hostname;
+                        iconHtml = `<a href="${item.url}" target="_blank" onclick="event.stopPropagation()" title="Open Site"><img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" class="w-6 h-6 rounded-full bg-white/10 shrink-0 border border-white/20 hover:scale-110 transition-transform"></a>`;
+                    } catch (e) {
+                        iconHtml = `<i class="fa-solid fa-user-shield text-[var(--accent-color)] text-base shrink-0"></i>`;
+                    }
+                } else {
+                    iconHtml = `<i class="fa-solid fa-user-shield text-[var(--accent-color)] text-base shrink-0"></i>`;
+                }
+            }
+            const header = `<div class="flex justify-between items-start mb-3"><div class="flex items-center gap-2 overflow-hidden pr-2 w-full">${iconHtml}<div class="flex items-center overflow-hidden flex-1"><h3 class="font-bold text-sm text-slate-100 truncate cursor-text select-text ${!item.title ? 'italic text-slate-500' : ''}">${displayTitle}</h3>${sizeInfo}</div><button onclick="event.stopPropagation(); copyToClip('${titleSafe}')" class="text-slate-500 hover:text-white transition px-2 shrink-0"><i class="fa-regular fa-copy text-xs"></i></button></div></div>`;
+            const dateStr = new Date(item.createdAt).toLocaleDateString('en-US');
+            let footerActions = `
+                <button onclick="event.stopPropagation(); editItem('${item.id}')" class="text-blue-400 hover:text-blue-300 transition text-base p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                <button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="text-rose-400 hover:text-rose-300 transition text-base p-1"><i class="fa-solid fa-trash"></i></button>
+            `;
+            if (currentCategory === 'links') {
+                footerActions = `
+                    <button onclick="event.stopPropagation(); shareLink('${urlSafe}', '${titleSafe}')" class="text-indigo-400 hover:text-indigo-300 transition text-base p-1 mr-1" title="Share"><i class="fa-solid fa-share-nodes"></i></button>
+                    <a href="${item.url}" target="_blank" onclick="event.stopPropagation()" class="text-emerald-400 hover:text-emerald-300 transition text-base p-1 mr-2" title="Open Link"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                    <span class="w-[1px] h-4 bg-white/10 mx-1"></span>
+                    ${footerActions}
+                `;
+            }
+            const footer = `<div class="mt-auto pt-3 border-t border-white/5 flex justify-between items-center"><p class="text-[10px] text-sky-400 font-bold tracking-wider">${dateStr}</p><div class="flex items-center gap-1">${footerActions}</div></div>`;
+            let bodyHtml = '';
+            if (currentCategory === 'notes') {
+                bodyHtml = `<div class="relative group/content mb-2 pointer-events-none"><div class="text-xs text-slate-300 whitespace-pre-wrap font-mono line-clamp-6 leading-relaxed bg-slate-900/30 p-2 rounded-lg border border-white/5 pr-6 select-text">${item.content || ''}</div></div>`;
+            } else if (currentCategory === 'apis') {
+                const emailHtml = item.apiEmail ? `<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 mb-2"><span class="text-[9px] text-slate-500 uppercase font-bold block">Email</span><span class="font-mono text-xs text-indigo-300 truncate block select-text">${item.apiEmail}</span></div>` : '';
+                bodyHtml = `<div class="space-y-2 mb-2 pointer-events-none">${emailHtml}<div class="bg-slate-900/50 p-2 rounded border border-white/5 relative group/url"><p class="text-[10px] text-slate-500 uppercase font-bold mb-0.5">Key/Token Preview</p><div class="text-[10px] font-mono text-cyan-300 break-all pr-5 line-clamp-2 select-text">${item.apiKey ? item.apiKey.substring(0,20)+'...' : 'No Key'}</div></div></div>`;
+            } else if (currentCategory === 'links') {
+                const subtitleHtml = item.subtitle ? `<div class="mb-1.5"><span class="text-[9px] font-bold text-[var(--accent-color)] bg-[var(--accent-color)]/10 px-1.5 py-0.5 rounded border border-[var(--accent-color)]/20 uppercase tracking-wider">${item.subtitle}</span></div>` : '';
+                bodyHtml = `<div class="relative mb-2 pointer-events-none">${subtitleHtml}<div class="flex items-center gap-2 bg-slate-900/30 p-2 rounded border border-white/5"><i class="fa-solid fa-globe text-xs text-slate-500"></i><span class="text-[10px] text-indigo-300 truncate flex-1 select-text">${item.url}</span></div></div>`;
+            } else if (currentCategory === 'photos') {
+                bodyHtml = `<div class="relative group/img aspect-video bg-slate-900 rounded-lg overflow-hidden mb-2 border border-white/10 shadow-inner pointer-events-none"><img src="${item.imgUrl}" onerror="this.src='https://placehold.co/600x400/1e293b/FFF?text=Image+Broken'" class="w-full h-full object-cover"></div>`;
+            } else if (currentCategory === 'credentials') {
+                const urlHtml = item.url ? `<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 mb-2"><span class="text-[9px] text-slate-500 uppercase font-bold block">Site</span><span class="font-mono text-xs text-indigo-300 truncate block select-text">${item.url}</span></div>` : '';
+                bodyHtml = `<div class="text-sm mb-2 pointer-events-none">${urlHtml}<div class="bg-slate-900/60 p-2 rounded-lg border border-white/5 flex items-center justify-between"><div><span class="text-[9px] text-slate-500 uppercase font-bold block">User</span><span class="font-mono text-xs text-slate-300 select-text">${item.username}</span></div></div></div>`;
+            }
+            div.innerHTML = header + bodyHtml + footer;
+            return div;
+        }
+
+        window.copyToClip = (txt) => {
+            navigator.clipboard.writeText(txt);
+            showToast('Copied to clipboard');
+        };
+
+        window.showToast = (msg) => {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            t.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
+            setTimeout(() => {
+                t.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
+            }, 3000);
+        };
+
+        window.updateProfilePic = async () => {
+            const url = prompt("Enter Image URL for Profile:");
+            if (url) {
+                try {
+                    await update(ref(db, `users/${currentUser.uid}`), {
+                        profilePic: url
+                    });
+                    showToast("Profile Updated");
+                } catch (e) {
+                    alert("Error updating profile");
+                }
+            }
+        };
+
+        window.updateUserPassword = async () => {
+            const newPass = document.getElementById('new-password-input').value;
+            if (newPass.length < 6) return alert("Password must be at least 6 characters.");
+            try {
+                await updatePassword(currentUser, newPass);
+                showToast("Password Updated!");
+                document.getElementById('new-password-input').value = "";
+            } catch (e) {
+                if (e.code === 'auth/requires-recent-login') {
+                    alert("Please logout and login again to change password.");
+                    logout();
+                } else {
+                    alert("Error: " + e.message);
+                }
+            }
+        };
+    </script>
+</body>
+</html>
